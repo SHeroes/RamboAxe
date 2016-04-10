@@ -82,6 +82,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DaniTests\DaniTest1.cs" />
     <Compile Include="Ejemplo_1\Ejemplo1.cs" />
     <Compile Include="Ejemplo_1\GameCamera.cs" />
     <Compile Include="MiGrupo\EjemploAlumno.cs" />
