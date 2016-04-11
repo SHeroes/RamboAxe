@@ -37,15 +37,9 @@ namespace AlumnoEjemplos.Ejemplo_1
         Vector3 viewDir;
         Vector3 lookAt;
 
-        //Banderas de Input
-        bool moveForwardsPressed = false;
-        bool moveBackwardsPressed = false;
-        bool moveRightPressed = false;
-        bool moveLeftPressed = false;
-        bool moveUpPressed = false;
-        bool moveDownPressed = false;
+        
 
-        public bool rotateCamera;
+
         
         #region Getters y Setters
         
@@ -129,15 +123,7 @@ namespace AlumnoEjemplos.Ejemplo_1
             set { velocity.Y = value; }
         }
 
-        float rotationSpeed;
-        /// <summary>
-        /// Velocidad de rotacion de la cámara
-        /// </summary>
-        public float RotationSpeed
-        {
-            get { return rotationSpeed; }
-            set { rotationSpeed = value; }
-        }
+       
 
         Matrix viewMatrix;
         /// <summary>
@@ -175,7 +161,7 @@ namespace AlumnoEjemplos.Ejemplo_1
         public GameCamera()
         {
             resetValues();
-            this.rotateCamera = true;
+
         }
 
         /// <summary>
@@ -184,7 +170,7 @@ namespace AlumnoEjemplos.Ejemplo_1
         public void resetValues()
         {
             accumPitchDegrees = 0.0f;
-            rotationSpeed = DEFAULT_ROTATION_SPEED;
+
             eye = new Vector3(0.0f, 0.0f, 0.0f);
             xAxis = new Vector3(1.0f, 0.0f, 0.0f);
             yAxis = new Vector3(0.0f, 1.0f, 0.0f);
@@ -256,7 +242,7 @@ namespace AlumnoEjemplos.Ejemplo_1
         /// world units upwards or downwards; and dz world units forwards
         /// or backwards.
         /// </summary>
-        private void move(float dx, float dy, float dz)
+        public void move(float dx, float dy, float dz)
         {
 
             Vector3 auxEye = this.eye;
@@ -289,103 +275,16 @@ namespace AlumnoEjemplos.Ejemplo_1
             reconstructViewMatrix(false);
         }
 
-        /// <summary>
-        /// Rotates the camera based on its current behavior.
-        /// Note that not all behaviors support rolling.
-        ///
-        /// This Camera class follows the left-hand rotation rule.
-        /// Angles are measured clockwise when looking along the rotation
-        /// axis toward the origin. Since the Z axis is pointing into the
-        /// screen we need to negate rolls.
-        /// </summary>
-        private void rotate(float headingDegrees, float pitchDegrees, float rollDegrees)
-        {
-            rollDegrees = -rollDegrees;
-            rotateFirstPerson(headingDegrees, pitchDegrees);
-            reconstructViewMatrix(true);
-        }
-
-        /// <summary>
-        /// This method applies a scaling factor to the rotation angles prior to
-        /// using these rotation angles to rotate the camera. This method is usually
-        /// called when the camera is being rotated using an input device (such as a
-        /// mouse or a joystick).
-        /// </summary>
-        private void rotateSmoothly(float headingDegrees, float pitchDegrees, float rollDegrees)
-        {
-            headingDegrees *= rotationSpeed;
-            pitchDegrees *= rotationSpeed;
-            rollDegrees *= rotationSpeed;
-
-            rotate(headingDegrees, pitchDegrees, rollDegrees);
-        }
-
-        /// <summary>
-        /// Moves the camera using Newton's second law of motion. Unit mass is
-        /// assumed here to somewhat simplify the calculations. The direction vector
-        /// is in the range [-1,1].
-        /// </summary>
-        private void updatePosition(Vector3 direction, float elapsedTimeSec)
-        {
-            if (Vector3.LengthSq(currentVelocity) != 0.0f)
-            {
-                // Only move the camera if the velocity vector is not of zero length.
-                // Doing this guards against the camera slowly creeping around due to
-                // floating point rounding errors.
-
-                Vector3 displacement;
-                if (accelerationEnable)
-                {
-                    displacement = (currentVelocity * elapsedTimeSec) +
-                    (0.5f * acceleration * elapsedTimeSec * elapsedTimeSec);
-                }
-                else
-                {
-                    displacement = (currentVelocity * elapsedTimeSec);
-                }
+       
 
 
-                // Floating point rounding errors will slowly accumulate and cause the
-                // camera to move along each axis. To prevent any unintended movement
-                // the displacement vector is clamped to zero for each direction that
-                // the camera isn't moving in. Note that the updateVelocity() method
-                // will slowly decelerate the camera's velocity back to a stationary
-                // state when the camera is no longer moving along that direction. To
-                // account for this the camera's current velocity is also checked.
-
-                if (direction.X == 0.0f && Math.Abs(currentVelocity.X) < 1e-6f)
-                    displacement.X = 0.0f;
-
-                if (direction.Y == 0.0f && Math.Abs(currentVelocity.Y) < 1e-6f)
-                    displacement.Y = 0.0f;
-
-                if (direction.Z == 0.0f && Math.Abs(currentVelocity.Z) < 1e-6f)
-                    displacement.Z = 0.0f;
-
-                move(displacement.X, displacement.Y, displacement.Z);
-            }
-
-            // Continuously update the camera's velocity vector even if the camera
-            // hasn't moved during this call. When the camera is no longer being moved
-            // the camera is decelerating back to its stationary state.
-
-            if (accelerationEnable)
-            {
-                updateVelocity(direction, elapsedTimeSec);
-            }
-            else
-            {
-                updateVelocityNoAcceleration(direction);
-            }
-        }
-
-        private void setPosition(Vector3 pos)
+        public void setPosition(Vector3 pos)
         {
             eye = pos;
             reconstructViewMatrix(false);
         }
 
-        private void rotateFirstPerson(float headingDegrees, float pitchDegrees)
+        public void rotateFirstPerson(float headingDegrees, float pitchDegrees)
         {
             accumPitchDegrees += pitchDegrees;
 
@@ -430,113 +329,10 @@ namespace AlumnoEjemplos.Ejemplo_1
                 result = Vector3.Transform(zAxis, rotMtx);
                 zAxis = new Vector3(result.X, result.Y, result.Z);
             }
+            reconstructViewMatrix(true);
         }
 
 
-        /// <summary>
-        /// Updates the camera's velocity based on the supplied movement direction
-        /// and the elapsed time (since this method was last called). The movement
-        /// direction is the in the range [-1,1].
-        /// </summary>
-        private void updateVelocity(Vector3 direction, float elapsedTimeSec)
-        {
-            if (direction.X != 0.0f)
-            {
-                // Camera is moving along the x axis.
-                // Linearly accelerate up to the camera's max speed.
-
-                currentVelocity.X += direction.X * acceleration.X * elapsedTimeSec;
-
-                if (currentVelocity.X > velocity.X)
-                    currentVelocity.X = velocity.X;
-                else if (currentVelocity.X < -velocity.X)
-                    currentVelocity.X = -velocity.X;
-            }
-            else
-            {
-                // Camera is no longer moving along the x axis.
-                // Linearly decelerate back to stationary state.
-
-                if (currentVelocity.X > 0.0f)
-                {
-                    if ((currentVelocity.X -= acceleration.X * elapsedTimeSec) < 0.0f)
-                        currentVelocity.X = 0.0f;
-                }
-                else
-                {
-                    if ((currentVelocity.X += acceleration.X * elapsedTimeSec) > 0.0f)
-                        currentVelocity.X = 0.0f;
-                }
-            }
-
-            if (direction.Y != 0.0f)
-            {
-                // Camera is moving along the y axis.
-                // Linearly accelerate up to the camera's max speed.
-
-                currentVelocity.Y += direction.Y * acceleration.Y * elapsedTimeSec;
-
-                if (currentVelocity.Y > velocity.Y)
-                    currentVelocity.Y = velocity.Y;
-                else if (currentVelocity.Y < -velocity.Y)
-                    currentVelocity.Y = -velocity.Y;
-            }
-            else
-            {
-                // Camera is no longer moving along the y axis.
-                // Linearly decelerate back to stationary state.
-
-                if (currentVelocity.Y > 0.0f)
-                {
-                    if ((currentVelocity.Y -= acceleration.Y * elapsedTimeSec) < 0.0f)
-                        currentVelocity.Y = 0.0f;
-                }
-                else
-                {
-                    if ((currentVelocity.Y += acceleration.Y * elapsedTimeSec) > 0.0f)
-                        currentVelocity.Y = 0.0f;
-                }
-            }
-
-            if (direction.Z != 0.0f)
-            {
-                // Camera is moving along the z axis.
-                // Linearly accelerate up to the camera's max speed.
-
-                currentVelocity.Z += direction.Z * acceleration.Z * elapsedTimeSec;
-
-                if (currentVelocity.Z > velocity.Z)
-                    currentVelocity.Z = velocity.Z;
-                else if (currentVelocity.Z < -velocity.Z)
-                    currentVelocity.Z = -velocity.Z;
-            }
-            else
-            {
-                // Camera is no longer moving along the z axis.
-                // Linearly decelerate back to stationary state.
-
-                if (currentVelocity.Z > 0.0f)
-                {
-                    if ((currentVelocity.Z -= acceleration.Z * elapsedTimeSec) < 0.0f)
-                        currentVelocity.Z = 0.0f;
-                }
-                else
-                {
-                    if ((currentVelocity.Z += acceleration.Z * elapsedTimeSec) > 0.0f)
-                        currentVelocity.Z = 0.0f;
-                }
-            }
-        }
-
-        /// <summary>
-        /// Actualizar currentVelocity sin aplicar aceleracion
-        /// </summary>
-        private void updateVelocityNoAcceleration(Vector3 direction)
-        {
-            currentVelocity.X = velocity.X * direction.X;
-            currentVelocity.Y = velocity.Y * direction.Y;
-            currentVelocity.Z = velocity.Z * direction.Z;
-        }
 
         /// <summary>
         /// Reconstruct the view matrix.
@@ -594,25 +390,14 @@ namespace AlumnoEjemplos.Ejemplo_1
             }
 
             float elapsedTimeSec = GuiController.Instance.ElapsedTime;
-            TgcD3dInput d3dInput = GuiController.Instance.D3dInput;
 
-            float heading = 0.0f;
-            float pitch = 0.0f;
-
+           
             //Obtener direccion segun entrada de teclado
-            Vector3 direction = getMovementDirection(d3dInput);
-
-            pitch = d3dInput.YposRelative * rotationSpeed;
-            heading = d3dInput.XposRelative * rotationSpeed;
-
-            if (rotateCamera)
-            {
-                rotate(heading, pitch, 0.0f);
-            }
+//            Vector3 direction = getMovementDirection(d3dInput);
             
             
 
-            updatePosition(direction, elapsedTimeSec);
+  //          updatePosition(direction, elapsedTimeSec);
         }
 
         /// <summary>
@@ -628,111 +413,7 @@ namespace AlumnoEjemplos.Ejemplo_1
             d3dDevice.Transform.View = viewMatrix;
         }
 
-        /// <summary>
-        /// Obtiene la direccion a moverse por la camara en base a la entrada de teclado
-        /// </summary>
-        private Vector3 getMovementDirection(TgcD3dInput d3dInput)
-        {
-            Vector3 direction = new Vector3(0.0f, 0.0f, 0.0f);
 
-            //Forward
-            if (d3dInput.keyDown(Key.W))
-            {
-                if (!moveForwardsPressed)
-                {
-                    moveForwardsPressed = true;
-                    currentVelocity = new Vector3(currentVelocity.X, currentVelocity.Y, 0.0f);
-                }
-
-                direction.Z += 1.0f;
-            }
-            else
-            {
-                moveForwardsPressed = false;
-            }
-
-            //Backward
-            if (d3dInput.keyDown(Key.S))
-            {
-                if (!moveBackwardsPressed)
-                {
-                    moveBackwardsPressed = true;
-                    currentVelocity = new Vector3(currentVelocity.X, currentVelocity.Y, 0.0f);
-                }
-
-                direction.Z -= 1.0f;
-            }
-            else
-            {
-                moveBackwardsPressed = false;
-            }
-
-            //Strafe right
-            if (d3dInput.keyDown(Key.D))
-            {
-                if (!moveRightPressed)
-                {
-                    moveRightPressed = true;
-                    currentVelocity = new Vector3(0.0f, currentVelocity.Y, currentVelocity.Z);
-                }
-
-                direction.X += 1.0f;
-            }
-            else
-            {
-                moveRightPressed = false;
-            }
-
-            //Strafe left
-            if (d3dInput.keyDown(Key.A))
-            {
-                if (!moveLeftPressed)
-                {
-                    moveLeftPressed = true;
-                    currentVelocity = new Vector3(0.0f, currentVelocity.Y, currentVelocity.Z);
-                }
-
-                direction.X -= 1.0f;
-            }
-            else
-            {
-                moveLeftPressed = false;
-            }
-
-            //Jump
-            if (d3dInput.keyDown(Key.Space))
-            {
-                if (!moveUpPressed)
-                {
-                    moveUpPressed = true;
-                    currentVelocity = new Vector3(currentVelocity.X, 0.0f, currentVelocity.Z);
-                }
-
-                direction.Y += 1.0f;
-            }
-            else
-            {
-                moveUpPressed = false;
-            }
-
-            //Crouch
-            if (d3dInput.keyDown(Key.LeftControl))
-            {
-                if (!moveDownPressed)
-                {
-                    moveDownPressed = true;
-                    currentVelocity = new Vector3(currentVelocity.X, 0.0f, currentVelocity.Z);
-                }
-
-                direction.Y -= 1.0f;
-            }
-            else
-            {
-                moveDownPressed = false;
-            }
-
-            return direction;
-        }
 
         public Vector3 getPosition()
         {

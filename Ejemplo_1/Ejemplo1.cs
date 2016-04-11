@@ -15,19 +15,23 @@ using TgcViewer.Utils._2D;
 using TgcViewer.Utils.Collision.ElipsoidCollision;
 using System.Windows.Forms;
 
+
 namespace AlumnoEjemplos.Ejemplo_1
 {
 
     public class Ejemplo1 : TgcExample
     {
+        public bool rotateCamera;
         GameCamera gameCamera;
+        float rotationSpeed = 2.0f;
         TgcScene tgcScene;
         TgcBox box;
-        List<Collider> objetosColisionables = new List<Collider>();
-        ElipsoidCollisionManager collisionManager;
-        Vector3 movement;
         TgcText2d text3;
         TgcElipsoid characterElipsoid;
+        TgcArrow arrow;
+
+        List<Collider> objetosColisionables = new List<Collider>();
+        ElipsoidCollisionManager collisionManager;
 
         public override string getCategory()
         {
@@ -43,10 +47,10 @@ namespace AlumnoEjemplos.Ejemplo_1
         {
             return "Tratando de armar survival craft, primer intento";
         }
-        
+        TgcD3dInput d3dInput;
         public override void init()
         {
-            
+
             //Version para cargar escena desde carpeta descomprimida
             TgcSceneLoader loader = new TgcSceneLoader();
             tgcScene = loader.loadSceneFromFile(
@@ -55,44 +59,37 @@ namespace AlumnoEjemplos.Ejemplo_1
 
             gameCamera = new GameCamera();
             gameCamera.Enable = true;
-            gameCamera.setCamera(new Vector3(249,49,289), new Vector3(250f,49f,290f));
             gameCamera.MovementSpeed = 200f;            
             gameCamera.JumpSpeed = 200f;
-            gameCamera.rotateCamera = false;
-
-            TgcD3dInput d3dInput = GuiController.Instance.D3dInput;
+            rotateCamera = false;
+            
+            d3dInput = GuiController.Instance.D3dInput;
 
 
             //UserVar para contar la cantidad de meshes que se renderizan
-            GuiController.Instance.UserVars.addVar("Texto de ejemplo");
-            GuiController.Instance.UserVars.addVar("CAMERAX");
-            GuiController.Instance.UserVars.addVar("CAMERAY");
-            GuiController.Instance.UserVars.addVar("CAMERAZ");
-            GuiController.Instance.UserVars.addVar("CAMERAPOSX");
-            GuiController.Instance.UserVars.addVar("CAMERAPOSY");
-            GuiController.Instance.UserVars.addVar("CAMERAPOSZ");
+            GuiController.Instance.UserVars.addVar("Collision");
+           
+            GuiController.Instance.UserVars.addVar("CameraLookX");
+            GuiController.Instance.UserVars.addVar("CameraLookY");
+            GuiController.Instance.UserVars.addVar("CameraLookZ");
+            GuiController.Instance.UserVars.addVar("CameraPosX");
+            GuiController.Instance.UserVars.addVar("CameraPosY");
+            GuiController.Instance.UserVars.addVar("CameraPosZ");
             GuiController.Instance.UserVars.addVar("Movement");
            
 
-
-
-            GuiController.Instance.Modifiers.addBoolean("HabilitarGravedad", "Habilitar Gravedad", true);
-            GuiController.Instance.Modifiers.addVertex3f("Gravedad", new Vector3(-50, -50, -50), new Vector3(50, 50, 50), new Vector3(0, -4, 0));
-            GuiController.Instance.Modifiers.addFloat("SlideFactor", 0f, 2f, 1f);
-            GuiController.Instance.Modifiers.addFloat("Pendiente", 0f, 1f, 0.72f);
             GuiController.Instance.Modifiers.addBoolean("Collisions", "Collisions", true);
            
 
 
 
 
-
-            Vector3 center = new Vector3(194, 45, 178);
+            Vector3 center = new Vector3(260, 39, 300);
             Vector3 size = new Vector3(10, 10, 10);
             Color color = Color.Red;
             box = TgcBox.fromSize(center, size, color);
-            characterElipsoid = new TgcElipsoid(gameCamera.Position, new Vector3(12, 28, 12));
-
+            characterElipsoid = new TgcElipsoid(box.BoundingBox.calculateBoxCenter() + new Vector3(0, 0, 0), new Vector3(12, 28, 12));
+            
             objetosColisionables.Clear();
             foreach (TgcMesh mesh in tgcScene.Meshes)
             {
@@ -111,11 +108,23 @@ namespace AlumnoEjemplos.Ejemplo_1
             //Crear manejador de colisiones
             collisionManager = new ElipsoidCollisionManager();
             collisionManager.GravityEnabled = true;
+            
 
 
+            arrow = new TgcArrow();
 
-            movement = new Vector3(gameCamera.getPosition().X,gameCamera.getPosition().Y,gameCamera.getPosition().Z);
-         
+
+            Vector3 start = box.BoundingBox.calculateBoxCenter();
+            Vector3 end = new Vector3(0, 0, 20);
+            end.Add(start);
+            Vector3 cameraStart = new Vector3(start.X,start.Y,start.Z);
+            cameraStart.Add(new Vector3(0,10,-20));
+            gameCamera.setCamera(cameraStart,end);
+            arrow.Thickness = 0.1f;
+            arrow.HeadSize = new Vector2(0.2f, 0.2f);
+            arrow.BodyColor = Color.AliceBlue;
+            arrow.HeadColor = Color.Black;
+
             this.hud();
 
         }
@@ -133,22 +142,37 @@ namespace AlumnoEjemplos.Ejemplo_1
 
         public override void render(float elapsedTime)
         {
-            tgcScene.renderAll();
-            box.render();
-            GuiController.Instance.UserVars.setValue("CAMERAPOSX", gameCamera.getPosition().X);
-            GuiController.Instance.UserVars.setValue("CAMERAPOSY", gameCamera.getPosition().Y);
-            GuiController.Instance.UserVars.setValue("CAMERAPOSZ", gameCamera.getPosition().Z);
 
-            GuiController.Instance.UserVars.setValue("CAMERAX", gameCamera.getLookAt().X);
-            GuiController.Instance.UserVars.setValue("CAMERAY", gameCamera.getLookAt().Y);
-            GuiController.Instance.UserVars.setValue("CAMERAZ", gameCamera.getLookAt().Z);
+            float heading = 0.0f;
+            float pitch = 0.0f;
+
+
+
             
-            characterElipsoid.render();            
+            //Cargar valores de la flecha
+
+            //Actualizar valores para hacerlos efectivos
+            arrow.updateValues();
+
+            //Render
+            arrow.render();
+
+            tgcScene.renderAll();
+            
+            //box.render();
+            characterElipsoid.render();           
+            GuiController.Instance.UserVars.setValue("CameraPosX", gameCamera.getPosition().X);
+            GuiController.Instance.UserVars.setValue("CameraPosY", gameCamera.getPosition().Y);
+            GuiController.Instance.UserVars.setValue("CameraPosZ", gameCamera.getPosition().Z);
+
+            GuiController.Instance.UserVars.setValue("CameraLookX", gameCamera.getLookAt().X);
+            GuiController.Instance.UserVars.setValue("CameraLookY", gameCamera.getLookAt().Y);
+            GuiController.Instance.UserVars.setValue("CameraLookZ", gameCamera.getLookAt().Z);
             text3.render();
             if (GuiController.Instance.D3dInput.keyPressed(Microsoft.DirectX.DirectInput.Key.P))
             {
-                gameCamera.rotateCamera = !gameCamera.rotateCamera;
-                if (gameCamera.rotateCamera)
+                rotateCamera = !rotateCamera;
+                if (rotateCamera)
                 {
                     text3.Text = "Presiona P para ver el mouse.";
                     Cursor.Hide();
@@ -159,37 +183,86 @@ namespace AlumnoEjemplos.Ejemplo_1
                     Cursor.Show();
                 }
             }
-            if (gameCamera.rotateCamera)
+            if (rotateCamera)
             {
                 Cursor.Position = new Point(400, 400);
             }
-
-            movement.Subtract(gameCamera.getPosition());
-            //Actualizar valores de gravedad
-            collisionManager.GravityEnabled = (bool)GuiController.Instance.Modifiers["HabilitarGravedad"];
-            collisionManager.GravityForce = (Vector3)GuiController.Instance.Modifiers["Gravedad"] /** elapsedTime*/;
-            collisionManager.SlideFactor = (float)GuiController.Instance.Modifiers["SlideFactor"];
-            collisionManager.OnGroundMinDotValue = (float)GuiController.Instance.Modifiers["Pendiente"];
             
-            if ((bool)GuiController.Instance.Modifiers["Collisions"])
-            {
-                //Aca se aplica toda la lógica de detección de colisiones del CollisionManager. Intenta mover el Elipsoide
-                //del personaje a la posición deseada. Retorna la verdadera posicion (realMovement) a la que se pudo mover
-                Vector3 realMovement = collisionManager.moveCharacter(characterElipsoid, movement, objetosColisionables);
-                characterElipsoid.moveCenter(realMovement);
+            Vector3 movementVector = Vector3.Empty;
+            movementVector = getMovementDirection(d3dInput);
+            Vector3 realMovement = gameCamera.getLookAt();
+            
+            
+            //Collision manager.
+            realMovement = collisionManager.moveCharacter(characterElipsoid, movementVector, objetosColisionables);
+            GuiController.Instance.UserVars.setValue("Movement", TgcParserUtils.printVector3(realMovement));
 
-                //Cargar desplazamiento realizar en UserVar
-                GuiController.Instance.UserVars.setValue("Movement", TgcParserUtils.printVector3(realMovement));
+            box.Position = characterElipsoid.Position;
+            gameCamera.setPosition(characterElipsoid.Center);
+            
+            //box.BoundingBox.calculateBoxCenter());
+
+            pitch = d3dInput.YposRelative * rotationSpeed;
+            heading = d3dInput.XposRelative * rotationSpeed;
+
+            if (rotateCamera)
+            {
+                rotate(heading, pitch, 0.0f);
+            }
+            characterElipsoid.render();
+
+            /**/
+            if (collisionManager.Result.collisionFound)
+            {
+                GuiController.Instance.UserVars.setValue("Collision", "Colliding!");
+
             }
             else
             {
-                characterElipsoid.moveCenter(gameCamera.getPosition());
-                gameCamera.setCamera(characterElipsoid.Position,new Vector3(characterElipsoid.Position.X,characterElipsoid.Position.Y,characterElipsoid.Position.Z));
+                GuiController.Instance.UserVars.setValue("Collision", "not Colliding");
             }
 
-
         }
+        private void rotate(float headingDegrees, float pitchDegrees, float rollDegrees)
+        {
+            rollDegrees = -rollDegrees;
+            gameCamera.rotateFirstPerson(headingDegrees, pitchDegrees);
+        }
+        /// <summary>
+        /// Obtiene la direccion a moverse por la camara en base a la entrada de teclado
+        /// </summary>
+        private Vector3 getMovementDirection(TgcD3dInput d3dInput)
+        {
+            Vector3 direction = new Vector3(0.0f, 0.0f, 0.0f);
+            Vector3 lookingAt = new Vector3(gameCamera.getLookAt().X - box.BoundingBox.calculateBoxCenter().X, 0, gameCamera.getLookAt().Z - box.BoundingBox.calculateBoxCenter().Z);
+            
+            if (d3dInput.keyDown(Microsoft.DirectX.DirectInput.Key.W))
+            {
+                direction.Add(lookingAt);
+            }
+            else if(d3dInput.keyDown(Microsoft.DirectX.DirectInput.Key.S))
+            {
+                direction.Subtract(lookingAt);
+            }
+            
+            if (d3dInput.keyDown(Microsoft.DirectX.DirectInput.Key.A))
+            {
+                float z = (lookingAt.X + lookingAt.Y) /((lookingAt.Z)*-1);
+                var perpend = new Vector3(-1, -1, -z);
 
+                direction.Add(perpend);
+            
+            }
+            else if (d3dInput.keyDown(Microsoft.DirectX.DirectInput.Key.D))
+            {
+
+                float z = (lookingAt.X + lookingAt.Y) / ((lookingAt.Z) * -1);
+                var perpend = new Vector3(1, 1, z);
+                
+                direction.Add(perpend);
+            }
+            return direction;
+        }
         public override void close()
         {
         }
