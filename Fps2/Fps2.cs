@@ -112,7 +112,7 @@ namespace AlumnoEjemplos.Fps2
 
             collisionManager = new ElipsoidCollisionManager();
             collisionManager.GravityEnabled = true;
-
+            collisionManager.GravityForce = new Vector3(0,-3f,0);
         }
 
         public override void render(float elapsedTime)
@@ -217,11 +217,12 @@ namespace AlumnoEjemplos.Fps2
         }
         public void playerCrouchs()
         {
-            characterElipsoid.setValues(characterElipsoid.Center + new Vector3(0, 0, 0), new Vector3(12, 48, 12));
+            characterElipsoid.setValues(characterElipsoid.Center + new Vector3(0, 20, 0), new Vector3(12, 28, 12));
+
         }
         public void playerStands()
         {
-            characterElipsoid.setValues(characterElipsoid.Center + new Vector3(0, 0, 0), new Vector3(12, 28, 12));
+            characterElipsoid.setValues(characterElipsoid.Center + new Vector3(0, +20, 0), new Vector3(12, 48, 12));
         }
 
         public override void close()

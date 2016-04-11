@@ -215,7 +215,7 @@ namespace AlumnoEjemplos.Fps2
             get { return lookAt; }
         }
 
-        TgcD3dInput.MouseButtons rotateMouseButton;
+       /* TgcD3dInput.MouseButtons rotateMouseButton;
         /// <summary>
         /// Boton del mouse que debe ser presionado para rotar la camara.
         /// Por default es boton izquierdo.
@@ -226,7 +226,7 @@ namespace AlumnoEjemplos.Fps2
             set { rotateMouseButton = value; }
         }
 
-
+        */
         /// <summary>
         /// Terreno del que tomara la altura.
         /// </summary>
@@ -281,7 +281,7 @@ namespace AlumnoEjemplos.Fps2
             viewMatrix = Matrix.Identity;
             setPosition(CAMERA_POS + HeadPosition * WORLD_YAXIS);
 
-            rotateMouseButton = TgcD3dInput.MouseButtons.BUTTON_LEFT;
+            //rotateMouseButton = TgcD3dInput.MouseButtons.BUTTON_LEFT;
         }
 
 
@@ -696,17 +696,18 @@ namespace AlumnoEjemplos.Fps2
             pitch = d3dInput.YposRelative * rotationSpeed;
             heading = d3dInput.XposRelative * rotationSpeed;
 
-            //Solo rotar si se esta aprentando el boton del mouse configurado
-            if (d3dInput.buttonDown(rotateMouseButton) || this.rotateCameraWithMouse)
+            //Solo rotar si se capturo el mouse.
+            // ignorar: aprentando el boton del mouse configurado d3dInput.buttonDown(rotateMouseButton) ||
+            if ( this.rotateCameraWithMouse)
             {
                 rotate(heading, pitch, 0.0f);
             }
             
-            Vector3[] values = this.game.tryToMovePlayer(this.Position,direction);
-            Vector3 finalDirection = values[1];
+           Vector3[] values = this.game.tryToMovePlayer(this.Position,direction);
+           Vector3 finalDirection = values[1];
            this.setPosition(values[0]);
            updatePosition(finalDirection, elapsedTimeSec);
-            
+           
         }
 
         /// <summary>
@@ -795,30 +796,12 @@ namespace AlumnoEjemplos.Fps2
 
             //Jump
             if (d3dInput.keyUp(Key.Space))
-            {
-                //if (!moveUpPressed)
-                //{
-                  //  moveUpPressed = true;
-                    currentVelocity = new Vector3(currentVelocity.X, 0.0f, currentVelocity.Z);
-                //}
-
-                direction.Y += 100.0f;
+            {   
+                direction.Y += 130.2f;
             }
-            else
-            {
-                moveUpPressed = false;
-            }
-
             //Crouch
             if (d3dInput.keyDown(Key.LeftControl))
             {
-               /* if (!moveDownPressed)
-                {
-                    moveDownPressed = true;
-                    currentVelocity = new Vector3(currentVelocity.X, 0.0f, currentVelocity.Z);
-                }
-
-                direction.Y -= 1.0f;*/
                 this.game.playerCrouchs();
             }
             else
