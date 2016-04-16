@@ -12,6 +12,7 @@ using TgcViewer.Utils.TgcGeometry;
 using TgcViewer.Utils.Input;
 using TgcViewer.Utils._2D;
 using TgcViewer.Utils.Collision.ElipsoidCollision;
+using TgcViewer.Utils.TgcSceneLoader;
 
 namespace AlumnoEjemplos.Fps2
 {
@@ -35,10 +36,18 @@ namespace AlumnoEjemplos.Fps2
         string currentPath;
         TgcText2d text3;
         TgcBox box;
+        TgcBox box2;
+        private List<TgcMesh> vegetation;
+        private SmartTerrain terrain;
         GameCamera camera;
         List<Collider> objetosColisionables = new List<Collider>();
         ElipsoidCollisionManager collisionManager;
         TgcElipsoid characterElipsoid;
+        public List<TgcMesh> Vegetation { get { return vegetation; } }
+        /// <summary>
+        /// Obtiene o configura el terreno a editar
+        /// </summary>
+        public SmartTerrain Terrain { get { return terrain; } set { terrain = value; } }
         public override string getCategory()
         {
             return "AlumnoEjemplos";
@@ -58,22 +67,29 @@ namespace AlumnoEjemplos.Fps2
         public override void init()
         {
             Device d3dDevice = GuiController.Instance.D3dDevice;
-
+            Terrain = new SmartTerrain();
             //Armo la escena.
             
             //Malla default
-            string initialMeshFile = GuiController.Instance.AlumnoEjemplosMediaDir + "fps2\\" + "plano-TgcScene.xml";
+            string initialMeshFile = GuiController.Instance.AlumnoEjemplosMediaDir + "SelvaLoca\\" + "selva_4_game.xml";
+            string terrainHm = GuiController.Instance.AlumnoEjemplosMediaDir + "fps2\\" + "hm.jpg";
             loadMesh(initialMeshFile);
+            loadHeightmap(terrainHm,100f,6.5f);
+           
+         
+            Terrain.loadTexture(terrainHm);
+
 
             d3dInput = GuiController.Instance.D3dInput;
-            Vector3 center = new Vector3(-115, 80, -250);
+            //Vector3 center = new Vector3(-115, 80, -250);
+            Vector3 center = new Vector3(-2775, 80, -4187);
             Vector3 size = new Vector3(10, 10, 10);
             Color color = Color.Red;
             box = TgcBox.fromSize(center, size, color);
 
             
             characterElipsoid = new TgcElipsoid(box.BoundingBox.calculateBoxCenter() + new Vector3(0, 0, 0), new Vector3(12, 48, 12));
-            
+             
 
             
             //Pongo la camara
@@ -89,7 +105,24 @@ namespace AlumnoEjemplos.Fps2
             this.hud();
             this.userVars();
             this.initCollisions();
+
+            
+            
         }
+
+        /// <summary>
+        /// Carga el heightmap a partir de la textura del path.
+        /// </summary>
+        /// <param name="path"></param>
+        /// <param name="scaleXZ"></param>
+        /// <param name="scaleY"></param>
+        public void loadHeightmap(string path, float scaleXZ, float scaleY)
+        {
+            Terrain.loadHeightmap(path, scaleXZ, scaleY, new Vector3(0, 0, 0));
+           
+          //  clearVegetation();
+        }
+
         public void initCollisions()
         {
             //Busco todo lo colisionable en la scene
@@ -98,13 +131,14 @@ namespace AlumnoEjemplos.Fps2
             foreach (TgcMesh mesh in currentScene.Meshes)
             {
                 //Los objetos del layer "TriangleCollision" son colisiones a nivel de triangulo
-                if (mesh.Layer == "TriangleCollision")
-                {
-                    objetosColisionables.Add(TriangleMeshCollider.fromMesh(mesh));
-                }
+             //   if (mesh.Layer == "TriangleCollision")
+              //  {
+               //     objetosColisionables.Add(TriangleMeshCollider.fromMesh(mesh));
+               // }
                 //El resto de los objetos son colisiones de BoundingBox. Las colisiones a nivel de triangulo son muy costosas asi que deben utilizarse solo
                 //donde es extremadamente necesario (por ejemplo en el piso). El resto se simplifica con un BoundingBox
-                else
+                //else
+                if(mesh.Layer == "Suelo" || mesh.Layer == "PAREDES" || (mesh.Name.IndexOf("tronco")>=0))
                 {
                     objetosColisionables.Add(BoundingBoxCollider.fromBoundingBox(mesh.BoundingBox));
                 }
@@ -134,6 +168,8 @@ namespace AlumnoEjemplos.Fps2
             box.render();
             characterElipsoid.render();
             userVarUpdates();
+            Terrain.render();
+          
         
         }
         public void userVars()
@@ -214,6 +250,7 @@ namespace AlumnoEjemplos.Fps2
             //Cargar escena con herramienta TgcSceneLoader
             TgcSceneLoader loader = new TgcSceneLoader();
             currentScene = loader.loadSceneFromFile(path);
+            
         }
         public void playerCrouchs()
         {

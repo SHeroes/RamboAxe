@@ -796,7 +796,8 @@ namespace AlumnoEjemplos.Fps2
 
             //Jump
             if (d3dInput.keyUp(Key.Space))
-            {   
+            {
+
                 direction.Y += 130.2f;
             }
             //Crouch

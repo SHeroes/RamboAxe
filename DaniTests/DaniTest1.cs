@@ -43,6 +43,11 @@ namespace AlumnoEjemplos.DaniTest1
 
         //VARIABLE GLOBALES
         TgcScene scene;
+
+        TgcScene selva1;
+        TgcScene selva2;
+        TgcScene selva3;
+        TgcScene selva4;
         TgcMesh mainMesh;
 
         /// <summary>
@@ -62,7 +67,18 @@ namespace AlumnoEjemplos.DaniTest1
 
             //En este ejemplo primero cargamos una escena 3D entera.
             TgcSceneLoader loader = new TgcSceneLoader();
-            scene = loader.loadSceneFromFile(GuiController.Instance.ExamplesMediaDir + "MeshCreator\\Scenes\\Ciudad\\Ciudad-TgcScene.xml");
+            //scene = loader.loadSceneFromFile(GuiController.Instance.ExamplesMediaDir + "MeshCreator\\Scenes\\Selva\\Selva-TgcScene.xml");
+            scene = loader.loadSceneFromFile(alumnoMediaFolder + "\\SelvaLoca\\Selva-TgcScene.xml");
+
+
+            TgcSceneLoader loader2 = new TgcSceneLoader();
+            
+            selva1 = loader2.loadSceneFromFile(alumnoMediaFolder + "\\SelvaLoca\\Selva-TgcScene.xml");
+            /*
+            selva2 = loader.loadSceneFromFile(alumnoMediaFolder + "\\SelvaLoca\\Selva-TgcScene.xml");
+            selva3 = loader.loadSceneFromFile(alumnoMediaFolder + "\\SelvaLoca\\Selva-TgcScene.xml");
+            selva4 = loader.loadSceneFromFile(alumnoMediaFolder + "\\SelvaLoca\\Selva-TgcScene.xml");
+            */
 
             //Luego cargamos otro modelo aparte que va a hacer el objeto que controlamos con el teclado
             TgcScene scene2 = loader.loadSceneFromFile(GuiController.Instance.ExamplesMediaDir + "MeshCreator\\Meshes\\Vehiculos\\Hummer\\Hummer-TgcScene.xml");
@@ -105,7 +121,7 @@ namespace AlumnoEjemplos.DaniTest1
             GuiController.Instance.RotCamera.setCamera(new Vector3(0, 0, 0), 100);
 
 
-            /*
+            
             ///////////////CONFIGURAR CAMARA PRIMERA PERSONA//////////////////
             //Camara en primera persona, tipo videojuego FPS
             //Solo puede haber una camara habilitada a la vez. Al habilitar la camara FPS se deshabilita la camara rotacional
@@ -113,7 +129,7 @@ namespace AlumnoEjemplos.DaniTest1
             GuiController.Instance.FpsCamera.Enable = true;
             //Configurar posicion y hacia donde se mira
             GuiController.Instance.FpsCamera.setCamera(new Vector3(0, 0, -20), new Vector3(0, 0, 0));
-            */
+            
 
 
 
@@ -156,7 +172,7 @@ namespace AlumnoEjemplos.DaniTest1
             //Device de DirectX para renderizar
             Device d3dDevice = GuiController.Instance.D3dDevice;
 
-
+            
             //Obtener valor de UserVar (hay que castear)
             int valor = (int)GuiController.Instance.UserVars.getValue("variablePrueba");
 
