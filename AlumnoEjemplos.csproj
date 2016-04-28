@@ -88,6 +88,9 @@
     <Compile Include="Fps2\Fps2.cs" />
     <Compile Include="Fps2\GameCamera.cs" />
     <Compile Include="Fps2\SmartTerrain.cs" />
+    <Compile Include="Inventario\Objeto.cs" />
+    <Compile Include="Inventario\Inventario.cs" />
+    <Compile Include="Inventario\InventarioExample.cs" />
     <Compile Include="MiGrupo\EjemploAlumno.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
