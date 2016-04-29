@@ -29,7 +29,7 @@ namespace AlumnoEjemplos.Inventario
 
         public override string getDescription()
         {
-            return "Test del hud del inventario";
+            return "Apreta I para abrir/cerrar Agregar objetos con los botones del 1 al 3 Cambiar de receta con flecha arriba y abajo Generar receta con espacio";
         }
 
         public override void init()
@@ -42,6 +42,16 @@ namespace AlumnoEjemplos.Inventario
             obj2.nombre = "Leña";
             obj3 = new Objeto();
             obj3.nombre = "Palos";
+            Receta rec1 = new Receta(obj3, 3);
+            rec1.agregarIngrediente(obj2, 1);
+            rec1.agregarIngrediente(obj1, 2);
+            inv.agregarReceta(rec1);
+            Objeto casa = new Objeto();
+            casa.nombre = "Casa";
+            Receta rec2 = new Receta(casa, 1);
+            rec2.agregarIngrediente(obj2, 10);
+            rec2.agregarIngrediente(obj3, 50);
+            inv.agregarReceta(rec2);
         }
 
         public override void close()
@@ -76,6 +86,15 @@ namespace AlumnoEjemplos.Inventario
             else if (input.keyPressed(Key.NumPad3) || input.keyPressed(Key.D3))
             {
                 inv.agregar(obj3);
+            }
+            else if (input.keyPressed(Key.DownArrow))
+            {
+                inv.siguienteItem();
+            } else if(input.keyPressed(Key.UpArrow))
+            {
+                inv.anteriorItem();
+            } else if(input.keyPressed(Key.Space)){
+                inv.fabricarActual();
             }
 
             inv.render();

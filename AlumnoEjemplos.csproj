@@ -91,6 +91,7 @@
     <Compile Include="Inventario\Objeto.cs" />
     <Compile Include="Inventario\Inventario.cs" />
     <Compile Include="Inventario\InventarioExample.cs" />
+    <Compile Include="Inventario\Receta.cs" />
     <Compile Include="MiGrupo\EjemploAlumno.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
