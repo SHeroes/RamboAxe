@@ -79,27 +79,6 @@ namespace AlumnoEjemplos.Fps2
         bool fpsModeEnable;
         private float previousY;
         
-        public bool FpsModeEnable
-        {
-            get { if (Terrain == null) return false; else return fpsModeEnable; }
-            set
-            {
-                if (value && Terrain == null) return;
-
-                if (value && !fpsModeEnable)
-                {
-                    previousY = eye.Y;
-                    float y;
-                    Terrain.interpoledHeight(eye.X, eye.Z, out y);
-                    eye.Y = y + HeadPosition * WORLD_YAXIS.Y;
-                }
-                else if (!value && fpsModeEnable) eye.Y = previousY;
-                fpsModeEnable = value;
-                setPosition(eye);
-            }
-
-
-        }
         bool enable;
         /// <summary>
         /// Habilita o no el uso de la camara
@@ -227,11 +206,6 @@ namespace AlumnoEjemplos.Fps2
         }
 
         */
-        /// <summary>
-        /// Terreno del que tomara la altura.
-        /// </summary>
-
-        public SmartTerrain Terrain { get; set; }
 
         /// <summary>
         /// Posicion de la cabeza respecto del suelo.
@@ -239,16 +213,6 @@ namespace AlumnoEjemplos.Fps2
         public float HeadPosition { get; set; }
 
         #endregion
-        /// <summary>
-        /// Crea la cámara con valores iniciales.
-        /// Aceleración desactivada por Default
-        /// </summary>
-        public GameCamera(Fps2 _game,SmartTerrain terrain)
-        {
-            Terrain = terrain;
-            resetValues();
-            this.game = _game;
-        }
 
         /// <summary>
         /// Crea la cámara con valores iniciales.
@@ -355,17 +319,7 @@ namespace AlumnoEjemplos.Fps2
             auxEye += xAxis * dx;
             auxEye += WORLD_YAXIS * dy;
             auxEye += forwards * dz;
-            if (FpsModeEnable)
-            {
-                HeadPosition += dy;
-
-                float y;
-                if (Terrain.interpoledHeight(auxEye.X, auxEye.Z, out y))
-                {
-                    auxEye.Y = y;
-                    auxEye += HeadPosition * WORLD_YAXIS;
-                }
-            }
+            
             setPosition(auxEye);
         }
 
@@ -680,7 +634,7 @@ namespace AlumnoEjemplos.Fps2
             TgcD3dInput d3dInput = GuiController.Instance.D3dInput;
 
             //Imprimir por consola la posicion actual de la camara
-            if ((d3dInput.keyDown(Key.LeftShift) || d3dInput.keyDown(Key.RightShift)) && d3dInput.keyPressed(Key.P))
+            if (d3dInput.keyDown(Key.LeftShift) || d3dInput.keyDown(Key.RightShift))
             {
                 GuiController.Instance.Logger.logVector3(getPosition());
                 return;
@@ -702,10 +656,20 @@ namespace AlumnoEjemplos.Fps2
             {
                 rotate(heading, pitch, 0.0f);
             }
-            
+
+            if (this.game.falling)
+            {
+                direction.Y -= 30f;
+            }
            Vector3[] values = this.game.tryToMovePlayer(this.Position,direction);
            Vector3 finalDirection = values[1];
-           this.setPosition(values[0]);
+           if (finalDirection.Y <= 0.3f)
+           {
+               this.game.falling = false;
+           }
+            this.setPosition(values[0]);
+            GuiController.Instance.UserVars.addVar("falling", this.game.falling);
+
            updatePosition(finalDirection, elapsedTimeSec);
            
         }
@@ -799,10 +763,12 @@ namespace AlumnoEjemplos.Fps2
             {
 
                 direction.Y += 130.2f;
+                this.game.falling = true;
             }
             //Crouch
             if (d3dInput.keyDown(Key.LeftControl))
             {
+
                 this.game.playerCrouchs();
             }
             else

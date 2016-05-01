@@ -12,7 +12,7 @@ using TgcViewer.Utils.TgcGeometry;
 using TgcViewer.Utils.Input;
 using TgcViewer.Utils._2D;
 using TgcViewer.Utils.Collision.ElipsoidCollision;
-using TgcViewer.Utils.TgcSceneLoader;
+
 
 namespace AlumnoEjemplos.Fps2
 {
@@ -35,6 +35,7 @@ namespace AlumnoEjemplos.Fps2
         TgcScene currentScene;
         string currentPath;
         TgcText2d text3;
+        public bool falling = false;
         TgcBox box;
         TgcBox box2;
         private List<TgcMesh> vegetation;
@@ -74,7 +75,7 @@ namespace AlumnoEjemplos.Fps2
             string initialMeshFile = GuiController.Instance.AlumnoEjemplosMediaDir + "SelvaLoca\\" + "selva_4_game.xml";
             string terrainHm = GuiController.Instance.AlumnoEjemplosMediaDir + "fps2\\" + "hm.jpg";
             loadMesh(initialMeshFile);
-            loadHeightmap(terrainHm,100f,6.5f);
+            //loadHeightmap(terrainHm,100f,6.5f);
            
          
             Terrain.loadTexture(terrainHm);
@@ -98,7 +99,6 @@ namespace AlumnoEjemplos.Fps2
             camera = new GameCamera(this);
             //Configurar FPS Camara
             camera.Enable = true;
-
             //            camera.setCamera(new Vector3(-722.6171f, 495.0046f, -31.2611f), new Vector3(164.9481f, 35.3185f, -61.5394f));
             camera.setCamera(new Vector3(box.BoundingBox.calculateBoxCenter().X, box.BoundingBox.calculateBoxCenter().Y+25, box.BoundingBox.calculateBoxCenter().Z),new Vector3(box.BoundingBox.calculateBoxCenter().X+50, box.BoundingBox.calculateBoxCenter().Y, box.BoundingBox.calculateBoxCenter().Z));
 
@@ -168,13 +168,15 @@ namespace AlumnoEjemplos.Fps2
             box.render();
             characterElipsoid.render();
             userVarUpdates();
-            Terrain.render();
+          //  Terrain.render();
           
         
         }
         public void userVars()
         {
             GuiController.Instance.UserVars.addVar("MouseCapture", false);
+            GuiController.Instance.UserVars.addVar("falling", false);
+
             GuiController.Instance.UserVars.addVar("Cam Pos X", camera.Position.X);
             GuiController.Instance.UserVars.addVar("Cam Pos Y", camera.Position.Y);
             GuiController.Instance.UserVars.addVar("Cam Pos Z", camera.Position.Z);
@@ -199,15 +201,20 @@ namespace AlumnoEjemplos.Fps2
             GuiController.Instance.UserVars.setValue("Cam Look Y", camera.getLookAt().Y);
             GuiController.Instance.UserVars.setValue("Cam Look Z", camera.getLookAt().Z);
         }
+     
 
         public Vector3[]  tryToMovePlayer(Vector3 from, Vector3 direction){
             Vector3 elipsoidCorrection = new Vector3(from.X - characterElipsoid.Position.X, from.Y - characterElipsoid.Position.Y, from.Z - characterElipsoid.Position.Z);
+            
             Vector3 realMovement = collisionManager.moveCharacter(characterElipsoid, elipsoidCorrection, objetosColisionables);
+           
             //characterElipsoid.setCenter(from);
             Vector3 prevPos = new Vector3(characterElipsoid.Position.X, characterElipsoid.Position.Y, characterElipsoid.Position.Z);
+
+            
             realMovement = collisionManager.moveCharacter(characterElipsoid, direction, objetosColisionables);
-            box.Position = new Vector3(characterElipsoid.Position.X,characterElipsoid.Position.Y -20,characterElipsoid.Position.Z);
-           
+            box.Position = new Vector3(characterElipsoid.Position.X-20,characterElipsoid.Position.Y,characterElipsoid.Position.Z);
+                        
             GuiController.Instance.UserVars.setValue("Dir X",direction.X);
             GuiController.Instance.UserVars.setValue("Dir Y",direction.Y);
             GuiController.Instance.UserVars.setValue("Dir Z",direction.Z);
@@ -215,6 +222,8 @@ namespace AlumnoEjemplos.Fps2
             GuiController.Instance.UserVars.setValue("Real Y",realMovement.Y);
             GuiController.Instance.UserVars.setValue("Real Z",realMovement.Z);
             Vector3[] returnValues = new Vector3[2];
+
+
             returnValues[0] =  prevPos;
             returnValues[1] = realMovement;
             return returnValues;
@@ -266,6 +275,5 @@ namespace AlumnoEjemplos.Fps2
         {
             
         }
-
     }
 }
