@@ -46,7 +46,7 @@ namespace AlumnoEjemplos.LucasTest
             long indX = 0;
             long indZ = 0;
             long DISTANCIA_ENTRE_SECTORES = 2000;
-            long MAX_SECTORES = 32;
+            long MAX_SECTORES = 36;
 
             //Path de Heightmap default del terreno y Modifier para cambiarla
             currentHeightmap = GuiController.Instance.AlumnoEjemplosMediaDir + "Heighmaps\\" + "Heighmap3.jpg";
@@ -61,7 +61,7 @@ namespace AlumnoEjemplos.LucasTest
             //Crear SkyBox
             skyBox = new TgcSkyBox();
             skyBox.Center = new Vector3(0, 2400, 0);
-            skyBox.Size = new Vector3(12000, 5000, 12000);
+            skyBox.Size = new Vector3(17000, 5000, 13500);
             string texturesPath = GuiController.Instance.AlumnoEjemplosMediaDir + "isla\\SkyBox\\elbrus\\";
             skyBox.setFaceTexture(TgcSkyBox.SkyFaces.Up, texturesPath + "elbrus_up.jpg");
             skyBox.setFaceTexture(TgcSkyBox.SkyFaces.Down, texturesPath + "elbrus_dn.jpg");
@@ -76,7 +76,7 @@ namespace AlumnoEjemplos.LucasTest
             //Creo un plano XY (en realidad es una caja con altura 0)
             TgcTexture pasto = TgcTexture.createTexture(GuiController.Instance.ExamplesMediaDir + "MeshCreator\\Textures\\Vegetacion\\moss_rock60_512.jpg");
 
-            Vector3 sizePiso = new Vector3(10000, 0, 10000);
+            Vector3 sizePiso = new Vector3(13000, 0, 11500);
             sizePiso = sizePiso * CTE_ZOOM;
             piso = new TgcPlaneWall();
             piso.setTexture(pasto);
@@ -145,6 +145,11 @@ namespace AlumnoEjemplos.LucasTest
             {
                 return false;
             }
+        }
+
+        public TgcBox getContorno()
+        {
+            return contorno;
         }
 
     }

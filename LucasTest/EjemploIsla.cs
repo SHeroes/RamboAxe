@@ -10,6 +10,7 @@ using TgcViewer.Utils.Modifiers;
 using TgcViewer.Utils.TgcSceneLoader;
 using TgcViewer.Utils.Terrain;
 using TgcViewer.Utils.TgcGeometry;
+using System.Windows.Forms;
 
 namespace AlumnoEjemplos.LucasTest
 {
@@ -24,7 +25,8 @@ namespace AlumnoEjemplos.LucasTest
         float currentScaleY;
         MapaIsla isla;
         TgcBoundingBox mainMeshBoundingBox;
-        Vector3 TAMANIO_BOX_PRINCIPAL = new Vector3(10, 20, 10);
+        Vector3 TAMANIO_BOX_PRINCIPAL = new Vector3(12, 22, 12);
+        Vector3 posAnterior = new Vector3(0, 0, 0);
         bool pause = false;
 
         public override string getCategory()
@@ -41,6 +43,10 @@ namespace AlumnoEjemplos.LucasTest
         {
             return "Escenario outdoor con arboles.";
         }
+
+        protected Point mouseCenter;
+        SurvivalCamara camara = new SurvivalCamara();
+        bool primeraIteracion = true;
 
         public override void init()
         {
@@ -60,15 +66,28 @@ namespace AlumnoEjemplos.LucasTest
             currentScaleY = 1.3f;
             GuiController.Instance.Modifiers.addFloat("scaleY", 0.1f, 10f, currentScaleY);
 
+            Control focusWindows = GuiController.Instance.D3dDevice.CreationParameters.FocusWindow;
+            mouseCenter = focusWindows.PointToScreen(
+                new Point(
+                    focusWindows.Width / 2,
+                    focusWindows.Height / 2)
+                    );
+
+            camara.Enable = true;
+            camara.setCamera(new Vector3(0, 100, 0), new Vector3(0, 100, 4000));
+            camara.MovementSpeed = 200f;
+            camara.JumpSpeed = 500f;
+
             Vector3 center = new Vector3(0, 0, 0);
             TgcTexture texture = TgcTexture.createTexture(GuiController.Instance.ExamplesMediaDir + "MeshCreator\\Textures\\Ladrillo\\streetbricks.jpg");
             box = TgcBox.fromSize(center, TAMANIO_BOX_PRINCIPAL, texture);
+            box.move(camara.getPosition());
 
             //Configurar FPS Camara
-            GuiController.Instance.FpsCamera.Enable = true;
-            GuiController.Instance.FpsCamera.MovementSpeed = 100f;
-            GuiController.Instance.FpsCamera.JumpSpeed = 100f;
-            GuiController.Instance.FpsCamera.setCamera(new Vector3(-722.6171f, 495.0046f, -31.2611f), new Vector3(164.9481f, 35.3185f, -61.5394f));
+            //GuiController.Instance.FpsCamera.Enable = true;
+            //GuiController.Instance.FpsCamera.MovementSpeed = 1000f;
+            //GuiController.Instance.FpsCamera.JumpSpeed = 750f;
+            //GuiController.Instance.FpsCamera.setCamera(new Vector3(-1151.339f, 143.0946f, -82.3528f), new Vector3(-1150.342f, 143.0397f, -82.4039f));
 
 
         }
@@ -81,6 +100,7 @@ namespace AlumnoEjemplos.LucasTest
         public override void render(float elapsedTime)
         {
             Device d3dDevice = GuiController.Instance.D3dDevice;
+            bool collisionFound = false;
 
             //Ver si cambio alguno de los valores de escala
             float selectedScaleXZ = (float)GuiController.Instance.Modifiers["scaleXZ"];
@@ -93,7 +113,34 @@ namespace AlumnoEjemplos.LucasTest
                 currentScaleY = selectedScaleY;
             }
 
+            Cursor.Position = mouseCenter;
+            Cursor.Hide();
+            camara.capturarMouse(true);
+
+            Vector3 originalPos = box.Position;
+
+            box.setPositionSize(camara.getPosition(), TAMANIO_BOX_PRINCIPAL);
+
+
+            //QUILOMBO DE LA CAMARA
+
+            if (camara.getMouseCapturado())
+            {
+                Cursor.Position = mouseCenter;
+            }
+
             mainMeshBoundingBox = box.BoundingBox;
+
+            TgcBox contorno = isla.getContorno();
+            TgcCollisionUtils.BoxBoxResult collisionResult1 = TgcCollisionUtils.classifyBoxBox(mainMeshBoundingBox, contorno.BoundingBox);
+            if ((collisionResult1 != TgcCollisionUtils.BoxBoxResult.Encerrando))
+            {
+                //collisionFound = true;
+                //MessageBox.Show("Hay colision!!!");
+                camara.setPosicion(posAnterior);
+
+            }
+
 
             foreach (ZonaArboles zona in isla.zonas())
             {
@@ -108,16 +155,20 @@ namespace AlumnoEjemplos.LucasTest
                         TgcCollisionUtils.BoxBoxResult collisionResult2 = TgcCollisionUtils.classifyBoxBox(mainMeshBoundingBox, sceneMeshBoundingBox);
                         if ((collisionResult2 != TgcCollisionUtils.BoxBoxResult.Afuera))
                         {
-                            // MessageBox.Show("Hay colision!!!");
-                            //camara.setPosicion(posAnterior);
+                            collisionFound = true;
+                            camara.setPosicion(posAnterior);
                             break;
                         }
                     }
                 }
             }
 
-
             isla.dibujar(box, elapsedTime, pause);
+
+            if (!collisionFound)
+            {
+                posAnterior = camara.getPosition();
+            }
 
         }
 
