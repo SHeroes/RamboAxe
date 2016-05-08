@@ -1,0 +1,17 @@
+<tgcScene>
+	<name>Insel+09</name>
+	<texturesExport enabled='true' dir='Textures'/>
+	<lightmapExport enabled='false' dir='LightMaps'/>
+<meshes count='1' >
+<mesh name='Insel+09' layer='0' type='Original' matId='0' color='[134.0,6.0,6.0]' visibility='1.0' lightmap=''>
+<coordinatesIdx count='0'></coordinatesIdx>
+<vertices count='0'></vertices>
+<normals count='0'></normals>
+<textCoordsIdx count='0'></textCoordsIdx>
+<texCoords count='0'></texCoords>
+<matIds count='0'></matIds>
+<colorsIdx count='0'></colorsIdx>
+<colors count='3'>255 255 255 </colors>
+	</mesh>
+</meshes>
+</tgcScene>

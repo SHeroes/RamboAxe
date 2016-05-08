@@ -652,7 +652,7 @@ namespace AlumnoEjemplos.Fps3
         private Vector3 getMovementDirection(TgcD3dInput d3dInput)
         {
             Vector3 direction = new Vector3(0.0f, 0.0f, 0.0f);
-            direction.Z += 3.0f;
+            //direction.Z += 5.0f;
             //Forward
             if (d3dInput.keyDown(Key.W))
             {

@@ -97,6 +97,9 @@
     <Compile Include="Inventario\Receta.cs" />
     <Compile Include="MiGrupo\EjemploAlumno.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RamboAxe\Game.cs" />
+    <Compile Include="RamboAxe\GameCamera.cs" />
+    <Compile Include="RamboAxe\SkyBox.cs" />
     <Compile Include="SurvivalBars\SurvivalBarsExample.cs" />
   </ItemGroup>
   <ItemGroup>
