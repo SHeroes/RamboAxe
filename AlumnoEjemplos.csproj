@@ -95,11 +95,19 @@
     <Compile Include="Inventario\Inventario.cs" />
     <Compile Include="Inventario\InventarioExample.cs" />
     <Compile Include="Inventario\Receta.cs" />
+    <Compile Include="LucasTest\Arbol.cs" />
+    <Compile Include="LucasTest\EjemploIsla.cs" />
+    <Compile Include="LucasTest\MapaIsla.cs" />
+    <Compile Include="LucasTest\Pasto.cs" />
+    <Compile Include="LucasTest\SurvivalCamara.cs" />
+    <Compile Include="LucasTest\ZonaArboles.cs" />
     <Compile Include="MiGrupo\EjemploAlumno.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RamboAxe\Game.cs" />
     <Compile Include="RamboAxe\GameCamera.cs" />
     <Compile Include="RamboAxe\SkyBox.cs" />
+    <Compile Include="SurvivalBars\Barra.cs" />
+    <Compile Include="SurvivalBars\BarraExampleTest.cs" />
     <Compile Include="SurvivalBars\SurvivalBarsExample.cs" />
   </ItemGroup>
   <ItemGroup>
