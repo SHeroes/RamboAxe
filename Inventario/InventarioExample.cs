@@ -29,7 +29,7 @@ namespace AlumnoEjemplos.Inventario
 
         public override string getDescription()
         {
-            return "Apreta I para abrir/cerrar Agregar objetos con los botones del 1 al 3 Cambiar de receta con flecha arriba y abajo Generar receta con espacio";
+            return "Apreta I para abrir/cerrar Agregar objetos con los botones del 1 al 3 Cambia al inventario con flecha izquierda o derecha Cambiar de receta/item con flecha arriba y abajo Generar receta con espacio Consumir item con espacio";
         }
 
         public override void init()
@@ -75,6 +75,9 @@ namespace AlumnoEjemplos.Inventario
                     inv.abrir();
                 }
             }
+            else if(input.keyPressed(Key.LeftArrow) || input.keyPressed(Key.RightArrow)){
+                inv.invertirSeleccion();
+            }
             else if (input.keyPressed(Key.NumPad1) || input.keyPressed(Key.D1))
             {
                 inv.agregar(obj1);
@@ -94,7 +97,14 @@ namespace AlumnoEjemplos.Inventario
             {
                 inv.anteriorItem();
             } else if(input.keyPressed(Key.Space)){
-                inv.fabricarActual();
+                if(!inv.esReceta){
+                    string consumido = inv.consumirActual();
+                    Console.WriteLine("Item consumido: {0}", consumido);
+                }
+                else
+                {
+                    inv.fabricarActual();
+                }
             }
 
             inv.render();

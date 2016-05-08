@@ -30,6 +30,8 @@ namespace AlumnoEjemplos.Inventario
         Dictionary<string, int> itemCount;
         List<Receta> recetas;
         int currentRow;
+        /* Indica si se esta recorriendo las recetas o los items */
+        public bool esReceta { get; private set; }
 
         public bool abierto { get; private set; }
 
@@ -37,6 +39,7 @@ namespace AlumnoEjemplos.Inventario
         {
             string basePath = GuiController.Instance.AlumnoEjemplosMediaDir + "inventario\\";
             /* Inicializacion de los datos */
+            esReceta = true;
             abierto = false;
             recetas = new List<Receta>();
             itemName = new List<string>();
@@ -113,7 +116,11 @@ namespace AlumnoEjemplos.Inventario
                 GuiController.Instance.Drawer2D.beginDrawSprite();
                 back.render();
                 if(currentRow != -1){
-                    renderLine(selector, currentRow, selectorMiddle.Width * 2);
+                    int leftPadding = 0;
+                    if(esReceta){
+                        leftPadding = selectorMiddle.Width * 2;
+                    }
+                    renderLine(selector, currentRow, leftPadding);
                 }
                 GuiController.Instance.Drawer2D.endDrawSprite();
                 itemsTitle.render();
@@ -248,6 +255,9 @@ namespace AlumnoEjemplos.Inventario
         /// <returns></returns>
         private string generateIngredientesText()
         {
+            if(!esReceta){
+                return ingredientesText.Text;
+            }
             if(currentRow == -1){
                 return "";
             }
@@ -267,9 +277,9 @@ namespace AlumnoEjemplos.Inventario
 
         public void siguienteItem()
         {
-            if(currentRow >= (recetas.Count - 1))
+            if (currentRow >= (seleccionCount() - 1))
             {
-                if (recetas.Count == 0)
+                if (seleccionCount() == 0)
                 {
                     currentRow = -1;
                 }
@@ -289,7 +299,7 @@ namespace AlumnoEjemplos.Inventario
         {
             if (currentRow <= 0)
             {
-                currentRow = recetas.Count - 1;
+                currentRow = seleccionCount() - 1;
             }
             else
             {
@@ -298,9 +308,44 @@ namespace AlumnoEjemplos.Inventario
             ingredientesText.Text = generateIngredientesText();
         }
 
+        private int seleccionCount()
+        {
+            if(esReceta){
+                return recetas.Count;
+            }
+            else
+            {
+                return itemName.Count;
+            }
+        }
+
+        public void invertirSeleccion()
+        {
+            esReceta = !esReceta;
+            if (currentRow > (seleccionCount() - 1))
+            {
+                currentRow = (seleccionCount() - 1);
+            }
+        }
+
+        public string consumirActual()
+        {
+            if(itemName.Count > 0 && currentRow < itemName.Count && currentRow >= 0){
+                string item = itemName[currentRow];
+                int cantidad = itemCount[item];
+                if(cantidad > 0){
+                    cantidad--;
+                    itemCount[item] = cantidad;
+                    items.Text = generateItemText();
+                    return item;
+                }
+            }
+            return null;
+        }
+
         public void fabricarActual()
         {
-            if (currentRow != -1)
+            if (recetas.Count > 0 && currentRow < recetas.Count && currentRow >= 0)
             {
                 Receta receta = recetas[currentRow];
                 int cantidad = receta.fabricar(itemCount);
