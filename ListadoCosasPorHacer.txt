@@ -1,0 +1,30 @@
+TODO Basico:
+
+- Poner un objeto del inventario en el mundo
+- Poner las barras de "necesidades"
+- Que consumir un objeto te afecte las necesidades
+- Implementar climas
+- Generar un bosque o algo asi para el mapa (generado dinamicamente supongo)
+- Generar un objeto por necesidad
+- Adaptar el inventario para que entren todos los textos
+
+Cosas con onda del juego:
+
+- Onda cyberpunk mezclado con survival comun
+- Frio y Calor
+- Hambre
+- Sed
+
+- Dispenser de agua para la sed
+- Fruta tirada / Barras de Energia
+- Animales corriendo (gallina)
+- Maquinas expendidoras
+- Arboles
+- Rocas
+- Troncos
+- Charcos
+- Chapas
+
+- Receta: Estufa (Chapa x2 + Troncos x2 + Martillo)
+- Receta: Ventilador (Chapa x2 + Piedras x1 + Martillo)
+- Receta: Martillo (Troncos x1 + Piedras x3)
