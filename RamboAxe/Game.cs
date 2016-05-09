@@ -14,6 +14,7 @@ using TgcViewer.Utils._2D;
 using TgcViewer.Utils.Collision.ElipsoidCollision;
 using TgcViewer.Utils.Terrain;
 using TgcViewer.Utils;
+using Microsoft.DirectX.DirectInput;
 namespace AlumnoEjemplos.Game
 {
     /// <summary>
@@ -32,6 +33,14 @@ namespace AlumnoEjemplos.Game
     /// </summary>
     public class Fps3 : TgcExample
     {
+        Barra barraEjemplo;
+        float distanciaObjeto = 0;
+        TgcPickingRay pickingRay;
+        Vector3 collisionPoint;
+        TgcMesh selectedMesh;
+
+        Inventario inv;
+        List<Objeto> objetos;
        
         public override string getCategory()
         {
@@ -56,7 +65,7 @@ namespace AlumnoEjemplos.Game
         public bool falling = false;
         List<Collider> objetosColisionables = new List<Collider>();
         ElipsoidCollisionManager collisionManager;
-        
+
 
         TgcElipsoid characterElipsoid;
         double prevCuadrantX = 1;
@@ -64,12 +73,13 @@ namespace AlumnoEjemplos.Game
         float width = 2000;
         List<TgcScene> scenes;
         string currentPath;
-        List<Collider> meshes = new List<Collider>();
+        List<TgcMesh> meshes = new List<TgcMesh>();
         TgcPlaneWall[][] floors = new TgcPlaneWall [9][];
         public override void init()
         {
-            Device d3dDevice = GuiController.Instance.D3dDevice;
-           
+            Microsoft.DirectX.Direct3D.Device d3dDevice = GuiController.Instance.D3dDevice;
+            //Iniciarlizar PickingRay
+            pickingRay = new TgcPickingRay();
             TgcTexture texture =  TgcTexture.createTexture(d3dDevice,GuiController.Instance.AlumnoEjemplosMediaDir + "resources\\" + "piso.png");
             string initialMeshFile = GuiController.Instance.AlumnoEjemplosMediaDir + "ball-TgcScene.xml";
            // string terrainHm = GuiController.Instance.AlumnoEjemplosMediaDir + "fps2\\" + "hm.jpg";
@@ -99,12 +109,210 @@ namespace AlumnoEjemplos.Game
 
 
             characterElipsoid = new TgcElipsoid(new Vector3(0, 100, 0), new Vector3(12, 48, 12));
+            
+            this.initInventario();
             this.initCollisions();
             this.initCamera();
             this.hud();
             this.skyboxInit();
+           
+        }
+
+        public void initBarras() {
+
+            barraEjemplo = new Barra();
+            barraEjemplo.init(Barra.RED, true, 360, 160, 4);
+
+        }
+        public void handleInput() {
+            TgcD3dInput input = GuiController.Instance.D3dInput;
+
+            bool abierto = inv.abierto;
+            bool selected = false;
+            if (!abierto) {
+                //if (GuiController.Instance.D3dInput.buttonUp(TgcViewer.Utils.Input.TgcD3dInput.MouseButtons.BUTTON_LEFT))
+                if (GuiController.Instance.D3dInput.buttonDown(TgcViewer.Utils.Input.TgcD3dInput.MouseButtons.BUTTON_LEFT))
+                {
+                    if (barraEjemplo == null)
+                    {
+                        //Actualizar Ray de colisión en base a posición del mouse
+                        pickingRay.updateRay();
+
+                        //Testear Ray contra el AABB de todos los meshes
+                        foreach (TgcMesh box in meshes)
+                        {
+                            TgcBoundingBox aabb = box.BoundingBox;
+
+                            //Ejecutar test, si devuelve true se carga el punto de colision collisionPoint
+                            selected = TgcCollisionUtils.intersectRayAABB(pickingRay.Ray, aabb, out collisionPoint);
+                            if (selected)
+                            {
+                                Vector3 p1 = camera.Position;
+                                Vector3 p2 = collisionPoint;
+                                distanciaObjeto = Vector3.LengthSq(p2 - p1); //Es mas eficiente porque evita la raiz cuadrada (pero te da el valor al cuadrado)
+                                if (distanciaObjeto < 16264)
+                                {
+                                    initBarras();
+                                    selectedMesh = box;
+                                    break;
+                                }
+                                else
+                                {
+                                    if (barraEjemplo != null)
+                                    {
+                                        barraEjemplo.dispose();
+                                        barraEjemplo = null;
+                                        selectedMesh = null;
+                                    }
+                                }
+                            }
+                        }
+                    }else{
+                        if (selectedMesh!= null)
+                        {
+                            TgcBoundingBox aabb = selectedMesh.BoundingBox;
+                            //Ejecutar test, si devuelve true se carga el punto de colision collisionPoint
+                            selected = TgcCollisionUtils.intersectRayAABB(pickingRay.Ray, aabb, out collisionPoint);
+                            Vector3 p1 = camera.Position;
+                            Vector3 p2 = collisionPoint;
+                            distanciaObjeto = Vector3.LengthSq(p2 - p1); //Es mas eficiente porque evita la raiz cuadrada (pero te da el valor al cuadrado)
+                            if (distanciaObjeto > 16264)
+                            {
+                                if (barraEjemplo != null)
+                                {
+                                    barraEjemplo.dispose();
+                                    barraEjemplo = null;
+                                    selectedMesh = null;
+                                }
+                            }
+                        }
+                    }
+                }
+                if (GuiController.Instance.D3dInput.buttonUp(TgcViewer.Utils.Input.TgcD3dInput.MouseButtons.BUTTON_LEFT))
+                {
+                    selectedMesh = null;
+                    if (barraEjemplo != null)
+                    {
+                        barraEjemplo.dispose();
+                        barraEjemplo = null;
+                    }
+                }
+
+                
+            }
+
+            if (input.keyPressed(Key.I))
+            {
+                if (inv.abierto)
+                {
+                    inv.cerrar();
+                }
+                else
+                {
+                    inv.abrir();
+                }
+            }
+            if(abierto){
+                if (input.keyPressed(Key.LeftArrow) || input.keyPressed(Key.RightArrow))
+                {
+                    inv.invertirSeleccion();
+                }
+                else if (input.keyPressed(Key.NumPad1) || input.keyPressed(Key.D1))
+                {
+                    // TODO: desharcodear estos 3 agregar
+                    inv.agregar(objetos[0]);
+                }
+                else if (input.keyPressed(Key.NumPad2) || input.keyPressed(Key.D2))
+                {
+                    inv.agregar(objetos[1]);
+                }
+                else if (input.keyPressed(Key.NumPad3) || input.keyPressed(Key.D3))
+                {
+                    inv.agregar(objetos[2]);
+                }
+                else if (input.keyPressed(Key.DownArrow))
+                {
+                    inv.siguienteItem();
+                }
+                else if (input.keyPressed(Key.UpArrow))
+                {
+                    inv.anteriorItem();
+                }
+                else if (input.keyPressed(Key.Return))
+                {
+                    if (!inv.esReceta)
+                    {
+                        string consumido = inv.consumirActual();
+                        if(consumido == "Piedra Tallada"){
+                            agregarPiedraTallada();
+                        }
+                        // TODO: hacer algo al consumir
+                        Console.WriteLine("Item consumido: {0}", consumido);
+                    }
+                    else
+                    {
+                        inv.fabricarActual();
+                    }
+                }
+            }
+            if (selected)
+            {
+                //Render de AABB
+               
+
+                //Dibujar caja que representa el punto de colision
+               // collisionPointMesh.Position = collisionPoint;
+               //  collisionPointMesh.render();
+            }            
+        }
+
+        public void agregarPiedraTallada()
+        {
+            string initialMeshFile = GuiController.Instance.AlumnoEjemplosMediaDir + "ball-TgcScene.xml";
+            // string terrainHm = GuiController.Instance.AlumnoEjemplosMediaDir + "fps2\\" + "hm.jpg";
+            loadMesh(initialMeshFile);
+        }
+
+
+
+
+        public void initInventario() {
+            inv = new Inventario();
+            objetos = new List<Objeto>();
+            // TODO: Agregar objetos reales
+            Objeto obj1 = new Objeto();
+            obj1.nombre = "Piedra";
+            objetos.Add(obj1);
+            Objeto obj2 = new Objeto();
+            obj2.nombre = "Leña";
+            objetos.Add(obj2);
+            Objeto obj3 = new Objeto();
+            obj3.nombre = "Palos";
+            objetos.Add(obj3);
+            Receta rec1 = new Receta(obj3, 3);
+            rec1.agregarIngrediente(obj2, 1);
+            rec1.agregarIngrediente(obj1, 2);
+            inv.agregarReceta(rec1);
+            Objeto casa = new Objeto();
+            casa.nombre = "Casa";
+            objetos.Add(casa);
+            Receta rec2 = new Receta(casa, 1);
+            rec2.agregarIngrediente(obj2, 10);
+            rec2.agregarIngrediente(obj3, 50);
+            inv.agregarReceta(rec2);
+            Objeto piedraTallada = new Objeto();
+            piedraTallada.nombre = "Piedra Tallada";
+            Receta rPiedra = new Receta(piedraTallada, 1);
             
-            
+            rPiedra.agregarIngrediente(obj1, 1);
+            inv.agregarReceta(rPiedra);
+        }
+        public void disposeInventario()
+        {
+            inv.dispose();
+            foreach(Objeto obj in objetos){
+                obj.dispose();
+            }
         }
         public void initCamera()
         {
@@ -130,10 +338,14 @@ namespace AlumnoEjemplos.Game
             collisionManager.GravityEnabled = true;
             collisionManager.GravityForce = new Vector3(0, -1.2f, 0);
         }
+
+
         public override void render(float elapsedTime)
         {
-          
-            Device d3dDevice = GuiController.Instance.D3dDevice;
+            handleInput();
+            Microsoft.DirectX.Direct3D.Device d3dDevice = GuiController.Instance.D3dDevice;
+            if ( barraEjemplo != null)       barraEjemplo.render(elapsedTime);
+            inv.render();
             //box.render();
             text.render();
             skyBox.Center = camera.Position;
@@ -176,6 +388,7 @@ namespace AlumnoEjemplos.Game
                 }
                 collisionManager.GravityEnabled = true;
                 prevCuadrantX = currentCuadrantX;
+
             }
             
             if (currentCuadrantZ != prevCuadrantZ)
@@ -203,19 +416,32 @@ namespace AlumnoEjemplos.Game
                 collisionManager.GravityEnabled = true;
                 prevCuadrantZ = currentCuadrantZ;
             }
-            foreach (Collider collider in meshes)
+            foreach (TgcMesh mesh in meshes)
             {
-                
-                objetosColisionables.Add(collider);
+                objetosColisionables.Add(BoundingBoxCollider.fromBoundingBox(mesh.BoundingBox));
             }
            
            foreach(TgcScene scene in scenes){
                scene.renderAll();
                
            }
-           text.Text = floorCords + "\nCharacter: "+ characterElipsoid.Position.Z.ToString()+  " "  + characterElipsoid.Position.X.ToString() + "\n" + currentCuadrantZ.ToString() + " " + currentCuadrantX.ToString()+"\n"+characterElipsoid.Center.Y;
+           text.Text = floorCords + "\nCharacter: "+ characterElipsoid.Position.Z.ToString()+  " "  + characterElipsoid.Position.X.ToString() + "\n" + currentCuadrantZ.ToString() + " " + currentCuadrantX.ToString()+"\n"+characterElipsoid.Center.Y+" \n"+distanciaObjeto;
+           if (selectedMesh != null)
+           {
+               selectedMesh.BoundingBox.render();
+               if (barraEjemplo != null && !barraEjemplo.isActive())
+               {
+                   barraEjemplo.dispose();
+                   barraEjemplo = null;
+                   //getObjetoFrom(meshInteractuadoStringDelNombre).interactuar();
+                   meshes.Remove(selectedMesh);
+                   selectedMesh.dispose();
+                   selectedMesh = null;
+                   inv.agregar(objetos[0]);
+               }
+           }
+           
         }
-
 
         private void loadMesh(string path)
         {
@@ -236,12 +462,15 @@ namespace AlumnoEjemplos.Game
                
                 mesh.Scale = new Vector3(2.5f,2.2f,2.2f);
                
-                mesh.Position = new Vector3(2400, 1, 2500);
+                mesh.Position = new Vector3(5300, 1, 5300);
                 mesh.updateBoundingBox();
                 // meshes.Add(BoundingBoxCollider.fromBoundingBox(mesh.BoundingBox));
-                TriangleMeshCollider collider = (TriangleMeshCollider.fromMesh(mesh));
+              //  TriangleMeshCollider collider = (TriangleMeshCollider.fromMesh(mesh));
+              //  meshes.Add(BoundingBoxCollider.fromBoundingBox(mesh.BoundingBox));
+                meshes.Add(mesh);
+
                 //collider.BoundingSphere.Position = mesh.Position;
-                meshes.Add(collider);
+//                meshes.Add(collider);
                 
             }
             
@@ -337,7 +566,7 @@ namespace AlumnoEjemplos.Game
 
         public override void close()
         {
-            
+            disposeInventario();
         }
     }
 }

@@ -8,7 +8,7 @@ using TgcViewer;
 using TgcViewer.Utils.TgcSceneLoader;
 using TgcViewer.Utils._2D;
 
-namespace AlumnoEjemplos.Inventario
+namespace AlumnoEjemplos.Game
 {
     public class Inventario
     {
@@ -330,7 +330,8 @@ namespace AlumnoEjemplos.Inventario
 
         public string consumirActual()
         {
-            if(!esReceta && itemName.Count > 0 && currentRow < itemName.Count && currentRow >= 0){
+            if (!esReceta && itemName.Count > 0 && currentRow < itemName.Count && currentRow >= 0)
+            {
                 string item = itemName[currentRow];
                 int cantidad = itemCount[item];
                 if(cantidad > 0){

@@ -66,7 +66,12 @@ namespace AlumnoEjemplos.Game
             }
             if (rotateCameraWithMouse)
             {
-                Cursor.Position = new Point(400, 400);
+                int ScreenWidth = GuiController.Instance.D3dDevice.Viewport.Width;
+                int ScreenHeight = GuiController.Instance.D3dDevice.Viewport.Height;
+                int ScreenX = GuiController.Instance.D3dDevice.Viewport.X;
+                int ScreenY = GuiController.Instance.D3dDevice.Viewport.Y;
+       
+                Cursor.Position = new Point(ScreenX + ScreenWidth/2,ScreenY + ScreenHeight/2);
             }
         }
         #region Getters y Setters

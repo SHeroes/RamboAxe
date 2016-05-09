@@ -47,7 +47,7 @@ namespace AlumnoEjemplos.SurvivalBars
             //Device de DirectX para crear primitivas
             Microsoft.DirectX.Direct3D.Device d3dDevice = GuiController.Instance.D3dDevice;
             barraEjemplo = new Barra();
-            barraEjemplo.init(Barra.RED, false ,160,360,4);
+            barraEjemplo.init(Barra.RED, true ,160,360,4);
 
             barraEjemplo2 = new Barra();
             barraEjemplo2.init(Barra.YELLOW, true, 100, 360, 10);
