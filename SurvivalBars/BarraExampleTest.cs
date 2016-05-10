@@ -50,8 +50,9 @@ namespace AlumnoEjemplos.SurvivalBars
             barraEjemplo.init(Barra.RED, true ,160,260,4);
 
             barraEjemplo2 = new Barra();
-            barraEjemplo2.init(Barra.YELLOW, false, 100, 360, 10);
-            
+            barraEjemplo2.init(Barra.YELLOW, false, 100, 360, 50);
+
+
 
             text3 = new TgcText2d();
             text3.Text = "asdfasdf";
@@ -64,13 +65,15 @@ namespace AlumnoEjemplos.SurvivalBars
 
         public override void render(float elapsedTime)
         {
+            if (barraEjemplo2.getVidaActual() < 0.5) barraEjemplo2.agregarPorcentajeABarra((float)0.35);
+            text3.Text = barraEjemplo2.getVidaActual().ToString();
             //Device de DirectX para renderizar
             Microsoft.DirectX.Direct3D.Device d3dDevice = GuiController.Instance.D3dDevice;
             GuiController.Instance.Drawer2D.beginDrawSprite();
 
             //Dibujar sprite (si hubiese mas, deberian ir todos aquí)
             
-            text3.Text = barraEjemplo.isActive().ToString();
+           
             text3.render();
              
 

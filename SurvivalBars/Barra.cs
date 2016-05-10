@@ -30,8 +30,12 @@ namespace AlumnoEjemplos.SurvivalBars
             else { //SOLO SE AGREGAR PORCENTAJES A LA BARRA DE DESCARGA "VIDA, SED HAMBRE"
                 //la asigna a disminuye el tiempo que paso en la barra en porcentaje del total del tiempo que la barra tenia que tardar
                 tiempoActualBarra = tiempoActualBarra - porcentajeAAgegar * finTiempoBarra;
-                if (tiempoActualBarra > 0 )tiempoActualBarra = (float)0.00001;
+                if (tiempoActualBarra < 0 )tiempoActualBarra = (float)0.00001;
             }
+        }
+
+        public float getVidaActual(){
+            return this.floatDeBarra;
         }
         public bool esDeCarga() {
             return this.esBarraDeCarga; 
@@ -106,8 +110,9 @@ namespace AlumnoEjemplos.SurvivalBars
                     this.ISACTIVE = false;
                 }          
             }
-            barEmpty.render();
             barColor.render();
+            barEmpty.render();
+ 
 
         }
 
