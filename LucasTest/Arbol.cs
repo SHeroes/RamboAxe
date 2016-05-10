@@ -68,6 +68,11 @@ namespace AlumnoEjemplos.LucasTest
             get { return box.BoundingBox; }
         }
 
+        public void renderBoundingBox()
+        {
+            boundingBox().render();
+        }
+
         public void scale(Vector3 tamanio)
         {
             mesh.Scale = tamanio;

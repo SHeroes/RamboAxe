@@ -616,7 +616,7 @@ namespace AlumnoEjemplos.LucasTest
             //Imprimir por consola la posicion actual de la camara
             if ((d3dInput.keyDown(Key.LeftShift) || d3dInput.keyDown(Key.RightShift)) && d3dInput.keyPressed(Key.P))
             {
-                // GuiController.Instance.printCurrentPosition();
+                //GuiController.Instance.printCurrentPosition();
                 return;
             }
 

@@ -14,19 +14,24 @@ namespace AlumnoEjemplos.LucasTest
 
         List<Arbol> listaArboles;
         List<Pasto> listaPasto;
+        List<Piedra> listaPiedras;
         int indArboles;
         long cantArboles;
         int indPasto;
+        int indPiedras;
+        long cantPiedras;
         TgcBox box;
 
         public ZonaArboles()
         {
             listaArboles = new List<Arbol>();
             listaPasto = new List<Pasto>();
+            listaPiedras = new List<Piedra>();
         }
 
         public void cargar(long posX, long posZ, long desplazamiento)
         {
+            indPiedras = 0;
             indArboles = 0;
             long tamanioBox = 2000;
             long desplazamientoBox = desplazamiento - (tamanioBox / 2);
@@ -71,6 +76,29 @@ namespace AlumnoEjemplos.LucasTest
             agregarPasto(posX, posZ, desplazamiento, listaPasto, 1450, 1800);
             agregarPasto(posX, posZ, desplazamiento, listaPasto, 450, 1800);
 
+            agregarPiedra(posX, posZ, desplazamiento, listaPiedras, 300, 200);
+            agregarPiedra(posX, posZ, desplazamiento, listaPiedras, 550,200);
+            agregarPiedra(posX, posZ, desplazamiento, listaPiedras, 960, 200);
+            agregarPiedra(posX, posZ, desplazamiento, listaPiedras, 1300, 200);
+            agregarPiedra(posX, posZ, desplazamiento, listaPiedras, 1750, 200);
+            agregarPiedra(posX, posZ, desplazamiento, listaPiedras, 500, 400);
+            agregarPiedra(posX, posZ, desplazamiento, listaPiedras, 700, 400);
+            agregarPiedra(posX, posZ, desplazamiento, listaPiedras, 900, 400);
+            agregarPiedra(posX, posZ, desplazamiento, listaPiedras, 1100, 400);
+            agregarPiedra(posX, posZ, desplazamiento, listaPiedras, 1300, 400);
+            agregarPiedra(posX, posZ, desplazamiento, listaPiedras, 600, 800);
+            agregarPiedra(posX, posZ, desplazamiento, listaPiedras, 1100, 800);
+            agregarPiedra(posX, posZ, desplazamiento, listaPiedras, 1400, 800);
+            agregarPiedra(posX, posZ, desplazamiento, listaPiedras, 1600, 800);
+            agregarPiedra(posX, posZ, desplazamiento, listaPiedras, 300, 1200);
+            agregarPiedra(posX, posZ, desplazamiento, listaPiedras, 950, 1200);
+            agregarPiedra(posX, posZ, desplazamiento, listaPiedras, 1320, 1200);
+            agregarPiedra(posX, posZ, desplazamiento, listaPiedras, 1680, 1200);
+            agregarPiedra(posX, posZ, desplazamiento, listaPiedras, 450, 1800);
+            agregarPiedra(posX, posZ, desplazamiento, listaPiedras, 970, 1800);
+            agregarPiedra(posX, posZ, desplazamiento, listaPiedras, 1250, 1800);
+
+
             cantArboles = indArboles - 1;
         }
         public void render(float elapsedTime)
@@ -79,10 +107,15 @@ namespace AlumnoEjemplos.LucasTest
             foreach (Arbol arbol in listaArboles)
             {
 				arbol.render(elapsedTime);
+                arbol.renderBoundingBox();
 			}
             foreach (Pasto pasto in listaPasto)
             {
                 pasto.render(elapsedTime);
+            }
+            foreach (Piedra piedra in listaPiedras)
+            {
+                piedra.render(elapsedTime);
             }
 
         }
@@ -117,6 +150,22 @@ namespace AlumnoEjemplos.LucasTest
 
         }
 
+        public void agregarPiedra(long posX, long posZ, long desplazamiento, List<Piedra> listaPiedras, long indX, long indZ)
+        {
+            long convX;
+            long convZ;
+
+            Piedra piedra = new Piedra();
+            convX = posX + indX - (desplazamiento);
+            convZ = posZ + indZ - (desplazamiento);
+            piedra.move(convX, convZ);
+            piedra.setId(indPiedras);
+            piedra.setZona(this);
+            indPiedras++;
+            listaPiedras.Add(piedra);
+            
+        }
+
         public TgcBoundingBox BoundingBox
         {
             get { return box.BoundingBox; }
@@ -125,6 +174,10 @@ namespace AlumnoEjemplos.LucasTest
         public List<Arbol> getListaArboles()
         {
             return listaArboles;
+        }
+        public List<Piedra> getListaPiedras()
+        {
+            return listaPiedras;
         }
     }
 }

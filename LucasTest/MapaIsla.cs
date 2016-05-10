@@ -17,6 +17,7 @@ namespace AlumnoEjemplos.LucasTest
         float currentScaleXZ;
         float currentScaleY;
         TgcPlaneWall piso;
+        TgcCylinder water;
         TgcSkyBox skyBox;
         TgcBox contorno;
         int indZonas;
@@ -24,7 +25,8 @@ namespace AlumnoEjemplos.LucasTest
         long maxArboles = 500;
         long cantArboles;
         long cantZonas;
-        TgcScene scene = null;
+        TgcScene aguaScene = null;
+        TgcMesh agua;
         int CTE_ZOOM = 1;
         Vector3 tamanioArbol = new Vector3(2, 2, 2);
         long DESPLAZAMIENTO = 4900;
@@ -76,11 +78,11 @@ namespace AlumnoEjemplos.LucasTest
             //Creo un plano XY (en realidad es una caja con altura 0)
             TgcTexture pasto = TgcTexture.createTexture(GuiController.Instance.ExamplesMediaDir + "MeshCreator\\Textures\\Vegetacion\\moss_rock60_512.jpg");
 
-            Vector3 sizePiso = new Vector3(13000, 0, 11500);
+            Vector3 sizePiso = new Vector3(14000, 0, 12500);
             sizePiso = sizePiso * CTE_ZOOM;
             piso = new TgcPlaneWall();
             piso.setTexture(pasto);
-            piso.Origin = new Vector3(-5000, 0, -5000);
+            piso.Origin = new Vector3(-7000, 0, -6250);
             piso.Size = sizePiso;
             TgcPlaneWall.Orientations or = TgcPlaneWall.Orientations.XZplane;
             piso.Orientation = or;
@@ -90,9 +92,14 @@ namespace AlumnoEjemplos.LucasTest
             piso.updateValues();
 
             TgcTexture texture = TgcTexture.createTexture(GuiController.Instance.ExamplesMediaDir + "MeshCreator\\Textures\\Concreto\\clang_floor2.jpg");
-            contorno = TgcBox.fromSize(new Vector3(0, 1000, 0), new Vector3(10000, 2500, 10000), texture);
+            contorno = TgcBox.fromSize(new Vector3(0, 1000, 0), new Vector3(14000, 2500, 12500), texture);
 
             TgcSceneLoader loader = new TgcSceneLoader();
+            aguaScene = loader.loadSceneFromFile(GuiController.Instance.AlumnoEjemplosMediaDir + "isla\\Agua-TgcScene.xml");
+
+            agua = (TgcMesh)aguaScene.Meshes[0];
+            //agua.Scale = new Vector3(8f, 1f, 18f);
+            agua.Position = new Vector3(0, 5f, 0);
 
             listaArboles = new List<Arbol>();
             listaZonas = new List<ZonaArboles>();
@@ -116,7 +123,9 @@ namespace AlumnoEjemplos.LucasTest
         public void dibujar(TgcBox personajeBox, float elapsedTime, bool pause)
         {
             piso.render();
+            piso.BoundingBox.render();
             skyBox.render();
+            agua.render();
 
             TgcBoundingBox personajeBoundingBox = personajeBox.BoundingBox;
 
@@ -152,6 +161,12 @@ namespace AlumnoEjemplos.LucasTest
             return contorno;
         }
 
+
+        internal void sacarPiedra(Piedra piedra)
+        {
+            ZonaArboles zonaDeLaPiedra = piedra.getZona();
+            zonaDeLaPiedra.getListaPiedras().Remove(piedra);
+        }
     }
 }
 
