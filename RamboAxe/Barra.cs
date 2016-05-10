@@ -67,7 +67,7 @@ namespace AlumnoEjemplos.Game
             {
                 case 1: colorPath = "redBar.png"; break;
                 case 2: colorPath = "yellowBar.png"; break;
-                case 3: colorPath = "violet.png"; break;
+                case 3: colorPath = "violetBar.png"; break;
                 default: colorPath = "redBar.png"; break;
             }
             finTiempoBarra = duracion;

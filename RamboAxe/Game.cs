@@ -31,9 +31,9 @@ namespace AlumnoEjemplos.Game
     /// Autor: Matías Leone, Leandro Barbagallo
     /// 
     /// </summary>
-    public class Fps3 : TgcExample
+    public class RamboAxe : TgcExample
     {
-        Barra barraEjemplo;
+        Barra barraInteraccion; Barra barraVida; Barra barraHidratacion; Barra barraTermica;
         float distanciaObjeto = 0;
         TgcPickingRay pickingRay;
         Vector3 collisionPoint;
@@ -115,15 +115,26 @@ namespace AlumnoEjemplos.Game
             this.initCamera();
             this.hud();
             this.skyboxInit();
+            this.initBarrasVida();
            
         }
 
-        public void initBarras() {
-
-            barraEjemplo = new Barra();
-            barraEjemplo.init(Barra.RED, true, 360, 160, 4);
-
+        public void initbarraInteraccion()
+        {
+            barraInteraccion        = new Barra();
+            barraInteraccion.init(Barra.RED, true, 360, 160, 4);
         }
+        public void initBarrasVida()
+        {
+            float barrasWidth = 280;
+            barraVida = new Barra();
+            barraHidratacion = new Barra();
+            barraTermica = new Barra();
+            barraVida.init(Barra.RED, false, 80, 460, 360);
+            barraHidratacion.init(Barra.VIOLET, false, (barrasWidth)+80, 460, 180);
+            barraTermica.init(Barra.YELLOW, false, (barrasWidth*2)+80, 460, 360);
+        }
+
         public void handleInput() {
             TgcD3dInput input = GuiController.Instance.D3dInput;
 
@@ -133,7 +144,7 @@ namespace AlumnoEjemplos.Game
                 //if (GuiController.Instance.D3dInput.buttonUp(TgcViewer.Utils.Input.TgcD3dInput.MouseButtons.BUTTON_LEFT))
                 if (GuiController.Instance.D3dInput.buttonDown(TgcViewer.Utils.Input.TgcD3dInput.MouseButtons.BUTTON_LEFT))
                 {
-                    if (barraEjemplo == null)
+                    if (barraInteraccion == null)
                     {
                         //Actualizar Ray de colisión en base a posición del mouse
                         pickingRay.updateRay();
@@ -152,16 +163,16 @@ namespace AlumnoEjemplos.Game
                                 distanciaObjeto = Vector3.LengthSq(p2 - p1); //Es mas eficiente porque evita la raiz cuadrada (pero te da el valor al cuadrado)
                                 if (distanciaObjeto < 16264)
                                 {
-                                    initBarras();
+                                    initbarraInteraccion();
                                     selectedMesh = box;
                                     break;
                                 }
                                 else
                                 {
-                                    if (barraEjemplo != null)
+                                    if (barraInteraccion != null)
                                     {
-                                        barraEjemplo.dispose();
-                                        barraEjemplo = null;
+                                        barraInteraccion.dispose();
+                                        barraInteraccion = null;
                                         selectedMesh = null;
                                     }
                                 }
@@ -178,10 +189,10 @@ namespace AlumnoEjemplos.Game
                             distanciaObjeto = Vector3.LengthSq(p2 - p1); //Es mas eficiente porque evita la raiz cuadrada (pero te da el valor al cuadrado)
                             if (distanciaObjeto > 16264)
                             {
-                                if (barraEjemplo != null)
+                                if (barraInteraccion != null)
                                 {
-                                    barraEjemplo.dispose();
-                                    barraEjemplo = null;
+                                    barraInteraccion.dispose();
+                                    barraInteraccion = null;
                                     selectedMesh = null;
                                 }
                             }
@@ -191,10 +202,10 @@ namespace AlumnoEjemplos.Game
                 if (GuiController.Instance.D3dInput.buttonUp(TgcViewer.Utils.Input.TgcD3dInput.MouseButtons.BUTTON_LEFT))
                 {
                     selectedMesh = null;
-                    if (barraEjemplo != null)
+                    if (barraInteraccion != null)
                     {
-                        barraEjemplo.dispose();
-                        barraEjemplo = null;
+                        barraInteraccion.dispose();
+                        barraInteraccion = null;
                     }
                 }
 
@@ -343,8 +354,16 @@ namespace AlumnoEjemplos.Game
         public override void render(float elapsedTime)
         {
             handleInput();
+            
+            if (!inv.abierto)
+            {
+                barraHidratacion.render(elapsedTime);
+                barraTermica.render(elapsedTime);
+                barraVida.render(elapsedTime);
+            }
+            
             Microsoft.DirectX.Direct3D.Device d3dDevice = GuiController.Instance.D3dDevice;
-            if ( barraEjemplo != null)       barraEjemplo.render(elapsedTime);
+            if (barraInteraccion != null) barraInteraccion.render(elapsedTime);
             inv.render();
             //box.render();
             text.render();
@@ -429,10 +448,10 @@ namespace AlumnoEjemplos.Game
            if (selectedMesh != null)
            {
                selectedMesh.BoundingBox.render();
-               if (barraEjemplo != null && !barraEjemplo.isActive())
+               if (barraInteraccion != null && !barraInteraccion.isActive())
                {
-                   barraEjemplo.dispose();
-                   barraEjemplo = null;
+                   barraInteraccion.dispose();
+                   barraInteraccion = null;
                    //getObjetoFrom(meshInteractuadoStringDelNombre).interactuar();
                    meshes.Remove(selectedMesh);
                    selectedMesh.dispose();

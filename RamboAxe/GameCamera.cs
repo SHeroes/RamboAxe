@@ -18,7 +18,7 @@ namespace AlumnoEjemplos.Game
     public class GameCamera : TgcCamera
     {
         //Constantes de movimiento
-        Fps3 game;
+        RamboAxe game;
         const float DEFAULT_ROTATION_SPEED = 2f;
         const float DEFAULT_MOVEMENT_SPEED = 100f;
         const float HEAD_POSITION = 50f;
@@ -216,7 +216,7 @@ namespace AlumnoEjemplos.Game
         /// Crea la cámara con valores iniciales.
         /// Aceleración desactivada por Default
         /// </summary>
-        public GameCamera(Fps3 _game)
+        public GameCamera(RamboAxe _game)
         {
             resetValues();
             this.game = _game;
