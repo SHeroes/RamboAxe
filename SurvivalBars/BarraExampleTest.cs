@@ -68,8 +68,8 @@ namespace AlumnoEjemplos.SurvivalBars
             if (barraEjemplo2.getVidaActual() < 0.5) barraEjemplo2.agregarPorcentajeABarra((float)0.35);
             text3.Text = barraEjemplo2.getVidaActual().ToString();
             //Device de DirectX para renderizar
-            Microsoft.DirectX.Direct3D.Device d3dDevice = GuiController.Instance.D3dDevice;
-            GuiController.Instance.Drawer2D.beginDrawSprite();
+
+
 
             //Dibujar sprite (si hubiese mas, deberian ir todos aquí)
             
@@ -85,7 +85,7 @@ namespace AlumnoEjemplos.SurvivalBars
            //if (barraEjemplo.isActive()) barraEjemplo2.render(elapsedTime);
 
             //Finalizar el dibujado de Sprites
-            GuiController.Instance.Drawer2D.endDrawSprite();
+          
 
 
         }

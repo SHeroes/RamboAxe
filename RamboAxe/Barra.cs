@@ -14,29 +14,44 @@ namespace AlumnoEjemplos.Game
     {
         TgcSprite barEmpty;
         TgcSprite barColor;
-        const float SELECTION_BOX_HEIGHT = 50;
-        public static  int RED = 1;
-        public static  int YELLOW = 2;
-        public static  int VIOLET = 3;
-        private static bool esBarraDeCarga;
-        private static bool ISACTIVE;
-        float finTiempoBarra;
-        float tiempoActualBarra;
-        float barraAnchoCompleto;
-        
+        public static int RED = 1;
+        public static int YELLOW = 2;
+        public static int VIOLET = 3;
+        private bool esBarraDeCarga;
+        private bool ISACTIVE;
+        private float finTiempoBarra;
+        private float tiempoActualBarra;
+        private float barraAnchoCompleto;
+        private float floatDeBarra;
 
-        public bool esDeCarga() {
-            return Barra.esBarraDeCarga; 
-        }
-        public bool isActive()
+        public void agregarPorcentajeABarra(float porcentajeAAgegar)
         {
-            return Barra.ISACTIVE;
+            if (this.esDeCarga()) { return; }
+            else
+            { //SOLO SE AGREGAR PORCENTAJES A LA BARRA DE DESCARGA "VIDA, SED HAMBRE"
+                //la asigna a disminuye el tiempo que paso en la barra en porcentaje del total del tiempo que la barra tenia que tardar
+                tiempoActualBarra = tiempoActualBarra - porcentajeAAgegar * finTiempoBarra;
+                if (tiempoActualBarra < 0) tiempoActualBarra = (float)0.00001;
+            }
+        }
+
+        public float getVidaActual()
+        {
+            return this.floatDeBarra;
+        }
+        public bool esDeCarga()
+        {
+            return this.esBarraDeCarga;
+        }
+        public bool isActive() //SOLO PARA BARRAS DE CARGA
+        {
+            return this.ISACTIVE;
         }
 
 
         public void init(int color, bool carga, float barraVaciaPosX = (float)60.0, float barraVaciaPosY = (float)460.0, float duracion = (float)3.00)
         {
-            Barra.esBarraDeCarga = carga;
+            this.esBarraDeCarga = carga;
             barEmpty = new TgcSprite();
             barColor = new TgcSprite();
             string colorPath = "";
@@ -54,76 +69,63 @@ namespace AlumnoEjemplos.Game
                 case 2: colorPath = "yellowBar.png"; break;
                 case 3: colorPath = "violet.png"; break;
                 default: colorPath = "redBar.png"; break;
-            }            
-            if (carga) {
-            
-                finTiempoBarra = duracion;
-                tiempoActualBarra = (float)0;
-                barEmpty.Texture = TgcTexture.createTexture(GuiController.Instance.AlumnoEjemplosMediaDir + "\\survivalBars\\BarEmpty.png");
-                barEmpty.Position = new Vector2(barraVaciaPosX, barraVaciaPosY);
-                barEmpty.Scaling = new Vector2(barraVaciaAnchoScaling, barraVaciaAlturaScaling);
-            
-            }else {
-
-                finTiempoBarra = (float)0.000001;
-                tiempoActualBarra =  duracion;
-                barEmpty.Texture = TgcTexture.createTexture(GuiController.Instance.AlumnoEjemplosMediaDir + "\\survivalBars\\BarEmpty.png");
-                barEmpty.Position = new Vector2(barraVaciaPosX, barraVaciaPosY);
-                barEmpty.Scaling = new Vector2(barraVaciaAnchoScaling, barraVaciaAlturaScaling);
-                        
             }
+            finTiempoBarra = duracion;
+            tiempoActualBarra = (float)0.00001;
+
             /*
             float vidaPorcentaje = (float)1;
             float vidaInicial = bararAnchoCompleto * vidaPorcentaje;
             */
+            barEmpty.Texture = TgcTexture.createTexture(GuiController.Instance.AlumnoEjemplosMediaDir + "\\survivalBars\\BarEmpty.png");
+            barEmpty.Position = new Vector2(barraVaciaPosX, barraVaciaPosY);
+            barEmpty.Scaling = new Vector2(barraVaciaAnchoScaling, barraVaciaAlturaScaling);
             barColor.Texture = TgcTexture.createTexture(GuiController.Instance.AlumnoEjemplosMediaDir + "\\survivalBars\\" + colorPath);
             barColor.Position = new Vector2(barraPosX, barraPosY);
             barColor.Scaling = new Vector2(barraAnchoCompleto, barraAlto);
-        
+
         }
-        
-        public void render(float elapsedTime){
+
+        public void render(float elapsedTime)
+        {
             GuiController.Instance.Drawer2D.beginDrawSprite();
             float vidaActual;
-
-            if (!Barra.esBarraDeCarga)  //Barra DESCARGA
+            if (!this.esBarraDeCarga)  //Barra DESCARGA
             {
-
-                vidaActual = barraAnchoCompleto * ((finTiempoBarra - tiempoActualBarra) / finTiempoBarra);
-                tiempoActualBarra = tiempoActualBarra + elapsedTime;
-
+                floatDeBarra = ((finTiempoBarra - tiempoActualBarra) / finTiempoBarra); // 0.9999
+                vidaActual = barraAnchoCompleto * floatDeBarra;
+                tiempoActualBarra = tiempoActualBarra + elapsedTime; // para saber si llego al final sino sigue pal otro lado
                 if (tiempoActualBarra < finTiempoBarra)
                 {
                     //isActive ?
                     barColor.Scaling = new Vector2(vidaActual, (float)0.28);
                 }
-                barEmpty.render();
-                barColor.render();
-
             }
-            else {
+            else
+            { // CARGA
+                tiempoActualBarra = tiempoActualBarra + elapsedTime;
                 vidaActual = barraAnchoCompleto * (tiempoActualBarra / finTiempoBarra);
-                tiempoActualBarra = tiempoActualBarra + elapsedTime;
 
                 if (tiempoActualBarra < finTiempoBarra)
-                {
-                    //isActive ?
+                { //isActive ?
                     barColor.Scaling = new Vector2(vidaActual, (float)0.28);
-                    Barra.ISACTIVE = true;
+                    this.ISACTIVE = true;
                 }
-                else { 
-                //barra Cargada
-                    barColor.Scaling = new Vector2(barraAnchoCompleto, (float)0.28);
-                    Barra.ISACTIVE = false;
+                else
+                {  //barra Cargada
+                    barColor.Scaling = new Vector2((float)0, (float)0.28);
+                    this.ISACTIVE = false;
                 }
-                barEmpty.render();
-                barColor.render();            
             }
+            barColor.render();
+            barEmpty.render();
             GuiController.Instance.Drawer2D.endDrawSprite();
+
         }
 
-        public void dispose(){
-            if (!Barra.esBarraDeCarga)  barEmpty.dispose();
+        public void dispose()
+        {
+            if (!this.esBarraDeCarga) barEmpty.dispose();
             barColor.dispose();
         }
     }

@@ -14,7 +14,6 @@ namespace AlumnoEjemplos.SurvivalBars
     {
         TgcSprite barEmpty;
         TgcSprite barColor;
-        const float SELECTION_BOX_HEIGHT = 50;
         public static  int RED = 1;
         public static  int YELLOW = 2;
         public static  int VIOLET = 3;
@@ -40,7 +39,7 @@ namespace AlumnoEjemplos.SurvivalBars
         public bool esDeCarga() {
             return this.esBarraDeCarga; 
         }
-        public bool isActive()
+        public bool isActive() //SOLO PARA BARRAS DE CARGA
         {
             return this.ISACTIVE;
         }
@@ -84,6 +83,7 @@ namespace AlumnoEjemplos.SurvivalBars
         }
         
         public void render(float elapsedTime){
+            GuiController.Instance.Drawer2D.beginDrawSprite();
             float vidaActual;
             if (!this.esBarraDeCarga)  //Barra DESCARGA
             {
@@ -112,7 +112,7 @@ namespace AlumnoEjemplos.SurvivalBars
             }
             barColor.render();
             barEmpty.render();
- 
+            GuiController.Instance.Drawer2D.endDrawSprite();
 
         }
 
