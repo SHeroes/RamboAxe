@@ -7,13 +7,16 @@ using Microsoft.DirectX.Direct3D;
 using TgcViewer.Utils._2D;
 using TgcViewer.Utils.TgcGeometry;
 using TgcViewer.Utils.TgcSceneLoader;
+using System.Drawing;
 
 namespace AlumnoEjemplos.Game
 {
     class Barra
     {
+        TgcText2d barTitle;
         TgcSprite barEmpty;
         TgcSprite barColor;
+        public string barTitleText = "";
         public static int RED = 1;
         public static int YELLOW = 2;
         public static int VIOLET = 3;
@@ -84,6 +87,13 @@ namespace AlumnoEjemplos.Game
             barColor.Position = new Vector2(barraPosX, barraPosY);
             barColor.Scaling = new Vector2(barraAnchoCompleto, barraAlto);
 
+            barTitle = new TgcText2d();
+            barTitle.Position = new Point((int)barraVaciaPosX - 15, (int)barraVaciaPosY - 20);
+            barTitle.Size = new Size(310, 100);
+            System.Drawing.Font font1 = new System.Drawing.Font("Arial", 14);
+            //barTitle.Graphics.DrawString("Arial Font", font1, Brushes.Red, new PointF(10, 10));
+            barTitle.changeFont(font1);
+            barTitle.Color = Color.Red;
         }
 
         public void render(float elapsedTime)
@@ -119,16 +129,16 @@ namespace AlumnoEjemplos.Game
             }
             barColor.render();
             barEmpty.render();
+            barTitle.Text = barTitleText;
+            barTitle.render();
             GuiController.Instance.Drawer2D.endDrawSprite();
 
         }
 
         public void dispose()
         {
-            if (!this.esBarraDeCarga) barEmpty.dispose();
+            barEmpty.dispose();
             barColor.dispose();
         }
     }
-
-
 }

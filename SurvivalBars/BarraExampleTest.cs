@@ -50,7 +50,7 @@ namespace AlumnoEjemplos.SurvivalBars
             barraEjemplo.init(Barra.RED, true ,160,260,4);
 
             barraEjemplo2 = new Barra();
-            barraEjemplo2.init(Barra.YELLOW, false, 100, 360, 50);
+            barraEjemplo2.init(Barra.RED, false, 100, 360, 50);
 
 
 

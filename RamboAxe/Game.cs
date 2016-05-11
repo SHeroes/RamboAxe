@@ -33,7 +33,7 @@ namespace AlumnoEjemplos.Game
     /// </summary>
     public class RamboAxe : TgcExample
     {
-        Barra barraInteraccion; Barra barraVida; Barra barraHidratacion; Barra barraTermica;
+        Barra barraInteraccion; Barra barraVida; Barra barraHidratacion; BarraEstatica barraTermica;
         float distanciaObjeto = 0;
         TgcPickingRay pickingRay;
         Vector3 collisionPoint;
@@ -129,10 +129,14 @@ namespace AlumnoEjemplos.Game
             float barrasWidth = 280;
             barraVida = new Barra();
             barraHidratacion = new Barra();
-            barraTermica = new Barra();
+            barraTermica = new BarraEstatica();
             barraVida.init(Barra.RED, false, 80, 460, 360);
             barraHidratacion.init(Barra.VIOLET, false, (barrasWidth)+80, 460, 180);
-            barraTermica.init(Barra.YELLOW, false, (barrasWidth*2)+80, 460, 360);
+            barraTermica.init(Barra.YELLOW,(barrasWidth*2)+80, 460);
+
+            barraTermica.barTitleText       = "FRIO / CALOR";
+            barraHidratacion.barTitleText   = "Nivel de Hidratacion";
+            barraVida.barTitleText          = "Nivel de Vida";
         }
 
         public void handleInput() {
