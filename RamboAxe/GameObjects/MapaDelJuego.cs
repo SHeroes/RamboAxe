@@ -1,0 +1,61 @@
+﻿using Microsoft.DirectX;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using TgcViewer.Utils.TgcSceneLoader;
+
+namespace AlumnoEjemplos.RamboAxe.GameObjects
+{
+    class MapaDelJuego
+    {
+        
+        Dictionary<String,Dictionary<String,Cuadrante>> cuadrantes;
+        int widthCuadrante, heightCuadrante;
+        TgcSceneLoader loader = new TgcSceneLoader();
+        static List<TgcMesh> gameMeshes=new List<TgcMesh>();
+        public MapaDelJuego(int _widthCuadrante,int _heightCuadrante){
+             cuadrantes = new Dictionary<String,Dictionary<String,Cuadrante>>();
+             string initialMeshFile = TgcViewer.GuiController.Instance.AlumnoEjemplosMediaDir + "ball-TgcScene.xml";
+             
+             this.widthCuadrante = _widthCuadrante;
+             this.heightCuadrante = _heightCuadrante;
+             string meshFile = TgcViewer.GuiController.Instance.AlumnoEjemplosMediaDir + "ball-TgcScene.xml";
+             //Dispose de escena anterior
+             //Cargar escena con herramienta TgcSceneLoader
+             TgcScene scene = loader.loadSceneFromFile(meshFile);
+             foreach (TgcMesh mesh in scene.Meshes)
+             {
+                 mesh.Scale = new Vector3(2.5f, 2.2f, 2.2f);
+                 mesh.updateBoundingBox();
+                 gameMeshes.Add(mesh);
+             }
+        }
+        public static TgcMesh getGameMesh(int number)
+        {
+            return gameMeshes[number]; 
+        }
+        public Cuadrante getCuadrante(int x, int z)
+        {
+            
+            if (cuadrantes.Any(posX => posX.Key == x.ToString()))
+            {
+
+                if (cuadrantes[x.ToString()].Any(posZ => posZ.Key == z.ToString()))
+                {
+                    return cuadrantes[x.ToString()][z.ToString()];
+                }
+                else
+                {
+                    cuadrantes[x.ToString()][z.ToString()]= new Cuadrante(true,widthCuadrante,heightCuadrante,(int)x,(int)z);
+                }
+            }
+            else
+            {
+                cuadrantes[x.ToString()]=new Dictionary<string,Cuadrante>();
+                cuadrantes[x.ToString()][z.ToString()] = new Cuadrante(true,widthCuadrante,heightCuadrante,(int)x,(int)z);
+            }
+            return cuadrantes[x.ToString()][z.ToString()];
+       }
+    }
+}

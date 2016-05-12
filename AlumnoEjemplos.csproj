@@ -99,6 +99,7 @@
     <Compile Include="LucasTest\EjemploIsla.cs" />
     <Compile Include="LucasTest\MapaIsla.cs" />
     <Compile Include="LucasTest\Pasto.cs" />
+    <Compile Include="LucasTest\Piedra.cs" />
     <Compile Include="LucasTest\SurvivalCamara.cs" />
     <Compile Include="LucasTest\ZonaArboles.cs" />
     <Compile Include="MiGrupo\EjemploAlumno.cs" />
@@ -106,6 +107,9 @@
     <Compile Include="RamboAxe\Barra.cs" />
     <Compile Include="RamboAxe\Game.cs" />
     <Compile Include="RamboAxe\GameCamera.cs" />
+    <Compile Include="RamboAxe\GameObjects\Cuadrante.cs" />
+    <Compile Include="RamboAxe\GameObjects\Dispenser.cs" />
+    <Compile Include="RamboAxe\GameObjects\MapaDelJuego.cs" />
     <Compile Include="RamboAxe\Inventario.cs" />
     <Compile Include="RamboAxe\Objeto.cs" />
     <Compile Include="RamboAxe\Receta.cs" />
@@ -137,6 +141,7 @@
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

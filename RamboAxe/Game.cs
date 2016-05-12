@@ -15,6 +15,8 @@ using TgcViewer.Utils.Collision.ElipsoidCollision;
 using TgcViewer.Utils.Terrain;
 using TgcViewer.Utils;
 using Microsoft.DirectX.DirectInput;
+using AlumnoEjemplos.RamboAxe;
+using AlumnoEjemplos.RamboAxe.GameObjects;
 namespace AlumnoEjemplos.Game
 {
     /// <summary>
@@ -38,9 +40,11 @@ namespace AlumnoEjemplos.Game
         TgcPickingRay pickingRay;
         Vector3 collisionPoint;
         TgcMesh selectedMesh;
-
-        Inventario inv;
         List<Objeto> objetos;
+        double currentCuadrantX, currentCuadrantZ;
+        Inventario inv;
+
+        MapaDelJuego mapa;
        
         public override string getCategory()
         {
@@ -58,7 +62,6 @@ namespace AlumnoEjemplos.Game
         }
         TgcD3dInput d3dInput;
         TgcText2d text;
-        TgcSceneLoader loader = new TgcSceneLoader();
         SkyBox skyBox;
         GameCamera camera;
         TgcPlaneWall ground;
@@ -66,50 +69,47 @@ namespace AlumnoEjemplos.Game
         List<Collider> objetosColisionables = new List<Collider>();
         ElipsoidCollisionManager collisionManager;
 
-
         TgcElipsoid characterElipsoid;
         double prevCuadrantX = 1;
         double prevCuadrantZ = 1;
         float width = 2000;
-        List<TgcScene> scenes;
-        string currentPath;
-        List<TgcMesh> meshes = new List<TgcMesh>();
+        float height = 2000;
+
+        
         TgcPlaneWall[][] floors = new TgcPlaneWall [9][];
+        
         public override void init()
         {
             Microsoft.DirectX.Direct3D.Device d3dDevice = GuiController.Instance.D3dDevice;
             //Iniciarlizar PickingRay
             pickingRay = new TgcPickingRay();
             TgcTexture texture =  TgcTexture.createTexture(d3dDevice,GuiController.Instance.AlumnoEjemplosMediaDir + "resources\\" + "piso.png");
-            string initialMeshFile = GuiController.Instance.AlumnoEjemplosMediaDir + "ball-TgcScene.xml";
            // string terrainHm = GuiController.Instance.AlumnoEjemplosMediaDir + "fps2\\" + "hm.jpg";
-            loadMesh(initialMeshFile);
+
             
-            ground = new TgcPlaneWall(new Vector3(0,0,0),new Vector3(width,0,width),TgcPlaneWall.Orientations.XZplane,texture);
+            ground = new TgcPlaneWall(new Vector3(0,0,0),new Vector3(width,0,height),TgcPlaneWall.Orientations.XZplane,texture);
        
 
             for(int i = 0;i<3;i++){
                 floors[i] = new TgcPlaneWall[9];
                 for(int x = 0;x<3;x++){
                     floors[i][x]= ground.clone();
-
                 }
             }
             
 
             for(int i = 0;i<3;i++){
                 for(int x = 0;x<3;x++){
-                    floors[i][x].setExtremes(new Vector3((1 + i) * width, 0, (1 + x) * width), new Vector3((1 + i) * width + width, 0, (1 + x) * width+width));
+                    floors[i][x].setExtremes(new Vector3((1 + i) * width, 0, (1 + x) * height), new Vector3((1 + i) * width + width, 0, (1 + x) * height+height));
                     floors[i][x].updateValues();
                 }
             }
-            
 
             d3dInput = GuiController.Instance.D3dInput;
 
 
             characterElipsoid = new TgcElipsoid(new Vector3(0, 100, 0), new Vector3(12, 48, 12));
-            
+            this.initMapa();
             this.initInventario();
             this.initCollisions();
             this.initCamera();
@@ -118,7 +118,12 @@ namespace AlumnoEjemplos.Game
             this.initBarrasVida();
            
         }
-
+        public void initMapa(){
+            mapa = new MapaDelJuego((int)width,(int)height);
+            
+            
+        }
+    
         public void initbarraInteraccion()
         {
             barraInteraccion        = new Barra();
@@ -150,7 +155,7 @@ namespace AlumnoEjemplos.Game
                         pickingRay.updateRay();
 
                         //Testear Ray contra el AABB de todos los meshes
-                        foreach (TgcMesh box in meshes)
+                        foreach (TgcMesh box in mapa.getCuadrante((int)currentCuadrantX,(int)currentCuadrantZ).getMeshes())
                         {
                             TgcBoundingBox aabb = box.BoundingBox;
 
@@ -279,9 +284,7 @@ namespace AlumnoEjemplos.Game
 
         public void agregarPiedraTallada()
         {
-            string initialMeshFile = GuiController.Instance.AlumnoEjemplosMediaDir + "ball-TgcScene.xml";
-            // string terrainHm = GuiController.Instance.AlumnoEjemplosMediaDir + "fps2\\" + "hm.jpg";
-            loadMesh(initialMeshFile);
+           //TODO
         }
 
 
@@ -381,8 +384,8 @@ namespace AlumnoEjemplos.Game
                     floorCords+= "\n["+i.ToString()+"/"+x.ToString()+"]"+floors[i][x].Position.X+floors[i][x].Position.Z;
                 }
             }
-            double currentCuadrantX = (Math.Floor(characterElipsoid.Position.X / width)-1);
-            double currentCuadrantZ = (Math.Floor(characterElipsoid.Position.Z / width)-1);
+            currentCuadrantX = (Math.Floor(characterElipsoid.Position.X / width)-1);
+            currentCuadrantZ = (Math.Floor(characterElipsoid.Position.Z / width)-1);
             if (currentCuadrantX != prevCuadrantX)
             {
                 collisionManager.GravityEnabled = false;
@@ -435,15 +438,26 @@ namespace AlumnoEjemplos.Game
                 collisionManager.GravityEnabled = true;
                 prevCuadrantZ = currentCuadrantZ;
             }
-            foreach (TgcMesh mesh in meshes)
+            for (int x = 0; x < 3;x++ )
             {
-                objetosColisionables.Add(BoundingBoxCollider.fromBoundingBox(mesh.BoundingBox));
+                for (int z = 0; z < 3; z++)
+                {
+                    int currentX = (int)currentCuadrantX -1 + x;
+                    int currentZ = (int)currentCuadrantZ - 1 + z;
+                    foreach (TgcMesh mesh in mapa.getCuadrante(currentX, currentZ).getMeshes())
+                    {
+                        mesh.Position = new Vector3(mesh.Position.X + (currentX*width), mesh.Position.Y, mesh.Position.Z + (currentZ * height));
+                        mesh.updateBoundingBox();
+                        objetosColisionables.Add(BoundingBoxCollider.fromBoundingBox(mesh.BoundingBox));
+                        mesh.render();
+                    }
+                }
             }
            
-           foreach(TgcScene scene in scenes){
-               scene.renderAll();
-               
-           }
+           
+            //TODO
+           //scene.renderAll();
+
            text.Text = floorCords + "\nCharacter: "+ characterElipsoid.Position.Z.ToString()+  " "  + characterElipsoid.Position.X.ToString() + "\n" + currentCuadrantZ.ToString() + " " + currentCuadrantX.ToString()+"\n"+characterElipsoid.Center.Y+" \n"+distanciaObjeto;
            if (selectedMesh != null)
            {
@@ -453,7 +467,7 @@ namespace AlumnoEjemplos.Game
                    barraInteraccion.dispose();
                    barraInteraccion = null;
                    //getObjetoFrom(meshInteractuadoStringDelNombre).interactuar();
-                   meshes.Remove(selectedMesh);
+                   mapa.getCuadrante((int)currentCuadrantX,(int)currentCuadrantZ).removeMesh(selectedMesh);
                    selectedMesh.dispose();
                    selectedMesh = null;
                    inv.agregar(objetos[0]);
@@ -462,38 +476,6 @@ namespace AlumnoEjemplos.Game
            
         }
 
-        private void loadMesh(string path)
-        {
-            currentPath = path;
-
-            //Dispose de escena anterior
-            if (scenes == null)
-            {
-                scenes = new List<TgcScene>();
-            }
-            //Cargar escena con herramienta TgcSceneLoader
-            
-            
-            TgcScene scene = loader.loadSceneFromFile(path);
-            scenes.Add(scene);
-            foreach (TgcMesh mesh in scene.Meshes)
-            {
-               
-                mesh.Scale = new Vector3(2.5f,2.2f,2.2f);
-               
-                mesh.Position = new Vector3(5300, 1, 5300);
-                mesh.updateBoundingBox();
-                // meshes.Add(BoundingBoxCollider.fromBoundingBox(mesh.BoundingBox));
-              //  TriangleMeshCollider collider = (TriangleMeshCollider.fromMesh(mesh));
-              //  meshes.Add(BoundingBoxCollider.fromBoundingBox(mesh.BoundingBox));
-                meshes.Add(mesh);
-
-                //collider.BoundingSphere.Position = mesh.Position;
-//                meshes.Add(collider);
-                
-            }
-            
-        }
 
         public void userVars()
         {
