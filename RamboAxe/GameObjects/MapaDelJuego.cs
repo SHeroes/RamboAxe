@@ -19,7 +19,7 @@ namespace AlumnoEjemplos.RamboAxe.GameObjects
              
              this.widthCuadrante = _widthCuadrante;
              this.heightCuadrante = _heightCuadrante;
-             string meshFile = TgcViewer.GuiController.Instance.AlumnoEjemplosMediaDir + "RamboAxe\\Group_237-TgcScene.xml";
+             string meshFile = TgcViewer.GuiController.Instance.AlumnoEjemplosDir + "RamboAxe\\Media\\Group_237-TgcScene.xml";
              //Dispose de escena anterior
              //Cargar escena con herramienta TgcSceneLoader
              TgcScene scene = loader.loadSceneFromFile(meshFile);
@@ -29,7 +29,7 @@ namespace AlumnoEjemplos.RamboAxe.GameObjects
                  mesh.updateBoundingBox();
                  gameMeshes.Add(mesh);
              }
-             meshFile = TgcViewer.GuiController.Instance.AlumnoEjemplosMediaDir + "RamboAxe\\Energy-TgcScene.xml";
+             meshFile = TgcViewer.GuiController.Instance.AlumnoEjemplosDir + "RamboAxe\\Media\\Energy-TgcScene.xml";
              scene = loader.loadSceneFromFile(meshFile);
              foreach (TgcMesh mesh in scene.Meshes)
              {
@@ -37,7 +37,7 @@ namespace AlumnoEjemplos.RamboAxe.GameObjects
                  mesh.updateBoundingBox();
                  gameMeshes.Add(mesh);
              }
-             meshFile = TgcViewer.GuiController.Instance.AlumnoEjemplosMediaDir + "RamboAxe\\metal-TgcScene.xml";
+             meshFile = TgcViewer.GuiController.Instance.AlumnoEjemplosDir + "RamboAxe\\Media\\metal-TgcScene.xml";
              scene = loader.loadSceneFromFile(meshFile);
              foreach (TgcMesh mesh in scene.Meshes)
              {
@@ -45,7 +45,7 @@ namespace AlumnoEjemplos.RamboAxe.GameObjects
                  mesh.updateBoundingBox();
                  gameMeshes.Add(mesh);
              }
-             meshFile = TgcViewer.GuiController.Instance.AlumnoEjemplosMediaDir + "RamboAxe\\ball-TgcScene.xml";
+             meshFile = TgcViewer.GuiController.Instance.AlumnoEjemplosDir + "RamboAxe\\Media\\ball-TgcScene.xml";
              scene = loader.loadSceneFromFile(meshFile);
              foreach (TgcMesh mesh in scene.Meshes)
              {

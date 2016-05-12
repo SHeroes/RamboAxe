@@ -37,7 +37,7 @@ namespace AlumnoEjemplos.RamboAxe.Player
 
         public Inventario()
         {
-            string basePath = GuiController.Instance.AlumnoEjemplosMediaDir + "RamboAxe\\inventario\\";
+            string basePath = GuiController.Instance.AlumnoEjemplosDir + "RamboAxe\\Media\\inventario\\";
             /* Inicializacion de los datos */
             esReceta = true;
             abierto = false;

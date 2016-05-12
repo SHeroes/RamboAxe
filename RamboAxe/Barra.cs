@@ -80,10 +80,10 @@ namespace AlumnoEjemplos.RamboAxe
             float vidaPorcentaje = (float)1;
             float vidaInicial = bararAnchoCompleto * vidaPorcentaje;
             */
-            barEmpty.Texture = TgcTexture.createTexture(GuiController.Instance.AlumnoEjemplosMediaDir + "RamboAxe\\BarEmpty.png");
+            barEmpty.Texture = TgcTexture.createTexture(GuiController.Instance.AlumnoEjemplosDir + "RamboAxe\\Media\\BarEmpty.png");
             barEmpty.Position = new Vector2(barraVaciaPosX, barraVaciaPosY);
             barEmpty.Scaling = new Vector2(barraVaciaAnchoScaling, barraVaciaAlturaScaling);
-            barColor.Texture = TgcTexture.createTexture(GuiController.Instance.AlumnoEjemplosMediaDir + "RamboAxe\\" + colorPath);
+            barColor.Texture = TgcTexture.createTexture(GuiController.Instance.AlumnoEjemplosDir + "RamboAxe\\Media\\" + colorPath);
             barColor.Position = new Vector2(barraPosX, barraPosY);
             barColor.Scaling = new Vector2(barraAnchoCompleto, barraAlto);
 
