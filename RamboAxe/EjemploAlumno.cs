@@ -372,7 +372,7 @@ namespace AlumnoEjemplos.RamboAxe
             if (barraInteraccion != null) barraInteraccion.render(elapsedTime);
             pj.getInventario().render();
             //box.render();
-            text.render();
+           // text.render();
             text2.render();
             skyBox.Center = camera.Position;
             skyBox.updateValues();
@@ -436,7 +436,7 @@ namespace AlumnoEjemplos.RamboAxe
                     }
                 }
             }
-           text.Text = floorCords + "\nCharacter: "+ characterElipsoid.Position.Z.ToString()+  " "  + characterElipsoid.Position.X.ToString() + "\n" + currentCuadrantZ.ToString() + " " + currentCuadrantX.ToString()+"\n"+characterElipsoid.Center.Y+" \n"+distanciaObjeto;
+        //   text.Text = floorCords + "\nCharacter: "+ characterElipsoid.Position.Z.ToString()+  " "  + characterElipsoid.Position.X.ToString() + "\n" + currentCuadrantZ.ToString() + " " + currentCuadrantX.ToString()+"\n"+characterElipsoid.Center.Y+" \n"+distanciaObjeto;
            if (selectedGameObject != null)
            {
                if (barraInteraccion != null && !barraInteraccion.isActive())
@@ -496,12 +496,12 @@ namespace AlumnoEjemplos.RamboAxe
             text.Position = new Point(5, 20);
 
             text2 = new TgcText2d();
-            text2.Text = "Texto del hud.";
+            text2.Text = "-\"wasd\" para moverse    -\"P\" para capturar el mouse    -\"I\" para el inventario    -\"Click Izq\" para interactuar" ;
             text2.Align = TgcText2d.TextAlign.LEFT;
             text2.Position = new Point(5, 20);
-            text2.Size = new Size(310, 100);
+            text2.Size = new Size(800, 100);
             text2.Color = Color.Gold;
-            text2.Position = new Point(105, 20);
+            text2.Position = new Point(75, 10);
 
         }
 
