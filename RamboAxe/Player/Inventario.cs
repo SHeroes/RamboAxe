@@ -8,7 +8,7 @@ using TgcViewer;
 using TgcViewer.Utils.TgcSceneLoader;
 using TgcViewer.Utils._2D;
 
-namespace AlumnoEjemplos.Game
+namespace AlumnoEjemplos.RamboAxe.Player
 {
     public class Inventario
     {
@@ -166,6 +166,8 @@ namespace AlumnoEjemplos.Game
             recetasText.dispose();
             ingredientesText.dispose();
             ingredientesTitle.dispose();
+            this.dispose();
+           
         }
 
         public void abrir()

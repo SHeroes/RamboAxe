@@ -15,7 +15,10 @@ using TgcViewer.Utils.Collision.ElipsoidCollision;
 using TgcViewer.Utils.Terrain;
 using TgcViewer.Utils;
 using Microsoft.DirectX.DirectInput;
-namespace AlumnoEjemplos.Game
+using AlumnoEjemplos.RamboAxe;
+using AlumnoEjemplos.RamboAxe.GameObjects;
+using AlumnoEjemplos.RamboAxe.Player;
+namespace AlumnoEjemplos.RamboAxe
 {
     /// <summary>
     /// Ejemplo EjemploMeshLoader:
@@ -31,17 +34,34 @@ namespace AlumnoEjemplos.Game
     /// Autor: Matías Leone, Leandro Barbagallo
     /// 
     /// </summary>
-    public class RamboAxe : TgcExample
+    public class Game : TgcExample
     {
-        Barra barraInteraccion; Barra barraVida; Barra barraHidratacion; BarraEstatica barraTermica;
+        Barra barraInteraccion; Barra barraVida; BarraEstatica barraTermica;
+        Barra barraHidratacion;
         float distanciaObjeto = 0;
         TgcPickingRay pickingRay;
+        static Game game;
         Vector3 collisionPoint;
-        TgcMesh selectedMesh;
-
-        Inventario inv;
+        GameObjectAbstract selectedGameObject;
         List<Objeto> objetos;
-       
+        double currentCuadrantX, currentCuadrantZ = 1;
+        CharacterSheet pj = CharacterSheet.getInstance();
+        bool firstRun = true;
+
+        MapaDelJuego mapa;
+        public static Game getInstance()
+        {
+            return game;
+        }
+        public Barra getBarraHidratacion()
+        {
+            return barraHidratacion;
+        }
+        public Barra getBarraComida()
+        {
+            return barraVida;
+        }
+
         public override string getCategory()
         {
             return "AlumnoEjemplos";
@@ -58,7 +78,7 @@ namespace AlumnoEjemplos.Game
         }
         TgcD3dInput d3dInput;
         TgcText2d text;
-        TgcSceneLoader loader = new TgcSceneLoader();
+        TgcText2d text2;
         SkyBox skyBox;
         GameCamera camera;
         TgcPlaneWall ground;
@@ -66,50 +86,48 @@ namespace AlumnoEjemplos.Game
         List<Collider> objetosColisionables = new List<Collider>();
         ElipsoidCollisionManager collisionManager;
 
-
         TgcElipsoid characterElipsoid;
         double prevCuadrantX = 1;
         double prevCuadrantZ = 1;
         float width = 2000;
-        List<TgcScene> scenes;
-        string currentPath;
-        List<TgcMesh> meshes = new List<TgcMesh>();
-        TgcPlaneWall[][] floors = new TgcPlaneWall [9][];
+        float height = 2000;
+
+        
+        TgcPlaneWall[][] floors = new TgcPlaneWall [3][];
+        
         public override void init()
         {
+            Game.game = this;
             Microsoft.DirectX.Direct3D.Device d3dDevice = GuiController.Instance.D3dDevice;
             //Iniciarlizar PickingRay
             pickingRay = new TgcPickingRay();
-            TgcTexture texture =  TgcTexture.createTexture(d3dDevice,GuiController.Instance.AlumnoEjemplosMediaDir + "resources\\" + "piso.png");
-            string initialMeshFile = GuiController.Instance.AlumnoEjemplosMediaDir + "ball-TgcScene.xml";
+            TgcTexture texture = TgcTexture.createTexture(d3dDevice, GuiController.Instance.AlumnoEjemplosMediaDir + "" + "tile_1.png");
            // string terrainHm = GuiController.Instance.AlumnoEjemplosMediaDir + "fps2\\" + "hm.jpg";
-            loadMesh(initialMeshFile);
+
             
-            ground = new TgcPlaneWall(new Vector3(0,0,0),new Vector3(width,0,width),TgcPlaneWall.Orientations.XZplane,texture);
+            ground = new TgcPlaneWall(new Vector3(0,0,0),new Vector3(width,0,height),TgcPlaneWall.Orientations.XZplane,texture);
        
 
             for(int i = 0;i<3;i++){
-                floors[i] = new TgcPlaneWall[9];
+                floors[i] = new TgcPlaneWall[3];
                 for(int x = 0;x<3;x++){
                     floors[i][x]= ground.clone();
-
                 }
             }
             
 
             for(int i = 0;i<3;i++){
                 for(int x = 0;x<3;x++){
-                    floors[i][x].setExtremes(new Vector3((1 + i) * width, 0, (1 + x) * width), new Vector3((1 + i) * width + width, 0, (1 + x) * width+width));
+                    floors[i][x].setExtremes(new Vector3((1 + i) * width, 0, (1 + x) * height), new Vector3((1 + i) * width + width, 0, (1 + x) * height+height));
                     floors[i][x].updateValues();
                 }
             }
-            
 
             d3dInput = GuiController.Instance.D3dInput;
 
 
-            characterElipsoid = new TgcElipsoid(new Vector3(0, 100, 0), new Vector3(12, 48, 12));
-            
+            characterElipsoid = new TgcElipsoid(new Vector3(0, 250, 0), new Vector3(12, 48, 12));
+            this.initMapa();
             this.initInventario();
             this.initCollisions();
             this.initCamera();
@@ -118,11 +136,16 @@ namespace AlumnoEjemplos.Game
             this.initBarrasVida();
            
         }
-
-        public void initbarraInteraccion()
+        public void initMapa(){
+            mapa = new MapaDelJuego((int)width,(int)height);
+            
+            
+        }
+    
+        public void initbarraInteraccion(float time,int color)
         {
             barraInteraccion        = new Barra();
-            barraInteraccion.init(Barra.RED, true, 360, 160, 4);
+            barraInteraccion.init(color, true, 360, 160, time);
         }
         public void initBarrasVida()
         {
@@ -132,8 +155,8 @@ namespace AlumnoEjemplos.Game
             barraTermica = new BarraEstatica();
             barraVida.init(Barra.RED, false, 80, 460, 360);
             barraHidratacion.init(Barra.VIOLET, false, (barrasWidth)+80, 460, 180);
-            barraTermica.init(Barra.YELLOW,(barrasWidth*2)+80, 460);
-
+            
+            barraTermica.init(Barra.YELLOW, false, (barrasWidth*2)+80, 460, 360);
             barraTermica.barTitleText       = "FRIO / CALOR";
             barraHidratacion.barTitleText   = "Nivel de Hidratacion";
             barraVida.barTitleText          = "Nivel de Vida";
@@ -142,7 +165,7 @@ namespace AlumnoEjemplos.Game
         public void handleInput() {
             TgcD3dInput input = GuiController.Instance.D3dInput;
 
-            bool abierto = inv.abierto;
+            bool abierto = pj.getInventario().abierto;
             bool selected = false;
             if (!abierto) {
                 //if (GuiController.Instance.D3dInput.buttonUp(TgcViewer.Utils.Input.TgcD3dInput.MouseButtons.BUTTON_LEFT))
@@ -154,9 +177,9 @@ namespace AlumnoEjemplos.Game
                         pickingRay.updateRay();
 
                         //Testear Ray contra el AABB de todos los meshes
-                        foreach (TgcMesh box in meshes)
+                        foreach (GameObjectAbstract go in mapa.getCuadrante((int)currentCuadrantX,(int)currentCuadrantZ).getObjects())
                         {
-                            TgcBoundingBox aabb = box.BoundingBox;
+                            TgcBoundingBox aabb = go.getMesh().BoundingBox;
 
                             //Ejecutar test, si devuelve true se carga el punto de colision collisionPoint
                             selected = TgcCollisionUtils.intersectRayAABB(pickingRay.Ray, aabb, out collisionPoint);
@@ -167,8 +190,8 @@ namespace AlumnoEjemplos.Game
                                 distanciaObjeto = Vector3.LengthSq(p2 - p1); //Es mas eficiente porque evita la raiz cuadrada (pero te da el valor al cuadrado)
                                 if (distanciaObjeto < 16264)
                                 {
-                                    initbarraInteraccion();
-                                    selectedMesh = box;
+                                    initbarraInteraccion(go.delayUso,Barra.RED);
+                                    selectedGameObject = go;
                                     break;
                                 }
                                 else
@@ -177,15 +200,15 @@ namespace AlumnoEjemplos.Game
                                     {
                                         barraInteraccion.dispose();
                                         barraInteraccion = null;
-                                        selectedMesh = null;
+                                        selectedGameObject = null;
                                     }
                                 }
                             }
                         }
                     }else{
-                        if (selectedMesh!= null)
+                        if (selectedGameObject!= null)
                         {
-                            TgcBoundingBox aabb = selectedMesh.BoundingBox;
+                            TgcBoundingBox aabb = selectedGameObject.getMesh().BoundingBox;
                             //Ejecutar test, si devuelve true se carga el punto de colision collisionPoint
                             selected = TgcCollisionUtils.intersectRayAABB(pickingRay.Ray, aabb, out collisionPoint);
                             Vector3 p1 = camera.Position;
@@ -197,7 +220,7 @@ namespace AlumnoEjemplos.Game
                                 {
                                     barraInteraccion.dispose();
                                     barraInteraccion = null;
-                                    selectedMesh = null;
+                                    selectedGameObject = null;
                                 }
                             }
                         }
@@ -205,7 +228,7 @@ namespace AlumnoEjemplos.Game
                 }
                 if (GuiController.Instance.D3dInput.buttonUp(TgcViewer.Utils.Input.TgcD3dInput.MouseButtons.BUTTON_LEFT))
                 {
-                    selectedMesh = null;
+                    selectedGameObject = null;
                     if (barraInteraccion != null)
                     {
                         barraInteraccion.dispose();
@@ -218,46 +241,46 @@ namespace AlumnoEjemplos.Game
 
             if (input.keyPressed(Key.I))
             {
-                if (inv.abierto)
+                if (pj.getInventario().abierto)
                 {
-                    inv.cerrar();
+                    pj.getInventario().cerrar();
                 }
                 else
                 {
-                    inv.abrir();
+                    pj.getInventario().abrir();
                 }
             }
             if(abierto){
                 if (input.keyPressed(Key.LeftArrow) || input.keyPressed(Key.RightArrow))
                 {
-                    inv.invertirSeleccion();
+                    pj.getInventario().invertirSeleccion();
                 }
                 else if (input.keyPressed(Key.NumPad1) || input.keyPressed(Key.D1))
                 {
                     // TODO: desharcodear estos 3 agregar
-                    inv.agregar(objetos[0]);
+                    pj.getInventario().agregar(objetos[0]);
                 }
                 else if (input.keyPressed(Key.NumPad2) || input.keyPressed(Key.D2))
                 {
-                    inv.agregar(objetos[1]);
+                    pj.getInventario().agregar(objetos[1]);
                 }
                 else if (input.keyPressed(Key.NumPad3) || input.keyPressed(Key.D3))
                 {
-                    inv.agregar(objetos[2]);
+                    pj.getInventario().agregar(objetos[2]);
                 }
                 else if (input.keyPressed(Key.DownArrow))
                 {
-                    inv.siguienteItem();
+                    pj.getInventario().siguienteItem();
                 }
                 else if (input.keyPressed(Key.UpArrow))
                 {
-                    inv.anteriorItem();
+                    pj.getInventario().anteriorItem();
                 }
                 else if (input.keyPressed(Key.Return))
                 {
-                    if (!inv.esReceta)
+                    if (!pj.getInventario().esReceta)
                     {
-                        string consumido = inv.consumirActual();
+                        string consumido = pj.getInventario().consumirActual();
                         if(consumido == "Piedra Tallada"){
                             agregarPiedraTallada();
                         }
@@ -266,7 +289,7 @@ namespace AlumnoEjemplos.Game
                     }
                     else
                     {
-                        inv.fabricarActual();
+                        pj.getInventario().fabricarActual();
                     }
                 }
             }
@@ -283,16 +306,14 @@ namespace AlumnoEjemplos.Game
 
         public void agregarPiedraTallada()
         {
-            string initialMeshFile = GuiController.Instance.AlumnoEjemplosMediaDir + "ball-TgcScene.xml";
-            // string terrainHm = GuiController.Instance.AlumnoEjemplosMediaDir + "fps2\\" + "hm.jpg";
-            loadMesh(initialMeshFile);
+           //TODO
         }
 
 
 
 
         public void initInventario() {
-            inv = new Inventario();
+            
             objetos = new List<Objeto>();
             // TODO: Agregar objetos reales
             Objeto obj1 = new Objeto();
@@ -307,28 +328,22 @@ namespace AlumnoEjemplos.Game
             Receta rec1 = new Receta(obj3, 3);
             rec1.agregarIngrediente(obj2, 1);
             rec1.agregarIngrediente(obj1, 2);
-            inv.agregarReceta(rec1);
+            //.agregarReceta(rec1);
             Objeto casa = new Objeto();
             casa.nombre = "Casa";
             objetos.Add(casa);
             Receta rec2 = new Receta(casa, 1);
             rec2.agregarIngrediente(obj2, 10);
             rec2.agregarIngrediente(obj3, 50);
-            inv.agregarReceta(rec2);
+            //inv.agregarReceta(rec2);
             Objeto piedraTallada = new Objeto();
             piedraTallada.nombre = "Piedra Tallada";
             Receta rPiedra = new Receta(piedraTallada, 1);
             
             rPiedra.agregarIngrediente(obj1, 1);
-            inv.agregarReceta(rPiedra);
+            //inv.agregarReceta(rPiedra);
         }
-        public void disposeInventario()
-        {
-            inv.dispose();
-            foreach(Objeto obj in objetos){
-                obj.dispose();
-            }
-        }
+
         public void initCamera()
         {
             camera = new GameCamera(this);
@@ -359,7 +374,7 @@ namespace AlumnoEjemplos.Game
         {
             handleInput();
             
-            if (!inv.abierto)
+            if (!pj.getInventario().abierto)
             {
                 barraHidratacion.render(elapsedTime);
                 barraTermica.render(elapsedTime);
@@ -368,9 +383,10 @@ namespace AlumnoEjemplos.Game
             
             Microsoft.DirectX.Direct3D.Device d3dDevice = GuiController.Instance.D3dDevice;
             if (barraInteraccion != null) barraInteraccion.render(elapsedTime);
-            inv.render();
+            pj.getInventario().render();
             //box.render();
             text.render();
+            text2.render();
             skyBox.Center = camera.Position;
             skyBox.updateValues();
             skyBox.render();
@@ -385,119 +401,67 @@ namespace AlumnoEjemplos.Game
                     floorCords+= "\n["+i.ToString()+"/"+x.ToString()+"]"+floors[i][x].Position.X+floors[i][x].Position.Z;
                 }
             }
-            double currentCuadrantX = (Math.Floor(characterElipsoid.Position.X / width)-1);
-            double currentCuadrantZ = (Math.Floor(characterElipsoid.Position.Z / width)-1);
-            if (currentCuadrantX != prevCuadrantX)
+            currentCuadrantX = (Math.Floor(characterElipsoid.Position.X / width)-1);
+            currentCuadrantZ = (Math.Floor(characterElipsoid.Position.Z / width)-1);
+            if (currentCuadrantX != prevCuadrantX || currentCuadrantZ != prevCuadrantZ || firstRun)
             {
+                firstRun = false;
+
                 collisionManager.GravityEnabled = false;
-                
-                for (int z = 0; z < 3; z++)
-                {
-                    for (int x = 0; x < 3; x++)
-                    {
-                       TgcPlaneWall f = floors[z][x];
-                       float nx =   ((float)(width*(currentCuadrantX-prevCuadrantX)))+f.Position.X ;
-                        f.setExtremes(new Vector3(nx, 0, f.Position.Z), new Vector3(nx+width,0, f.Position.Z + width));
-                        f.updateValues();
-                    }
-                }
                 objetosColisionables.Clear();
-                for (int i = 0; i < 3; i++)
+                for (int x = 0; x < 3; x++)
                 {
-                    for (int x = 0; x < 3; x++)
+                    for (int z = 0; z < 3; z++)
                     {
-                        objetosColisionables.Add(BoundingBoxCollider.fromBoundingBox(floors[i][x].BoundingBox));
+                        TgcPlaneWall f = floors[x][z];
+                        float nx = ((float)(width * (currentCuadrantX - prevCuadrantX))) + f.Position.X;
+                        float nz = ((float)(width * (currentCuadrantZ - prevCuadrantZ))) + f.Position.Z;
+                        f.setExtremes(new Vector3(nx, 0, nz), new Vector3(nx + width, 0, nz + width));
+                        f.updateValues();
+                        objetosColisionables.Add(BoundingBoxCollider.fromBoundingBox(floors[x][z].BoundingBox));
+
+                        foreach (GameObjectAbstract go in mapa.getCuadrante((int)(currentCuadrantX + (x - 1)),((int) currentCuadrantZ + (z - 1))).getObjects())
+                        {
+                            TgcMesh mesh = go.getMesh();
+                            mesh.Position = new Vector3(go.getX() + nx, go.getY() + f.Position.Y, go.getZ() + nz);
+                            mesh.updateBoundingBox();
+                            if (x == 1 && z == 1)
+                            {
+                                objetosColisionables.Add(BoundingBoxCollider.fromBoundingBox(mesh.BoundingBox));
+                            }
+                        }
                     }
                 }
+
                 collisionManager.GravityEnabled = true;
                 prevCuadrantX = currentCuadrantX;
+                prevCuadrantZ = currentCuadrantZ;
 
             }
-            
-            if (currentCuadrantZ != prevCuadrantZ)
+            for (int x = 0; x < 3; x++)
             {
-                collisionManager.GravityEnabled = false;
                 for (int z = 0; z < 3; z++)
                 {
-                    for (int x = 0; x < 3; x++)
+                    foreach (GameObjectAbstract go in mapa.getCuadrante((int)(currentCuadrantX+(x-1)), ((int)currentCuadrantZ+z-1)).getObjects())
                     {
-                        TgcPlaneWall f = floors[z][x];
-                        float nz = ((float)(width * (currentCuadrantZ - prevCuadrantZ))) + f.Position.Z;
-                        f.setExtremes(new Vector3(f.Position.X,0, nz), new Vector3(f.Position.X+width, 0, nz + width));
-                        f.updateValues();
-                      
+                        TgcMesh mesh = go.getMesh();
+                        mesh.render();
                     }
                 }
-                objetosColisionables.Clear();
-                for (int i = 0; i < 3; i++)
-                {
-                    for (int x = 0; x < 3; x++)
-                    {
-                        objetosColisionables.Add(BoundingBoxCollider.fromBoundingBox(floors[i][x].BoundingBox));
-                    }
-                }
-                collisionManager.GravityEnabled = true;
-                prevCuadrantZ = currentCuadrantZ;
             }
-            foreach (TgcMesh mesh in meshes)
-            {
-                objetosColisionables.Add(BoundingBoxCollider.fromBoundingBox(mesh.BoundingBox));
-            }
-           
-           foreach(TgcScene scene in scenes){
-               scene.renderAll();
-               
-           }
            text.Text = floorCords + "\nCharacter: "+ characterElipsoid.Position.Z.ToString()+  " "  + characterElipsoid.Position.X.ToString() + "\n" + currentCuadrantZ.ToString() + " " + currentCuadrantX.ToString()+"\n"+characterElipsoid.Center.Y+" \n"+distanciaObjeto;
-           if (selectedMesh != null)
+           if (selectedGameObject != null)
            {
-               selectedMesh.BoundingBox.render();
                if (barraInteraccion != null && !barraInteraccion.isActive())
                {
                    barraInteraccion.dispose();
                    barraInteraccion = null;
-                   //getObjetoFrom(meshInteractuadoStringDelNombre).interactuar();
-                   meshes.Remove(selectedMesh);
-                   selectedMesh.dispose();
-                   selectedMesh = null;
-                   inv.agregar(objetos[0]);
+                   selectedGameObject.use();
                }
            }
            
         }
 
-        private void loadMesh(string path)
-        {
-            currentPath = path;
-
-            //Dispose de escena anterior
-            if (scenes == null)
-            {
-                scenes = new List<TgcScene>();
-            }
-            //Cargar escena con herramienta TgcSceneLoader
-            
-            
-            TgcScene scene = loader.loadSceneFromFile(path);
-            scenes.Add(scene);
-            foreach (TgcMesh mesh in scene.Meshes)
-            {
-               
-                mesh.Scale = new Vector3(2.5f,2.2f,2.2f);
-               
-                mesh.Position = new Vector3(5300, 1, 5300);
-                mesh.updateBoundingBox();
-                // meshes.Add(BoundingBoxCollider.fromBoundingBox(mesh.BoundingBox));
-              //  TriangleMeshCollider collider = (TriangleMeshCollider.fromMesh(mesh));
-              //  meshes.Add(BoundingBoxCollider.fromBoundingBox(mesh.BoundingBox));
-                meshes.Add(mesh);
-
-                //collider.BoundingSphere.Position = mesh.Position;
-//                meshes.Add(collider);
-                
-            }
-            
-        }
 
         public void userVars()
         {
@@ -544,6 +508,14 @@ namespace AlumnoEjemplos.Game
             text.Color = Color.Gold;
             text.Position = new Point(5, 20);
 
+            text2 = new TgcText2d();
+            text2.Text = "Texto del hud.";
+            text2.Align = TgcText2d.TextAlign.LEFT;
+            text2.Position = new Point(5, 20);
+            text2.Size = new Size(310, 100);
+            text2.Color = Color.Gold;
+            text2.Position = new Point(105, 20);
+
         }
 
 
@@ -589,7 +561,10 @@ namespace AlumnoEjemplos.Game
 
         public override void close()
         {
-            disposeInventario();
+            foreach (Objeto obj in objetos)
+            {
+                obj.dispose();
+            }
         }
     }
 }

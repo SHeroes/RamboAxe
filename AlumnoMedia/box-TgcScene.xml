@@ -1,0 +1,229 @@
+<tgcScene>
+	<name>box</name>
+	<texturesExport enabled='true' dir='Textures'/>
+	<lightmapExport enabled='false' dir='LightMaps'/>
+	<materials count='1'>
+	<m name='material' type='Multimaterial'>
+	<subM name='mat_0' type='Standardmaterial'>
+		<ambient>[51.0,51.0,51.0,255.0]</ambient>
+		<diffuse>[253,177,9,255]</diffuse>
+		<specular>[51.0,51.0,51.0,255.0]</specular>
+		<opacity>100.0</opacity>
+		<alphaBlendEnable>false</alphaBlendEnable>
+		<bitmap uvTiling='[1.0,1.0]' uvOffset='[0.0,0.0]'>clr253-177-9.bmp</bitmap>
+	</subM>
+	<subM name='mat_1' type='Standardmaterial'>
+		<ambient>[51.0,51.0,51.0,255.0]</ambient>
+		<diffuse>[255,255,255,255]</diffuse>
+		<specular>[51.0,51.0,51.0,255.0]</specular>
+		<opacity>100.0</opacity>
+		<alphaBlendEnable>false</alphaBlendEnable>
+		<bitmap uvTiling='[1.0,1.0]' uvOffset='[0.0,0.0]'>clr255-255-255.bmp</bitmap>
+	</subM>
+	<subM name='mat_2' type='Standardmaterial'>
+		<ambient>[51.0,51.0,51.0,255.0]</ambient>
+		<diffuse>[222,18,34,255]</diffuse>
+		<specular>[51.0,51.0,51.0,255.0]</specular>
+		<opacity>100.0</opacity>
+		<alphaBlendEnable>false</alphaBlendEnable>
+		<bitmap uvTiling='[1.0,1.0]' uvOffset='[0.0,0.0]'>clr222-18-34.bmp</bitmap>
+	</subM>
+	<subM name='mat_3' type='Standardmaterial'>
+		<ambient>[51.0,51.0,51.0,255.0]</ambient>
+		<diffuse>[195,158,128,255]</diffuse>
+		<specular>[51.0,51.0,51.0,255.0]</specular>
+		<opacity>100.0</opacity>
+		<alphaBlendEnable>false</alphaBlendEnable>
+		<bitmap uvTiling='[1.0,1.0]' uvOffset='[0.0,0.0]'>clr195-158-128.bmp</bitmap>
+	</subM>
+	<subM name='mat_4' type='Standardmaterial'>
+		<ambient>[51.0,51.0,51.0,255.0]</ambient>
+		<diffuse>[118,80,58,255]</diffuse>
+		<specular>[51.0,51.0,51.0,255.0]</specular>
+		<opacity>100.0</opacity>
+		<alphaBlendEnable>false</alphaBlendEnable>
+		<bitmap uvTiling='[1.0,1.0]' uvOffset='[0.0,0.0]'>clr118-80-58.bmp</bitmap>
+	</subM>
+	<subM name='mat_5' type='Standardmaterial'>
+		<ambient>[51.0,51.0,51.0,255.0]</ambient>
+		<diffuse>[195,195,195,255]</diffuse>
+		<specular>[51.0,51.0,51.0,255.0]</specular>
+		<opacity>100.0</opacity>
+		<alphaBlendEnable>false</alphaBlendEnable>
+		<bitmap uvTiling='[1.0,1.0]' uvOffset='[0.0,0.0]'>clr195-195-195.bmp</bitmap>
+	</subM>
+	<subM name='mat_6' type='Standardmaterial'>
+		<ambient>[51.0,51.0,51.0,255.0]</ambient>
+		<diffuse>[231,232,226,255]</diffuse>
+		<specular>[51.0,51.0,51.0,255.0]</specular>
+		<opacity>100.0</opacity>
+		<alphaBlendEnable>false</alphaBlendEnable>
+		<bitmap uvTiling='[1.0,1.0]' uvOffset='[0.0,0.0]'>clr231-232-226.bmp</bitmap>
+	</subM>
+	<subM name='mat_7' type='Standardmaterial'>
+		<ambient>[51.0,51.0,51.0,255.0]</ambient>
+		<diffuse>[202,203,198,255]</diffuse>
+		<specular>[51.0,51.0,51.0,255.0]</specular>
+		<opacity>100.0</opacity>
+		<alphaBlendEnable>false</alphaBlendEnable>
+		<bitmap uvTiling='[1.0,1.0]' uvOffset='[0.0,0.0]'>clr202-203-198.bmp</bitmap>
+	</subM>
+	<subM name='mat_8' type='Standardmaterial'>
+		<ambient>[51.0,51.0,51.0,255.0]</ambient>
+		<diffuse>[92,80,79,255]</diffuse>
+		<specular>[51.0,51.0,51.0,255.0]</specular>
+		<opacity>100.0</opacity>
+		<alphaBlendEnable>false</alphaBlendEnable>
+		<bitmap uvTiling='[1.0,1.0]' uvOffset='[0.0,0.0]'>clr92-80-79.bmp</bitmap>
+	</subM>
+	<subM name='mat_9' type='Standardmaterial'>
+		<ambient>[51.0,51.0,51.0,255.0]</ambient>
+		<diffuse>[158,117,83,255]</diffuse>
+		<specular>[51.0,51.0,51.0,255.0]</specular>
+		<opacity>100.0</opacity>
+		<alphaBlendEnable>false</alphaBlendEnable>
+		<bitmap uvTiling='[1.0,1.0]' uvOffset='[0.0,0.0]'>clr158-117-83.bmp</bitmap>
+	</subM>
+	<subM name='mat_10' type='Standardmaterial'>
+		<ambient>[51.0,51.0,51.0,255.0]</ambient>
+		<diffuse>[24,25,29,255]</diffuse>
+		<specular>[51.0,51.0,51.0,255.0]</specular>
+		<opacity>100.0</opacity>
+		<alphaBlendEnable>false</alphaBlendEnable>
+		<bitmap uvTiling='[1.0,1.0]' uvOffset='[0.0,0.0]'>clr24-25-29.bmp</bitmap>
+	</subM>
+	<subM name='mat_11' type='Standardmaterial'>
+		<ambient>[51.0,51.0,51.0,255.0]</ambient>
+		<diffuse>[61,93,38,255]</diffuse>
+		<specular>[51.0,51.0,51.0,255.0]</specular>
+		<opacity>100.0</opacity>
+		<alphaBlendEnable>false</alphaBlendEnable>
+		<bitmap uvTiling='[1.0,1.0]' uvOffset='[0.0,0.0]'>clr61-93-38.bmp</bitmap>
+	</subM>
+	<subM name='mat_12' type='Standardmaterial'>
+		<ambient>[51.0,51.0,51.0,255.0]</ambient>
+		<diffuse>[250,183,172,255]</diffuse>
+		<specular>[51.0,51.0,51.0,255.0]</specular>
+		<opacity>100.0</opacity>
+		<alphaBlendEnable>false</alphaBlendEnable>
+		<bitmap uvTiling='[1.0,1.0]' uvOffset='[0.0,0.0]'>clr250-183-172.bmp</bitmap>
+	</subM>
+	<subM name='mat_13' type='Standardmaterial'>
+		<ambient>[51.0,51.0,51.0,255.0]</ambient>
+		<diffuse>[3,45,115,255]</diffuse>
+		<specular>[51.0,51.0,51.0,255.0]</specular>
+		<opacity>100.0</opacity>
+		<alphaBlendEnable>false</alphaBlendEnable>
+		<bitmap uvTiling='[1.0,1.0]' uvOffset='[0.0,0.0]'>clr3-45-115.bmp</bitmap>
+	</subM>
+	<subM name='mat_14' type='Standardmaterial'>
+		<ambient>[51.0,51.0,51.0,255.0]</ambient>
+		<diffuse>[129,90,35,255]</diffuse>
+		<specular>[51.0,51.0,51.0,255.0]</specular>
+		<opacity>100.0</opacity>
+		<alphaBlendEnable>false</alphaBlendEnable>
+		<bitmap uvTiling='[1.0,1.0]' uvOffset='[0.0,0.0]'>clr129-90-35.bmp</bitmap>
+	</subM>
+	<subM name='mat_15' type='Standardmaterial'>
+		<ambient>[51.0,51.0,51.0,255.0]</ambient>
+		<diffuse>[205,196,185,255]</diffuse>
+		<specular>[51.0,51.0,51.0,255.0]</specular>
+		<opacity>100.0</opacity>
+		<alphaBlendEnable>false</alphaBlendEnable>
+		<bitmap uvTiling='[1.0,1.0]' uvOffset='[0.0,0.0]'>clr205-196-185.bmp</bitmap>
+	</subM>
+	<subM name='mat_16' type='Standardmaterial'>
+		<ambient>[51.0,51.0,51.0,255.0]</ambient>
+		<diffuse>[36,72,94,255]</diffuse>
+		<specular>[51.0,51.0,51.0,255.0]</specular>
+		<opacity>100.0</opacity>
+		<alphaBlendEnable>false</alphaBlendEnable>
+		<bitmap uvTiling='[1.0,1.0]' uvOffset='[0.0,0.0]'>clr36-72-94.bmp</bitmap>
+	</subM>
+	<subM name='mat_17' type='Standardmaterial'>
+		<ambient>[51.0,51.0,51.0,255.0]</ambient>
+		<diffuse>[60,64,70,255]</diffuse>
+		<specular>[51.0,51.0,51.0,255.0]</specular>
+		<opacity>100.0</opacity>
+		<alphaBlendEnable>false</alphaBlendEnable>
+		<bitmap uvTiling='[1.0,1.0]' uvOffset='[0.0,0.0]'>clr60-64-70.bmp</bitmap>
+	</subM>
+	<subM name='mat_18' type='Standardmaterial'>
+		<ambient>[51.0,51.0,51.0,255.0]</ambient>
+		<diffuse>[40,28,16,255]</diffuse>
+		<specular>[51.0,51.0,51.0,255.0]</specular>
+		<opacity>100.0</opacity>
+		<alphaBlendEnable>false</alphaBlendEnable>
+		<bitmap uvTiling='[1.0,1.0]' uvOffset='[0.0,0.0]'>clr40-28-16.bmp</bitmap>
+	</subM>
+	<subM name='mat_19' type='Standardmaterial'>
+		<ambient>[51.0,51.0,51.0,255.0]</ambient>
+		<diffuse>[40,39,53,255]</diffuse>
+		<specular>[51.0,51.0,51.0,255.0]</specular>
+		<opacity>100.0</opacity>
+		<alphaBlendEnable>false</alphaBlendEnable>
+		<bitmap uvTiling='[1.0,1.0]' uvOffset='[0.0,0.0]'>clr40-39-53.bmp</bitmap>
+	</subM>
+	<subM name='mat_20' type='Standardmaterial'>
+		<ambient>[51.0,51.0,51.0,255.0]</ambient>
+		<diffuse>[47,0,9,255]</diffuse>
+		<specular>[51.0,51.0,51.0,255.0]</specular>
+		<opacity>100.0</opacity>
+		<alphaBlendEnable>false</alphaBlendEnable>
+		<bitmap uvTiling='[1.0,1.0]' uvOffset='[0.0,0.0]'>clr47-0-9.bmp</bitmap>
+	</subM>
+	<subM name='mat_21' type='Standardmaterial'>
+		<ambient>[51.0,51.0,51.0,255.0]</ambient>
+		<diffuse>[103,0,10,255]</diffuse>
+		<specular>[51.0,51.0,51.0,255.0]</specular>
+		<opacity>100.0</opacity>
+		<alphaBlendEnable>false</alphaBlendEnable>
+		<bitmap uvTiling='[1.0,1.0]' uvOffset='[0.0,0.0]'>clr103-0-10.bmp</bitmap>
+	</subM>
+	<subM name='mat_22' type='Standardmaterial'>
+		<ambient>[51.0,51.0,51.0,255.0]</ambient>
+		<diffuse>[193,182,119,255]</diffuse>
+		<specular>[51.0,51.0,51.0,255.0]</specular>
+		<opacity>100.0</opacity>
+		<alphaBlendEnable>false</alphaBlendEnable>
+		<bitmap uvTiling='[1.0,1.0]' uvOffset='[0.0,0.0]'>clr193-182-119.bmp</bitmap>
+	</subM>
+	<subM name='mat_23' type='Standardmaterial'>
+		<ambient>[51.0,51.0,51.0,255.0]</ambient>
+		<diffuse>[255,255,255,255]</diffuse>
+		<specular>[51.0,51.0,51.0,255.0]</specular>
+		<opacity>100.0</opacity>
+		<alphaBlendEnable>false</alphaBlendEnable>
+		<bitmap uvTiling='[1.0,1.0]' uvOffset='[0.0,0.0]'>Fencing Lattice Natural.jpg</bitmap>
+	</subM>
+	<subM name='mat_24' type='Standardmaterial'>
+		<ambient>[51.0,51.0,51.0,255.0]</ambient>
+		<diffuse>[255,255,255,255]</diffuse>
+		<specular>[51.0,51.0,51.0,255.0]</specular>
+		<opacity>100.0</opacity>
+		<alphaBlendEnable>false</alphaBlendEnable>
+		<bitmap uvTiling='[1.0,1.0]' uvOffset='[0.0,0.0]'>Concrete Stamped Ashlar.jpg</bitmap>
+	</subM>
+	<subM name='mat_25' type='Standardmaterial'>
+		<ambient>[51.0,51.0,51.0,255.0]</ambient>
+		<diffuse>[255,255,255,255]</diffuse>
+		<specular>[51.0,51.0,51.0,255.0]</specular>
+		<opacity>100.0</opacity>
+		<alphaBlendEnable>false</alphaBlendEnable>
+		<bitmap uvTiling='[1.0,1.0]' uvOffset='[0.0,0.0]'>Groundcover Gravel 1 inch.jpg</bitmap>
+	</subM>
+	</m>
+	</materials>
+<meshes count='1' >
+<mesh name='box' layer='0' type='Original' matId='0' color='[134.0,6.0,6.0]' visibility='1.0' lightmap=''>
+<coordinatesIdx count='36'>0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 </coordinatesIdx>
+<vertices count='108'>90.45937 0.00000 0.00000 0.00000 0.00000 0.00000 0.00000 0.00000 100.00000 0.00000 0.00000 100.00000 90.45937 0.00000 100.00000 90.45937 0.00000 0.00000 90.45937 108.83392 100.00000 0.00000 108.83392 100.00000 0.00000 108.83392 0.00000 0.00000 108.83392 0.00000 90.45937 108.83392 0.00000 90.45937 108.83392 100.00000 0.00000 108.83392 0.00000 0.00000 0.00000 0.00000 90.45937 0.00000 0.00000 90.45937 0.00000 0.00000 90.45937 108.83392 0.00000 0.00000 108.83392 0.00000 90.45937 0.00000 0.00000 90.45937 0.00000 100.00000 90.45937 108.83392 100.00000 90.45937 108.83392 100.00000 90.45937 108.83392 0.00000 90.45937 0.00000 0.00000 90.45937 108.83392 100.00000 90.45937 0.00000 100.00000 0.00000 0.00000 100.00000 0.00000 0.00000 100.00000 0.00000 108.83392 100.00000 90.45937 108.83392 100.00000 0.00000 108.83392 0.00000 0.00000 108.83392 100.00000 0.00000 0.00000 100.00000 0.00000 0.00000 100.00000 0.00000 0.00000 0.00000 0.00000 108.83392 0.00000 </vertices>
+<normals count='108'>0.00000 -1.00000 -0.00000 0.00000 -1.00000 -0.00000 0.00000 -1.00000 -0.00000 0.00000 -1.00000 -0.00000 0.00000 -1.00000 -0.00000 0.00000 -1.00000 -0.00000 0.00000 1.00000 -0.00000 0.00000 1.00000 -0.00000 0.00000 1.00000 -0.00000 0.00000 1.00000 -0.00000 0.00000 1.00000 -0.00000 0.00000 1.00000 -0.00000 0.00000 0.00000 -1.00000 0.00000 0.00000 -1.00000 0.00000 0.00000 -1.00000 0.00000 0.00000 -1.00000 0.00000 0.00000 -1.00000 0.00000 0.00000 -1.00000 1.00000 0.00000 -0.00000 1.00000 0.00000 -0.00000 1.00000 0.00000 -0.00000 1.00000 0.00000 -0.00000 1.00000 0.00000 -0.00000 1.00000 0.00000 -0.00000 0.00000 0.00000 1.00000 0.00000 0.00000 1.00000 0.00000 0.00000 1.00000 0.00000 0.00000 1.00000 0.00000 0.00000 1.00000 0.00000 0.00000 1.00000 -1.00000 0.00000 -0.00000 -1.00000 0.00000 -0.00000 -1.00000 0.00000 -0.00000 -1.00000 0.00000 -0.00000 -1.00000 0.00000 -0.00000 -1.00000 0.00000 -0.00000 </normals>
+<textCoordsIdx count='36'>0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 </textCoordsIdx>
+<texCoords count='72'>-149.43323 -157.97617 -48.64582 -157.97617 -48.64582 -46.55884 -48.64582 -46.55884 -149.43323 -46.55884 -149.43323 -157.97617 8.30185 -1.64216 2.70255 -1.64216 2.70255 -7.83201 2.70255 -7.83201 8.30185 -7.83201 8.30185 -1.64216 -2.70255 -5.73666 -2.70255 1.00000 -8.30185 1.00000 -8.30185 1.00000 -8.30185 -5.73666 -2.70255 -5.73666 39.74404 1.00000 11.88971 1.00000 11.88971 -29.31496 11.88971 -29.31496 39.74404 -29.31496 39.74404 1.00000 37.35831 -29.31496 37.35831 1.00000 12.16146 1.00000 12.16146 1.00000 12.16146 -29.31496 37.35831 -29.31496 -8.83201 -5.73666 -2.64216 -5.73666 -2.64216 1.00000 -2.64216 1.00000 -8.83201 1.00000 -8.83201 -5.73666 </texCoords>
+<matIds count='12'>0 0 25 25 25 25 23 23 23 23 25 25 </matIds>
+<colorsIdx count='36'>0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 </colorsIdx>
+<colors count='3'>255 255 255 </colors>
+	</mesh>
+</meshes>
+</tgcScene>
