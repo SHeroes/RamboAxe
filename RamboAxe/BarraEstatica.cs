@@ -9,7 +9,7 @@ using TgcViewer.Utils.TgcGeometry;
 using TgcViewer.Utils.TgcSceneLoader;
 using System.Drawing;
 
-namespace AlumnoEjemplos.Game
+namespace AlumnoEjemplos.RamboAxe
 {
     class BarraEstatica
     {
@@ -49,10 +49,10 @@ namespace AlumnoEjemplos.Game
                 case 3: colorPath = "violetBar.png"; break;
                 default: colorPath = "redBar.png"; break;
             }
-            barEmpty.Texture = TgcTexture.createTexture(GuiController.Instance.AlumnoEjemplosMediaDir + "\\survivalBars\\BarEmpty.png");
+            barEmpty.Texture = TgcTexture.createTexture(GuiController.Instance.AlumnoEjemplosMediaDir + "RamboAxe\\BarEmpty.png");
             barEmpty.Position = new Vector2(barraVaciaPosX, barraVaciaPosY);
             barEmpty.Scaling = new Vector2(barraVaciaAnchoScaling, barraVaciaAlturaScaling);
-            barColor.Texture = TgcTexture.createTexture(GuiController.Instance.AlumnoEjemplosMediaDir + "\\survivalBars\\" + colorPath);
+            barColor.Texture = TgcTexture.createTexture(GuiController.Instance.AlumnoEjemplosMediaDir + "RamboAxe\\" + colorPath);
             barColor.Position = new Vector2(barraPosX, barraPosY);
             barColor.Scaling = new Vector2(barraAnchoCompleto, barraAlto);
 

@@ -20,27 +20,13 @@ using AlumnoEjemplos.RamboAxe.GameObjects;
 using AlumnoEjemplos.RamboAxe.Player;
 namespace AlumnoEjemplos.RamboAxe
 {
-    /// <summary>
-    /// Ejemplo EjemploMeshLoader:
-    /// Unidades Involucradas:
-    ///     # Unidad 3 - Conceptos Básicos de 3D - Mesh
-    /// 
-    /// Permite cargar una malla estática de formato TGC desde el FileSystem.
-    /// Utiliza la herramienta TgcMeshLoader.
-    /// Esta herramienta crea un objeto TgcScene, compuesto a su vez por N TgcMesh
-    /// Cada uno representa una malla estática.
-    /// La escena es cargada desde un archivo XML de formato TGC
-    /// 
-    /// Autor: Matías Leone, Leandro Barbagallo
-    /// 
-    /// </summary>
-    public class Game : TgcExample
+    public class EjemploAlumno : TgcExample
     {
         Barra barraInteraccion; Barra barraVida; BarraEstatica barraTermica;
         Barra barraHidratacion;
         float distanciaObjeto = 0;
         TgcPickingRay pickingRay;
-        static Game game;
+        static EjemploAlumno game;
         Vector3 collisionPoint;
         GameObjectAbstract selectedGameObject;
         List<Objeto> objetos;
@@ -49,7 +35,7 @@ namespace AlumnoEjemplos.RamboAxe
         bool firstRun = true;
 
         MapaDelJuego mapa;
-        public static Game getInstance()
+        public static EjemploAlumno getInstance()
         {
             return game;
         }
@@ -97,12 +83,12 @@ namespace AlumnoEjemplos.RamboAxe
         
         public override void init()
         {
-            Game.game = this;
+            EjemploAlumno.game = this;
             Microsoft.DirectX.Direct3D.Device d3dDevice = GuiController.Instance.D3dDevice;
             //Iniciarlizar PickingRay
             pickingRay = new TgcPickingRay();
-            TgcTexture texture = TgcTexture.createTexture(d3dDevice, GuiController.Instance.AlumnoEjemplosMediaDir + "" + "tile_1.png");
-           // string terrainHm = GuiController.Instance.AlumnoEjemplosMediaDir + "fps2\\" + "hm.jpg";
+            TgcTexture texture = TgcTexture.createTexture(d3dDevice, GuiController.Instance.AlumnoEjemplosMediaDir + "RamboAxe\\" + "tile_1.png");
+           // string terrainHm = GuiController.Instance.AlumnoEjemplosMediaDir + "RamboAxe\\" + "fps2\\" + "hm.jpg";
 
             
             ground = new TgcPlaneWall(new Vector3(0,0,0),new Vector3(width,0,height),TgcPlaneWall.Orientations.XZplane,texture);
@@ -155,8 +141,9 @@ namespace AlumnoEjemplos.RamboAxe
             barraTermica = new BarraEstatica();
             barraVida.init(Barra.RED, false, 80, 460, 360);
             barraHidratacion.init(Barra.VIOLET, false, (barrasWidth)+80, 460, 180);
-            
-            barraTermica.init(Barra.YELLOW, false, (barrasWidth*2)+80, 460, 360);
+
+            barraTermica.init(Barra.YELLOW, (barrasWidth * 2) + 80, 460, - 40, 80);
+
             barraTermica.barTitleText       = "FRIO / CALOR";
             barraHidratacion.barTitleText   = "Nivel de Hidratacion";
             barraVida.barTitleText          = "Nivel de Vida";
