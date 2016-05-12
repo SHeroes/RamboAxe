@@ -37,6 +37,8 @@ namespace AlumnoEjemplos.RamboAxe.GameObjects
                  mesh.updateBoundingBox();
                  gameMeshes.Add(mesh);
              }
+            //TODO Esto se debe poder hacer mejor
+
              meshFile = TgcViewer.GuiController.Instance.AlumnoEjemplosMediaDir + "metal-TgcScene.xml";
              scene = loader.loadSceneFromFile(meshFile);
              foreach (TgcMesh mesh in scene.Meshes)
@@ -45,6 +47,12 @@ namespace AlumnoEjemplos.RamboAxe.GameObjects
                  mesh.updateBoundingBox();
                  gameMeshes.Add(mesh);
              }
+             //TODO 
+
+
+
+            //DESDE ACÁ
+            //Esto se puede copiar y pegar con otro xml para tener mas objetos que crear en el cuadrante.
              meshFile = TgcViewer.GuiController.Instance.AlumnoEjemplosMediaDir + "ball-TgcScene.xml";
              scene = loader.loadSceneFromFile(meshFile);
              foreach (TgcMesh mesh in scene.Meshes)
@@ -53,6 +61,8 @@ namespace AlumnoEjemplos.RamboAxe.GameObjects
                  mesh.updateBoundingBox();
                  gameMeshes.Add(mesh);
              }
+            //Hasta ACA
+
         }
         public static TgcMesh getGameMesh(int number)
         {
