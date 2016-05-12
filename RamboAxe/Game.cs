@@ -18,7 +18,7 @@ using Microsoft.DirectX.DirectInput;
 using AlumnoEjemplos.RamboAxe;
 using AlumnoEjemplos.RamboAxe.GameObjects;
 using AlumnoEjemplos.RamboAxe.Player;
-namespace AlumnoEjemplos.Game
+namespace AlumnoEjemplos.RamboAxe
 {
     /// <summary>
     /// Ejemplo EjemploMeshLoader:
@@ -93,7 +93,7 @@ namespace AlumnoEjemplos.Game
         float height = 2000;
 
         
-        TgcPlaneWall[][] floors = new TgcPlaneWall [9][];
+        TgcPlaneWall[][] floors = new TgcPlaneWall [3][];
         
         public override void init()
         {
@@ -101,7 +101,7 @@ namespace AlumnoEjemplos.Game
             Microsoft.DirectX.Direct3D.Device d3dDevice = GuiController.Instance.D3dDevice;
             //Iniciarlizar PickingRay
             pickingRay = new TgcPickingRay();
-            TgcTexture texture = TgcTexture.createTexture(d3dDevice, GuiController.Instance.AlumnoEjemplosMediaDir + "" + "cuadrante.png");
+            TgcTexture texture = TgcTexture.createTexture(d3dDevice, GuiController.Instance.AlumnoEjemplosMediaDir + "" + "tile_1.png");
            // string terrainHm = GuiController.Instance.AlumnoEjemplosMediaDir + "fps2\\" + "hm.jpg";
 
             
@@ -126,7 +126,7 @@ namespace AlumnoEjemplos.Game
             d3dInput = GuiController.Instance.D3dInput;
 
 
-            characterElipsoid = new TgcElipsoid(new Vector3(0, 100, 0), new Vector3(12, 48, 12));
+            characterElipsoid = new TgcElipsoid(new Vector3(0, 250, 0), new Vector3(12, 48, 12));
             this.initMapa();
             this.initInventario();
             this.initCollisions();
@@ -454,12 +454,6 @@ namespace AlumnoEjemplos.Game
                    barraInteraccion.dispose();
                    barraInteraccion = null;
                    selectedGameObject.use();
-                   //getObjetoFrom(meshInteractuadoStringDelNombre).interactuar();
-               //    mapa.getCuadrante((int)currentCuadrantX,(int)currentCuadrantZ).removeMesh(selectedMesh);
-                 //  selectedMesh.dispose();
-                  // selectedMesh = null;
-                   //TODO FINALIZAR
-
                }
            }
            

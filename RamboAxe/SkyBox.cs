@@ -8,7 +8,7 @@ using TgcViewer.Utils;
 using TgcViewer.Utils.TgcSceneLoader;
 using System.Drawing;
 
-namespace AlumnoEjemplos.Game
+namespace AlumnoEjemplos.RamboAxe
 {
     /// <summary>
     /// Herramienta para crear un SkyBox conformado por un cubo de 6 caras, cada cada con su

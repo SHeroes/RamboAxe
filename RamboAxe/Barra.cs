@@ -8,7 +8,7 @@ using TgcViewer.Utils._2D;
 using TgcViewer.Utils.TgcGeometry;
 using TgcViewer.Utils.TgcSceneLoader;
 
-namespace AlumnoEjemplos.Game
+namespace AlumnoEjemplos.RamboAxe
 {
     public class Barra
     {
@@ -61,7 +61,7 @@ namespace AlumnoEjemplos.Game
             float barraAlto = (float)0.28;
             float barraPosX = barraVaciaPosX + (float)19;
             float barraPosY = barraVaciaPosY + (float)3.5;
-            float barrasWidth = 280;
+            //float barrasWidth = 280;
             barraAnchoCompleto = (float)0.23;
             switch (color)
             {

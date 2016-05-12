@@ -108,6 +108,7 @@
     <Compile Include="RamboAxe\Game.cs" />
     <Compile Include="RamboAxe\GameCamera.cs" />
     <Compile Include="RamboAxe\GameObjects\Cuadrante.cs" />
+    <Compile Include="RamboAxe\GameObjects\Obstaculo.cs" />
     <Compile Include="RamboAxe\GameObjects\Racion.cs" />
     <Compile Include="RamboAxe\GameObjects\Dispencer.cs" />
     <Compile Include="RamboAxe\GameObjects\GameObjectAbstract.cs" />

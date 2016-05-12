@@ -10,7 +10,7 @@ using TgcViewer;
 using TgcViewer.Utils.TgcSceneLoader;
 using System.Windows.Forms;
 using System.Drawing;
-namespace AlumnoEjemplos.Game
+namespace AlumnoEjemplos.RamboAxe
 {
     /// <summary>
     /// Copypaste de TgcFPSCamera con algunas modificaciones para que se adapte a la altura del terreno.

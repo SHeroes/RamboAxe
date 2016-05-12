@@ -16,21 +16,36 @@ namespace AlumnoEjemplos.RamboAxe.GameObjects
         static List<TgcMesh> gameMeshes=new List<TgcMesh>();
         public MapaDelJuego(int _widthCuadrante,int _heightCuadrante){
              cuadrantes = new Dictionary<String,Dictionary<String,Cuadrante>>();
-             string initialMeshFile = TgcViewer.GuiController.Instance.AlumnoEjemplosMediaDir + "ball-TgcScene.xml";
              
              this.widthCuadrante = _widthCuadrante;
              this.heightCuadrante = _heightCuadrante;
-             string meshFile = TgcViewer.GuiController.Instance.AlumnoEjemplosMediaDir + "ball-TgcScene.xml";
+             string meshFile = TgcViewer.GuiController.Instance.AlumnoEjemplosMediaDir + "Group_237-TgcScene.xml";
              //Dispose de escena anterior
              //Cargar escena con herramienta TgcSceneLoader
              TgcScene scene = loader.loadSceneFromFile(meshFile);
+             foreach (TgcMesh mesh in scene.Meshes)
+             {
+                 mesh.Scale = new Vector3(0.3f, 0.3f, 0.3f);
+                 mesh.updateBoundingBox();
+                 gameMeshes.Add(mesh);
+             }
+             meshFile = TgcViewer.GuiController.Instance.AlumnoEjemplosMediaDir + "Energy-TgcScene.xml";
+             scene = loader.loadSceneFromFile(meshFile);
+             foreach (TgcMesh mesh in scene.Meshes)
+             {
+                 mesh.Scale = new Vector3(0.3f, 0.3f, 0.3f);
+                 mesh.updateBoundingBox();
+                 gameMeshes.Add(mesh);
+             }
+             meshFile = TgcViewer.GuiController.Instance.AlumnoEjemplosMediaDir + "metal-TgcScene.xml";
+             scene = loader.loadSceneFromFile(meshFile);
              foreach (TgcMesh mesh in scene.Meshes)
              {
                  mesh.Scale = new Vector3(2.0f, 2.0f, 2.0f);
                  mesh.updateBoundingBox();
                  gameMeshes.Add(mesh);
              }
-             meshFile = TgcViewer.GuiController.Instance.AlumnoEjemplosMediaDir + "box-TgcScene.xml";
+             meshFile = TgcViewer.GuiController.Instance.AlumnoEjemplosMediaDir + "ball-TgcScene.xml";
              scene = loader.loadSceneFromFile(meshFile);
              foreach (TgcMesh mesh in scene.Meshes)
              {

@@ -13,19 +13,24 @@ namespace AlumnoEjemplos.RamboAxe.GameObjects
         float uses = 2;
         public Dispencer(TgcMesh mesh,int x, int y,int z):base(mesh,x,y,z)
         {
-            
+            delayUso = 3f;   
         }
          public  override InteractuableResponse use()
         {
-            Objeto obj1 = new Objeto();
-            obj1.nombre = "Agua";
-            if (uses > 0)
+          //  Objeto obj1 = new Objeto();
+          //  obj1.nombre = "Agua";
+            uses--;
+            if (uses >= 0)
             {
-                base.getMesh().Scale = new Vector3(--uses, uses, uses);
-                base.getMesh().Position = new Vector3(base.getMesh().Position.X, 50, base.getMesh().Position.Z);
-                base.getMesh().updateBoundingBox();
-                CharacterSheet.getInstance().getInventario().agregar(obj1);
-                Game.Game.getInstance().getBarraHidratacion().agregarPorcentajeABarra(0.2f);
+//                base.getMesh().Scale = new Vector3((float)(uses * 0.), (float)(uses * 0.5), (float)(uses * 0.5));
+               // base.getMesh().Position = new Vector3(getMesh().Position.X, 0, getMesh().Position.Z);
+               // base.getMesh().updateBoundingBox();
+                //haracterSheet.getInstance().getInventario().agregar(obj1);
+                Game.getInstance().getBarraHidratacion().agregarPorcentajeABarra(0.2f);
+                if (uses == 0)
+                {
+                    getMesh().Scale = new Vector3(0f, 0f, 0f);
+                }
             }
             return null;
         }
