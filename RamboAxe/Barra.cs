@@ -10,7 +10,7 @@ using TgcViewer.Utils.TgcSceneLoader;
 
 namespace AlumnoEjemplos.Game
 {
-    class Barra
+    public class Barra
     {
         TgcSprite barEmpty;
         TgcSprite barColor;

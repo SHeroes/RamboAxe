@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace AlumnoEjemplos.RamboAxe.GameObjects
+namespace AlumnoEjemplos.RamboAxe.Player
 {
-    class Dispenser
+    class ObjetoInventario
     {
     }
 }

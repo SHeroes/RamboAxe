@@ -26,7 +26,15 @@ namespace AlumnoEjemplos.RamboAxe.GameObjects
              TgcScene scene = loader.loadSceneFromFile(meshFile);
              foreach (TgcMesh mesh in scene.Meshes)
              {
-                 mesh.Scale = new Vector3(2.5f, 2.2f, 2.2f);
+                 mesh.Scale = new Vector3(2.0f, 2.0f, 2.0f);
+                 mesh.updateBoundingBox();
+                 gameMeshes.Add(mesh);
+             }
+             meshFile = TgcViewer.GuiController.Instance.AlumnoEjemplosMediaDir + "box-TgcScene.xml";
+             scene = loader.loadSceneFromFile(meshFile);
+             foreach (TgcMesh mesh in scene.Meshes)
+             {
+                 mesh.Scale = new Vector3(2.0f, 2.0f, 2.0f);
                  mesh.updateBoundingBox();
                  gameMeshes.Add(mesh);
              }

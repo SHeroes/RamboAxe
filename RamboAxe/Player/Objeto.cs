@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace AlumnoEjemplos.Game
+namespace AlumnoEjemplos.RamboAxe.Player
 {
     public class Objeto
     {
