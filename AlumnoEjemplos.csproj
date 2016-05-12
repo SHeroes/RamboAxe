@@ -105,7 +105,8 @@
     <Compile Include="MiGrupo\EjemploAlumno.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RamboAxe\Barra.cs" />
-    <Compile Include="RamboAxe\Game.cs" />
+    <Compile Include="RamboAxe\BarraEstatica.cs" />
+    <Compile Include="RamboAxe\EjemploAlumno.cs" />
     <Compile Include="RamboAxe\GameCamera.cs" />
     <Compile Include="RamboAxe\GameObjects\Cuadrante.cs" />
     <Compile Include="RamboAxe\GameObjects\Obstaculo.cs" />

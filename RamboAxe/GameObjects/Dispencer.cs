@@ -26,7 +26,7 @@ namespace AlumnoEjemplos.RamboAxe.GameObjects
                // base.getMesh().Position = new Vector3(getMesh().Position.X, 0, getMesh().Position.Z);
                // base.getMesh().updateBoundingBox();
                 //haracterSheet.getInstance().getInventario().agregar(obj1);
-                Game.getInstance().getBarraHidratacion().agregarPorcentajeABarra(0.2f);
+                EjemploAlumno.getInstance().getBarraHidratacion().agregarPorcentajeABarra(0.2f);
                 if (uses == 0)
                 {
                     getMesh().Scale = new Vector3(0f, 0f, 0f);
