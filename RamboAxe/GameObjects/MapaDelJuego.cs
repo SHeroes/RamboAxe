@@ -18,7 +18,7 @@ namespace AlumnoEjemplos.RamboAxe.GameObjects
              cuadrantes = new Dictionary<String,Dictionary<String,Cuadrante>>();
              
              this.widthCuadrante = _widthCuadrante;
-             this.heightCuadrante = _heightCuadrante;
+             this.heightCuadrante = _heightCuadrante;//Group_237
              string meshFile = TgcViewer.GuiController.Instance.AlumnoEjemplosDir + "RamboAxe\\Media\\Group_237-TgcScene.xml";
              //Dispose de escena anterior
              //Cargar escena con herramienta TgcSceneLoader
@@ -46,6 +46,15 @@ namespace AlumnoEjemplos.RamboAxe.GameObjects
                  gameMeshes.Add(mesh);
              }
              meshFile = TgcViewer.GuiController.Instance.AlumnoEjemplosDir + "RamboAxe\\Media\\ball-TgcScene.xml";
+             scene = loader.loadSceneFromFile(meshFile);
+             foreach (TgcMesh mesh in scene.Meshes)
+             {
+                 mesh.Scale = new Vector3(2.0f, 2.0f, 2.0f);
+                 mesh.updateBoundingBox();
+                 gameMeshes.Add(mesh);
+             }
+
+             meshFile = TgcViewer.GuiController.Instance.AlumnoEjemplosDir + "RamboAxe\\Media\\bol-TgcScene.xml";
              scene = loader.loadSceneFromFile(meshFile);
              foreach (TgcMesh mesh in scene.Meshes)
              {

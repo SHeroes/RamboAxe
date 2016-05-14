@@ -235,6 +235,7 @@ namespace AlumnoEjemplos.RamboAxe
                 else
                 {
                     pj.getInventario().abrir();
+                    pj.getInventario().siguienteItem();
                 }
             }
             if(abierto){
@@ -268,11 +269,12 @@ namespace AlumnoEjemplos.RamboAxe
                     if (!pj.getInventario().esReceta)
                     {
                         string consumido = pj.getInventario().consumirActual();
-                        if(consumido == "Piedra Tallada"){
-                            agregarPiedraTallada();
+                        if(consumido == "Racion"){
+                           barraVida.agregarPorcentajeABarra(0.1f);
                         }
                         // TODO: hacer algo al consumir
-                        Console.WriteLine("Item consumido: {0}", consumido);
+                       // Console.WriteLine("Item consumido: {0}", consumido);
+                       // GuiController.Instance.Logger.log
                     }
                     else
                     {
@@ -316,6 +318,7 @@ namespace AlumnoEjemplos.RamboAxe
             rec1.agregarIngrediente(obj2, 1);
             rec1.agregarIngrediente(obj1, 2);
             //.agregarReceta(rec1);
+            
             Objeto casa = new Objeto();
             casa.nombre = "Casa";
             objetos.Add(casa);
@@ -328,7 +331,11 @@ namespace AlumnoEjemplos.RamboAxe
             Receta rPiedra = new Receta(piedraTallada, 1);
             
             rPiedra.agregarIngrediente(obj1, 1);
-            //inv.agregarReceta(rPiedra);
+            pj.getInventario().agregar(obj1);
+            pj.getInventario().agregar(obj2);
+            pj.getInventario().agregar(obj3);
+            pj.getInventario().agregar(obj3);
+            pj.getInventario().agregarReceta(rec2);
         }
 
         public void initCamera()
