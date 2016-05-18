@@ -19,7 +19,7 @@ namespace AlumnoEjemplos.RamboAxe.GameObjects
              
              this.widthCuadrante = _widthCuadrante;
              this.heightCuadrante = _heightCuadrante;
-             string meshFile = TgcViewer.GuiController.Instance.AlumnoEjemplosMediaDir + "RamboAxe\\Group_237-TgcScene.xml";
+             string meshFile = TgcViewer.GuiController.Instance.AlumnoEjemplosDir + "RamboAxe\\media\\Group_237-TgcScene.xml";
              //Dispose de escena anterior
              //Cargar escena con herramienta TgcSceneLoader
              TgcScene scene = loader.loadSceneFromFile(meshFile);

@@ -104,23 +104,58 @@
     <Compile Include="LucasTest\ZonaArboles.cs" />
     <Compile Include="MiGrupo\EjemploAlumno.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RamboAxe\Barra.cs" />
-    <Compile Include="RamboAxe\BarraEstatica.cs" />
-    <Compile Include="RamboAxe\EjemploAlumno.cs" />
-    <Compile Include="RamboAxe\GameCamera.cs" />
-    <Compile Include="RamboAxe\GameObjects\Cuadrante.cs" />
-    <Compile Include="RamboAxe\GameObjects\Obstaculo.cs" />
-    <Compile Include="RamboAxe\GameObjects\Racion.cs" />
-    <Compile Include="RamboAxe\GameObjects\Dispencer.cs" />
-    <Compile Include="RamboAxe\GameObjects\GameObjectAbstract.cs" />
-    <Compile Include="RamboAxe\GameObjects\InteractuableResponse.cs" />
-    <Compile Include="RamboAxe\GameObjects\MapaDelJuego.cs" />
-    <Compile Include="RamboAxe\Player\Inventario.cs" />
-    <Compile Include="RamboAxe\Player\Objeto.cs" />
-    <Compile Include="RamboAxe\Player\CharacterSheet.cs" />
-    <Compile Include="RamboAxe\Player\ObjetoInventario.cs" />
-    <Compile Include="RamboAxe\Player\Receta.cs" />
-    <Compile Include="RamboAxe\SkyBox.cs" />
+    <Compile Include="RamboAxe\Barra.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="RamboAxe\BarraEstatica.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="RamboAxe\ControlTermico.cs" />
+    <Compile Include="RamboAxe\EjemploAlumno.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="RamboAxe\GameCamera.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="RamboAxe\GameObjects\Cuadrante.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="RamboAxe\GameObjects\Dispencer.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="RamboAxe\GameObjects\GameObjectAbstract.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="RamboAxe\GameObjects\InteractuableResponse.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="RamboAxe\GameObjects\MapaDelJuego.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="RamboAxe\GameObjects\Obstaculo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="RamboAxe\GameObjects\Racion.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="RamboAxe\Player\CharacterSheet.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="RamboAxe\Player\Inventario.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="RamboAxe\Player\Objeto.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="RamboAxe\Player\ObjetoInventario.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="RamboAxe\Player\Receta.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="RamboAxe\SkyBox.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="SurvivalBars\Barra.cs" />
     <Compile Include="SurvivalBars\BarraExampleTest.cs" />
     <Compile Include="SurvivalBars\SurvivalBarsExample.cs" />
