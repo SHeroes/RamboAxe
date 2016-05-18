@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using TgcViewer.Utils.TgcSceneLoader;
+using AlumnoEjemplos.RamboAxe.Inventario;
 
 namespace AlumnoEjemplos.RamboAxe.GameObjects
 {
@@ -27,7 +28,7 @@ namespace AlumnoEjemplos.RamboAxe.GameObjects
                 Objeto obj1 = new Objeto();
                 obj1.nombre = "Ramita";
 
-                CharacterSheet.getInstance().getInventario().agregar(obj1);
+                CharacterSheet.getInstance().getInventario().agregar(ObjetosInventarioManager.RAMITA);
     
                 if (uses == 0)
                 {

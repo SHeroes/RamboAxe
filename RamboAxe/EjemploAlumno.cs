@@ -22,7 +22,7 @@ namespace AlumnoEjemplos.RamboAxe
 {
     public class EjemploAlumno : TgcExample
     {
-        Barra barraInteraccion; Barra barraVida; BarraEstatica barraTermica;
+        Barra barraInteraccion; Barra barraHambre; BarraEstatica barraTermica;
         Barra barraHidratacion;
         float distanciaObjeto = 0;
         TgcPickingRay pickingRay;
@@ -45,7 +45,7 @@ namespace AlumnoEjemplos.RamboAxe
         }
         public Barra getBarraComida()
         {
-            return barraVida;
+            return barraHambre;
         }
 
         public override string getCategory()
@@ -136,17 +136,17 @@ namespace AlumnoEjemplos.RamboAxe
         public void initBarrasVida()
         {
             float barrasWidth = 280;
-            barraVida = new Barra();
+            barraHambre = new Barra();
             barraHidratacion = new Barra();
             barraTermica = new BarraEstatica();
-            barraVida.init(Barra.RED, false, 80, 460, 360);
+            barraHambre.init(Barra.RED, true, 80, 460, 360);
             barraHidratacion.init(Barra.VIOLET, false, (barrasWidth)+80, 460, 180);
 
-            barraTermica.init(Barra.YELLOW, (barrasWidth * 2) + 80, 460, - 40, 80);
-
-            barraTermica.barTitleText       = "FRIO / CALOR";
+            barraTermica.init(Barra.YELLOW, (barrasWidth * 2) + 80, 460, 0, 100);
+            barraTermica.valorActual = 0;
+            barraTermica.barTitleText       = "Vida";
             barraHidratacion.barTitleText   = "Nivel de Hidratacion";
-            barraVida.barTitleText          = "Nivel de Vida";
+            barraHambre.barTitleText          = "Hambre";
         }
 
         public void handleInput() {
@@ -270,7 +270,7 @@ namespace AlumnoEjemplos.RamboAxe
                     {
                         string consumido = pj.getInventario().consumirActual();
                         if(consumido == "Racion"){
-                           barraVida.agregarPorcentajeABarra(0.1f);
+                           barraHambre.agregarPorcentajeABarra(0.1f);
                         }
                         // TODO: hacer algo al consumir
                        // Console.WriteLine("Item consumido: {0}", consumido);
@@ -372,7 +372,7 @@ namespace AlumnoEjemplos.RamboAxe
             {
                 barraHidratacion.render(elapsedTime);
                 barraTermica.render(elapsedTime);
-                barraVida.render(elapsedTime);
+                barraHambre.render(elapsedTime);
             }
             
             Microsoft.DirectX.Direct3D.Device d3dDevice = GuiController.Instance.D3dDevice;
