@@ -417,8 +417,7 @@ namespace AlumnoEjemplos.RamboAxe
                         foreach (GameObjectAbstract go in mapa.getCuadrante((int)(currentCuadrantX + (x - 1)),((int) currentCuadrantZ + (z - 1))).getObjects())
                         {
                             TgcMesh mesh = go.getMesh();
-                            mesh.Position = new Vector3(go.getX() + nx, go.getY() + f.Position.Y, go.getZ() + nz);
-                            mesh.updateBoundingBox();
+                            go.move(new Vector3(go.getX() + nx, go.getY() + f.Position.Y, go.getZ() + nz));
                             if (x == 1 && z == 1)
                             {
                                 objetosColisionables.Add(BoundingBoxCollider.fromBoundingBox(mesh.BoundingBox));

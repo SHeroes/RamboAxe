@@ -41,6 +41,11 @@ namespace AlumnoEjemplos.RamboAxe.GameObjects
             return this.z;
         }
         public abstract InteractuableResponse use();
+		public void move(Vector3 vector)
+        {
+            this.getMesh().Position = vector;
+            this.getMesh().Rotation = new Vector3(0.0f, 0.0f, 0.0f);
+        }
 
     }
 }
