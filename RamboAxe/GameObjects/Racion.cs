@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using TgcViewer.Utils.TgcSceneLoader;
+using AlumnoEjemplos.RamboAxe.Inventario;
 
 namespace AlumnoEjemplos.RamboAxe.GameObjects
 {
@@ -20,9 +21,7 @@ namespace AlumnoEjemplos.RamboAxe.GameObjects
             uses--;
              if (uses >= 0)
             {
-                Objeto obj1 = new Objeto();
-                obj1.nombre = "Racion";
-                CharacterSheet.getInstance().getInventario().agregar(obj1);
+                CharacterSheet.getInstance().getInventario().agregar(InventarioManager.Racion);
                 if (uses == 0)
                 {
                     getMesh().Scale = new Vector3(0f, 0f, 0f);

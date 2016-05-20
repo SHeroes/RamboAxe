@@ -25,10 +25,8 @@ namespace AlumnoEjemplos.RamboAxe.GameObjects
                // base.getMesh().Position = new Vector3(getMesh().Position.X, 0, getMesh().Position.Z);
                // base.getMesh().updateBoundingBox();
                 //haracterSheet.getInstance().getInventario().agregar(obj1);
-                Objeto obj1 = new Objeto();
-                obj1.nombre = "Ramita";
 
-                CharacterSheet.getInstance().getInventario().agregar(ObjetosInventarioManager.RAMITA);
+                CharacterSheet.getInstance().getInventario().agregar(InventarioManager.Ramita);
     
                 if (uses == 0)
                 {

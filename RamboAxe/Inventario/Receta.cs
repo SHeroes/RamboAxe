@@ -3,17 +3,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace AlumnoEjemplos.RamboAxe.Player
+namespace AlumnoEjemplos.RamboAxe.Inventario
 {
     public class Receta
     {
         public List<string> ingredientes { get; private set; }
         public Dictionary<string, int> cantidadIngrediente { get; private set; }
 
-        public Objeto resultado { get; private set; }
+        public ObjetoInventario resultado { get; private set; }
         public int cantidadResultado { get; private set; }
 
-        public Receta(Objeto resultado, int cantidad)
+        public Receta(ObjetoInventario resultado, int cantidad)
         {
             this.resultado = resultado;
             this.cantidadResultado = cantidad;
@@ -21,7 +21,7 @@ namespace AlumnoEjemplos.RamboAxe.Player
             this.cantidadIngrediente = new Dictionary<string, int>();
         }
 
-        public void agregarIngrediente(Objeto ingrediente, int cantidad)
+        public void agregarIngrediente(ObjetoInventario ingrediente, int cantidad)
         {
             int currentCount;
             if (cantidadIngrediente.TryGetValue(ingrediente.nombre, out currentCount))
