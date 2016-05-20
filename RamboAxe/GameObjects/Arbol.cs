@@ -28,7 +28,9 @@ namespace AlumnoEjemplos.RamboAxe.GameObjects
                 Objeto obj1 = new Objeto();
                 obj1.nombre = "Ramita";
 
-                CharacterSheet.getInstance().getInventario().agregar(ObjetosInventarioManager.RAMITA);
+                obj1.nombre = ObjetosInventarioManager.RAMITA;
+
+                CharacterSheet.getInstance().getInventario().agregar(obj1);
     
                 if (uses == 0)
                 {

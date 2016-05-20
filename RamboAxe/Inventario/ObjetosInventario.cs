@@ -9,14 +9,15 @@ namespace AlumnoEjemplos.RamboAxe.Inventario
 {
     public abstract class ObjetosInventarioManager
     {
-        public static const string RAMITA = "ramita";
-        public static List<ObjetoInventario> getObjetos()
-        {
-            return null;
-        }
+        public const string RAMITA = "ramita";
+
         public static ObjetoInventario getObjeto(string name)
         {
                 return null;
+        }
+        public static List<ObjetoInventario> getObjetos()
+        {
+            return null;
         }
     }
   
