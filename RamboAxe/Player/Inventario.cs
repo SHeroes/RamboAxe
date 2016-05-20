@@ -7,6 +7,7 @@ using Microsoft.DirectX;
 using TgcViewer;
 using TgcViewer.Utils.TgcSceneLoader;
 using TgcViewer.Utils._2D;
+using AlumnoEjemplos.RamboAxe.Inventario;
 
 namespace AlumnoEjemplos.RamboAxe.Player
 {
@@ -190,7 +191,7 @@ namespace AlumnoEjemplos.RamboAxe.Player
         /// Agrega un nuevo elemento al inventario
         /// </summary>
         /// <param name="obj"></param>
-        public void agregar(Objeto obj)
+        public void agregar(ObjetoInventario obj)
         {
             int currentCount;
             if(itemCount.TryGetValue(obj.nombre, out currentCount)){
@@ -211,7 +212,7 @@ namespace AlumnoEjemplos.RamboAxe.Player
         /// </summary>
         /// <param name="obj"></param>
         /// <returns></returns>
-        public int contar(Objeto obj)
+        public int contar(ObjetoInventario obj)
         {
             int currentCount;
             if(!itemCount.TryGetValue(obj.nombre, out currentCount)){

@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace AlumnoEjemplos.RamboAxe.Player
+namespace AlumnoEjemplos.RamboAxe.Inventario
 {
-    public class Objeto
+    public class ObjetoInventario
     {
         public string nombre;
 
-        public Objeto(){
+        public ObjetoInventario(){
 
         }
 
