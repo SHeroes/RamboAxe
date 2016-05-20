@@ -27,6 +27,7 @@ namespace AlumnoEjemplos.RamboAxe.GameObjects
                 //haracterSheet.getInstance().getInventario().agregar(obj1);
 
                 CharacterSheet.getInstance().getInventario().agregar(InventarioManager.Ramita);
+
     
                 if (uses == 0)
                 {
