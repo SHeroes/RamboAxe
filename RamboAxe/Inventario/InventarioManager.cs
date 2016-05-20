@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-
 namespace AlumnoEjemplos.RamboAxe.Inventario
 {
     public abstract class InventarioManager
@@ -33,9 +32,9 @@ namespace AlumnoEjemplos.RamboAxe.Inventario
             agregarObjeto("Piedra");
             agregarObjeto("Leña");
             agregarObjeto("Palos");
-            agregarObjeto("Casa");
+            agregarObjeto("Casa", TipoObjetoInventario.Construible);
             agregarObjeto("Ramita");
-            agregarObjeto("Racion");
+            agregarObjeto("Racion", TipoObjetoInventario.Consumible);
             /* Listado de Recetas */
             agregarReceta(
                 Casa, 
@@ -61,12 +60,13 @@ namespace AlumnoEjemplos.RamboAxe.Inventario
         /// Agrega un nuevo objeto
         /// </summary>
         /// <param name="nombre">Nombre del objeto</param>
-        private static void agregarObjeto(String nombre)
+        private static void agregarObjeto(String nombre, TipoObjetoInventario tipo = TipoObjetoInventario.Ninguno)
         {
             ObjetoInventario obj;
             if(!objetos.TryGetValue(nombre, out obj)){
                 obj = new ObjetoInventario();
                 obj.nombre = nombre;
+                obj.tipo = tipo;
                 objetos.Add(nombre, obj);
             }
             else

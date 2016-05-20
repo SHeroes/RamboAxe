@@ -118,7 +118,8 @@
     <Compile Include="RamboAxe\GameObjects\InteractuableResponse.cs" />
     <Compile Include="RamboAxe\GameObjects\MapaDelJuego.cs" />
     <Compile Include="RamboAxe\Inventario\InventarioManager.cs" />
-    <Compile Include="RamboAxe\Player\Inventario.cs" />
+    <Compile Include="RamboAxe\Inventario\ModeloInventario.cs" />
+    <Compile Include="RamboAxe\Player\VistaInventario.cs" />
     <Compile Include="RamboAxe\Inventario\ObjetoInventario.cs" />
     <Compile Include="RamboAxe\Player\CharacterSheet.cs" />
     <Compile Include="RamboAxe\Inventario\Receta.cs" />
