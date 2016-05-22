@@ -1,5 +1,4 @@
 Properties/AssemblyInfo.cs
-*.csproj
 **.exe
 **.pdb
 **.dll
