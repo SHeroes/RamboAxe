@@ -257,6 +257,10 @@ namespace AlumnoEjemplos.RamboAxe.Player
         {
             inv.agregar(obj);
             items.Text = generateItemText();
+            if (esReceta)
+            {
+                ingredientesText.Text = generateIngredientesText();
+            }
         }
 
         /// <summary>
@@ -318,7 +322,10 @@ namespace AlumnoEjemplos.RamboAxe.Player
                 {
                     count = 0;
                 }
-                itemList += name + " x" + count + "\n\n";
+                int currentCount = 0;
+                ObjetoInventario obj = InventarioManager.obtenerObjetoPorNombre(name);
+                currentCount = inv.cantidadPorObjeto(obj);
+                itemList += name + "  " + currentCount + "/" + count + "\n\n";
             }
             return itemList;
         }
