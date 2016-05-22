@@ -161,7 +161,7 @@ namespace AlumnoEjemplos.RamboAxe.Player
             GuiController.Instance.Drawer2D.beginDrawSprite();
             auxPoint.X = startPosition;
             /* Start height - Tab Height */
-            auxPoint.Y = back.Position.Y - 40;
+            auxPoint.Y = back.Position.Y - 35;
             /* Render Tab Start */
             int actualWidth = tabBorderMiddle.Width;
             tabBackground.Position = auxPoint;
@@ -191,7 +191,7 @@ namespace AlumnoEjemplos.RamboAxe.Player
                 tabText.Text = "   " + tabName;
             }
             tabTextPosition.X = (int)startPosition + tabBorderMiddle.Width;
-            tabTextPosition.Y = (int)back.Position.Y - 40 + tabBorderMiddle.Width;
+            tabTextPosition.Y = (int)back.Position.Y - 35 + tabBorderMiddle.Width;
             tabText.Position = tabTextPosition;
             tabText.render();
         }
@@ -422,6 +422,8 @@ namespace AlumnoEjemplos.RamboAxe.Player
             if (esReceta)
             {
                 inv.fabricar(currentRow);
+                items.Text = generateItemText();
+                ingredientesText.Text = generateIngredientesText();
             }
         }
     }

@@ -16,6 +16,7 @@ namespace AlumnoEjemplos.RamboAxe.Inventario
     {
         public string nombre;
         public TipoObjetoInventario tipo;
+        public int peso;
 
         public bool esEquipable { get { return (tipo == TipoObjetoInventario.Equipable); } }
         public bool esConsumible { get { return (tipo == TipoObjetoInventario.Consumible); } }
@@ -23,6 +24,7 @@ namespace AlumnoEjemplos.RamboAxe.Inventario
 
         public ObjetoInventario(){
             tipo = TipoObjetoInventario.Ninguno;
+            peso = 0;
         }
 
         public void dispose()

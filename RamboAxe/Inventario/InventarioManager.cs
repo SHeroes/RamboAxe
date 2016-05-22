@@ -29,11 +29,11 @@ namespace AlumnoEjemplos.RamboAxe.Inventario
             objetos = new Dictionary<String, ObjetoInventario>();
             recetas = new Dictionary<String, Receta>();
             /* Listado de Objetos */
-            agregarObjeto("Piedra");
-            agregarObjeto("Leña");
-            agregarObjeto("Palos");
+            agregarObjeto("Piedra", TipoObjetoInventario.Ninguno, 2);
+            agregarObjeto("Leña", TipoObjetoInventario.Ninguno, 4);
+            agregarObjeto("Palos", TipoObjetoInventario.Ninguno, 1);
             agregarObjeto("Casa", TipoObjetoInventario.Construible);
-            agregarObjeto("Ramita");
+            agregarObjeto("Ramita", TipoObjetoInventario.Ninguno, 1);
             agregarObjeto("Racion", TipoObjetoInventario.Consumible);
             /* Listado de Recetas */
             agregarReceta(
@@ -60,13 +60,14 @@ namespace AlumnoEjemplos.RamboAxe.Inventario
         /// Agrega un nuevo objeto
         /// </summary>
         /// <param name="nombre">Nombre del objeto</param>
-        private static void agregarObjeto(String nombre, TipoObjetoInventario tipo = TipoObjetoInventario.Ninguno)
+        private static void agregarObjeto(String nombre, TipoObjetoInventario tipo = TipoObjetoInventario.Ninguno, int peso = 0)
         {
             ObjetoInventario obj;
             if(!objetos.TryGetValue(nombre, out obj)){
                 obj = new ObjetoInventario();
                 obj.nombre = nombre;
                 obj.tipo = tipo;
+                obj.peso = peso;
                 objetos.Add(nombre, obj);
             }
             else
