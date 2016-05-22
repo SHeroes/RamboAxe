@@ -100,7 +100,6 @@ namespace AlumnoEjemplos.RamboAxe.Inventario
                     receta.agregarIngrediente(objeto, ingredientes[objeto]);
                 }
             }
-            recetas.Add(resultado.nombre, receta);
             agregarReceta(receta);
         }
 
