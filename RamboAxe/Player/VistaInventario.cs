@@ -11,9 +11,9 @@ using AlumnoEjemplos.RamboAxe.Inventario;
 
 namespace AlumnoEjemplos.RamboAxe.Player
 {
-    public class VistaInventario
+    public class VistaInventario: Observador
     {
-        ModeloInventario inv;
+        private ModeloInventario inv { get { return CharacterSheet.getInstance().getInventario(); } }
 
         TgcText2d itemsTitle;
         TgcText2d items;
@@ -47,10 +47,8 @@ namespace AlumnoEjemplos.RamboAxe.Player
 
         public VistaInventario()
         {
-
             string basePath = GuiController.Instance.AlumnoEjemplosDir + "RamboAxe\\Media\\inventario\\";
             /* Inicializacion de los datos */
-            inv = new ModeloInventario();
             abierto = false;
             currentRow = -1;
             currentTab = 0;
@@ -128,6 +126,9 @@ namespace AlumnoEjemplos.RamboAxe.Player
             ingredientesText.Size = itemsTitle.Size;
             ingredientesText.Text = "";
             ingredientesText.Color = Color.White;
+
+            inv.agregarObservador(this);
+            cambioObservable();
         }
 
         public void render()
@@ -241,36 +242,6 @@ namespace AlumnoEjemplos.RamboAxe.Player
         public void cerrar()
         {
             abierto = false;
-        }
-
-        public void agregarReceta(Receta receta)
-        {
-            inv.agregar(receta);
-            recetasText.Text = generateRecetasText();
-        }
-
-        /// <summary>
-        /// Agrega un nuevo elemento al inventario
-        /// </summary>
-        /// <param name="obj"></param>
-        public void agregar(ObjetoInventario obj)
-        {
-            inv.agregar(obj);
-            items.Text = generateItemText();
-            if (esReceta)
-            {
-                ingredientesText.Text = generateIngredientesText();
-            }
-        }
-
-        /// <summary>
-        /// Devuelve la cantitad del objeto dado en el inventario
-        /// </summary>
-        /// <param name="obj"></param>
-        /// <returns></returns>
-        public int contar(ObjetoInventario obj)
-        {
-            return inv.cantidadPorObjeto(obj);
         }
 
         /// <summary>
@@ -422,9 +393,14 @@ namespace AlumnoEjemplos.RamboAxe.Player
             if (esReceta)
             {
                 inv.fabricar(currentRow);
-                items.Text = generateItemText();
-                ingredientesText.Text = generateIngredientesText();
             }
+        }
+
+        public void cambioObservable()
+        {
+            items.Text = generateItemText();
+            recetasText.Text = generateRecetasText();
+            ingredientesText.Text = generateIngredientesText();
         }
     }
 }

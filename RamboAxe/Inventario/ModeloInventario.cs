@@ -6,13 +6,13 @@ using AlumnoEjemplos.RamboAxe.Player;
 
 namespace AlumnoEjemplos.RamboAxe.Inventario
 {
-    public class ModeloInventario
+    public class ModeloInventario: Observable
     {
         private List<string> ordenObjetos;
         private Dictionary<string, int> cantidadObjetos;
         private List<string> recetas;
         private int pesoMaximo { get { return CharacterSheet.getInstance().pesoMaximo; } }
-        private int pesoActual;
+        public int pesoActual { get; private set; }
 
         public ModeloInventario()
         {
@@ -34,6 +34,7 @@ namespace AlumnoEjemplos.RamboAxe.Inventario
             if(recetas.IndexOf(nombre) == -1){
                 recetas.Add(nombre);
             }
+            huboCambios();
         }
 
         /// <summary>
@@ -59,6 +60,7 @@ namespace AlumnoEjemplos.RamboAxe.Inventario
                 cantidadActual += cantidad;
                 cantidadObjetos[objeto.nombre] = cantidadActual;
             }
+            huboCambios();
             return true;
         }
 
@@ -90,6 +92,7 @@ namespace AlumnoEjemplos.RamboAxe.Inventario
                         objeto.alConsumir();
                         cantidad--;
                     }
+                    huboCambios();
                 }
             }
             return consumido;
@@ -141,6 +144,7 @@ namespace AlumnoEjemplos.RamboAxe.Inventario
                     if(!objeto.esConstruible){
                         agregar(objeto, cantidad);
                     }
+                    huboCambios();
                 }
             }
             return seFabrico;

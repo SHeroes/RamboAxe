@@ -119,6 +119,7 @@
     <Compile Include="RamboAxe\GameObjects\MapaDelJuego.cs" />
     <Compile Include="RamboAxe\Inventario\InventarioManager.cs" />
     <Compile Include="RamboAxe\Inventario\ModeloInventario.cs" />
+    <Compile Include="RamboAxe\Observable.cs" />
     <Compile Include="RamboAxe\Player\VistaInventario.cs" />
     <Compile Include="RamboAxe\Inventario\ObjetoInventario.cs" />
     <Compile Include="RamboAxe\Player\CharacterSheet.cs" />
