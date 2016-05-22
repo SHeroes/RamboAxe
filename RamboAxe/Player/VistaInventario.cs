@@ -1,4 +1,4 @@
-﻿﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -23,6 +23,11 @@ namespace AlumnoEjemplos.RamboAxe.Player
         TgcText2d ingredientesText;
         TgcSprite back;
         TgcSprite selector;
+        TgcSprite tabBackground;
+        TgcText2d tabText;
+        Rectangle borderStart = new Rectangle(139, 3, 10, 37);
+        Rectangle borderMiddle = new Rectangle(149, 3, 10, 37);
+        Rectangle borderEnd = new Rectangle(334, 3, 10, 37);
         Rectangle selectorBorder;
         Rectangle selectorMiddle;
         Vector2 auxPoint;
@@ -36,6 +41,7 @@ namespace AlumnoEjemplos.RamboAxe.Player
 
         public VistaInventario()
         {
+
             string basePath = GuiController.Instance.AlumnoEjemplosDir + "RamboAxe\\Media\\inventario\\";
             /* Inicializacion de los datos */
             inv = new ModeloInventario();
@@ -53,6 +59,10 @@ namespace AlumnoEjemplos.RamboAxe.Player
             upperLeftCorner.X = (float)Math.Floor(upperLeftCorner.X);
             upperLeftCorner.Y = (float)Math.Floor(upperLeftCorner.Y);
             back.Position = upperLeftCorner;
+            tabBackground = new TgcSprite();
+            tabBackground.Texture = back.Texture;
+            tabBackground.SrcRect = new Rectangle(139, 3, 204, 37);
+            tabBackground.Position = new Vector2(upperLeftCorner.X, upperLeftCorner.Y - 40);
             /* Inicializacion del titulo de los items */
             itemsTitle = new TgcText2d();
             itemsTitle.Position = new Point(((int)upperLeftCorner.X) + 20, ((int)upperLeftCorner.Y) + 20);
@@ -111,7 +121,35 @@ namespace AlumnoEjemplos.RamboAxe.Player
             // Si esta abierto dibuja el fondo primero y despues el texto
             if(abierto){
                 GuiController.Instance.Drawer2D.beginDrawSprite();
+                /*Rectangle rectangle = new Rectangle(
+                    (int)GuiController.Instance.Modifiers["x"],
+                    (int)GuiController.Instance.Modifiers["y"],
+                    (int)GuiController.Instance.Modifiers["width"],
+                    (int)GuiController.Instance.Modifiers["height"]
+                );
+                back.SrcRect = rectangle;*/
                 back.render();
+                /* Start tab render */
+                int realWidth = (int) Math.Floor(back.SrcRect.Width * 1.5f);
+                int actualWidth = 10;
+                auxPoint.X = back.Position.X;
+                auxPoint.Y = tabBackground.Position.Y;
+                tabBackground.Position = auxPoint;
+                tabBackground.SrcRect = borderStart;
+                tabBackground.render();
+                tabBackground.SrcRect = borderMiddle;
+                while(actualWidth < (realWidth - 10)){
+                    actualWidth += 10;
+                    auxPoint.X += 10;
+                    tabBackground.Position = auxPoint;
+                    tabBackground.render();
+                }
+                tabBackground.SrcRect = borderEnd;
+                auxPoint.X = back.Position.X + realWidth - 10;
+                tabBackground.Position = auxPoint;
+                tabBackground.render();
+                //Console.WriteLine("Actual Width: {0} Start Width: {1}", actualWidth, realWidth);
+                /* End tab render */
                 if(currentRow != -1){
                     int leftPadding = 0;
                     if(esReceta){
@@ -127,6 +165,33 @@ namespace AlumnoEjemplos.RamboAxe.Player
                 ingredientesText.render();
                 ingredientesTitle.render();
             }
+        }
+
+        private void renderTab(string tabName, int tabIndex, int tabWidth)
+        {
+            /* Start position + Tab padding */
+            auxPoint.X = back.Position.X + tabWidth * tabIndex;
+            /* Start height - Tab Height */
+            auxPoint.Y = back.Position.Y - 40;
+            /* Render Tab Start */
+            int actualWidth = borderMiddle.Width;
+            tabBackground.Position = auxPoint;
+            tabBackground.SrcRect = borderStart;
+            tabBackground.render();
+            /* Render Tab Middles until Full Width */
+            tabBackground.SrcRect = borderMiddle;
+            while (actualWidth < (tabWidth - borderMiddle.Width))
+            {
+                actualWidth += borderMiddle.Width;
+                auxPoint.X += borderMiddle.Width;
+                tabBackground.Position = auxPoint;
+                tabBackground.render();
+            }
+            /* Render Tab End */
+            tabBackground.SrcRect = borderEnd;
+            auxPoint.X = back.Position.X + tabWidth - borderMiddle.Width;
+            tabBackground.Position = auxPoint;
+            tabBackground.render();
         }
 
         private void renderLine(TgcSprite lineSprite, int position, int leftPadding = 0)
@@ -163,7 +228,6 @@ namespace AlumnoEjemplos.RamboAxe.Player
             recetasText.dispose();
             ingredientesText.dispose();
             ingredientesTitle.dispose();
-            this.dispose();
            
         }
 
