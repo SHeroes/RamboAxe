@@ -5,6 +5,7 @@ using System.Text;
 
 namespace AlumnoEjemplos.RamboAxe
 {
+// comentario
     public interface Observador
     {
         void cambioObservable();
