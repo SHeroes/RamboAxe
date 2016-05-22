@@ -239,9 +239,9 @@ namespace AlumnoEjemplos.RamboAxe
                 }
             }
             if(abierto){
-                if (input.keyPressed(Key.LeftArrow) || input.keyPressed(Key.RightArrow))
+                if (input.keyPressed(Key.RightArrow))
                 {
-                    pj.getInventario().invertirSeleccion();
+                    pj.getInventario().cambiarTab();
                 }
                 else if (input.keyPressed(Key.NumPad1) || input.keyPressed(Key.D1))
                 {

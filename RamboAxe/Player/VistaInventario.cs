@@ -23,19 +23,25 @@ namespace AlumnoEjemplos.RamboAxe.Player
         TgcText2d ingredientesText;
         TgcSprite back;
         TgcSprite selector;
-        TgcSprite tabBackground;
-        TgcText2d tabText;
-        Rectangle borderStart = new Rectangle(139, 3, 10, 37);
-        Rectangle borderMiddle = new Rectangle(149, 3, 10, 37);
-        Rectangle borderEnd = new Rectangle(334, 3, 10, 37);
         Rectangle selectorBorder;
         Rectangle selectorMiddle;
         Vector2 auxPoint;
         Vector2 upperLeftCorner;
+        /* Tab render variables */
+        TgcSprite tabBackground;
+        TgcText2d tabText;
+        Point tabTextPosition;
+        Rectangle tabBorderStart = new Rectangle(139, 3, 10, 37);
+        Rectangle tabBorderMiddle = new Rectangle(149, 3, 10, 37);
+        Rectangle tabBorderEnd = new Rectangle(334, 3, 10, 37);
+        int tabWidth;
+        int currentTab;
 
         int currentRow;
         /* Indica si se esta recorriendo las recetas o los items */
-        public bool esReceta { get; private set; }
+        public bool esInventario { get { return (currentTab == 0); } }
+        public bool esReceta { get { return (currentTab == 1); } }
+        public bool esEquipable { get { return (currentTab == 2); } }
 
         public bool abierto { get; private set; }
 
@@ -45,9 +51,9 @@ namespace AlumnoEjemplos.RamboAxe.Player
             string basePath = GuiController.Instance.AlumnoEjemplosDir + "RamboAxe\\Media\\inventario\\";
             /* Inicializacion de los datos */
             inv = new ModeloInventario();
-            esReceta = true;
             abierto = false;
             currentRow = -1;
+            currentTab = 0;
             /* Inicializacion del fondo y calculo de la posicion centrada */
             back = new TgcSprite();
             back.Texture = TgcTexture.createTexture(GuiController.Instance.D3dDevice, basePath + "FFIandFFIIGBAFontsSheet.png");
@@ -59,10 +65,18 @@ namespace AlumnoEjemplos.RamboAxe.Player
             upperLeftCorner.X = (float)Math.Floor(upperLeftCorner.X);
             upperLeftCorner.Y = (float)Math.Floor(upperLeftCorner.Y);
             back.Position = upperLeftCorner;
+            /* Inicializacion de los tabs */
+            tabWidth = (int)Math.Floor(back.SrcRect.Width * 1.5f / 3);
             tabBackground = new TgcSprite();
             tabBackground.Texture = back.Texture;
             tabBackground.SrcRect = new Rectangle(139, 3, 204, 37);
             tabBackground.Position = new Vector2(upperLeftCorner.X, upperLeftCorner.Y - 40);
+            tabTextPosition = new Point(0, 0);
+            tabText = new TgcText2d();
+            tabText.Align = TgcText2d.TextAlign.LEFT;
+            tabText.Color = Color.White;
+            tabText.Size = new Size(tabWidth, 30);
+            tabText.Position = tabTextPosition;
             /* Inicializacion del titulo de los items */
             itemsTitle = new TgcText2d();
             itemsTitle.Position = new Point(((int)upperLeftCorner.X) + 20, ((int)upperLeftCorner.Y) + 20);
@@ -88,28 +102,28 @@ namespace AlumnoEjemplos.RamboAxe.Player
             selectorBorder = new Rectangle(0, 0, selectorBorderSize, selector.Texture.Height);
             /* Inicializacion del titulo de las recetas */
             recetasTitle = new TgcText2d();
-            recetasTitle.Position = new Point((int)(upperLeftCorner.X + selectorMiddle.Width * 2.0f) + 20, (int)(upperLeftCorner.Y) + 20);
+            recetasTitle.Position = new Point(((int)upperLeftCorner.X) + 20, ((int)upperLeftCorner.Y) + 20);
             recetasTitle.Align = TgcText2d.TextAlign.LEFT;
             recetasTitle.Size = new Size(back.SrcRect.Width * 3 / 2, back.SrcRect.Height * 3 / 2);
             recetasTitle.Text = "Recetas:";
             recetasTitle.Color = Color.White;
             /* Inicializacion del texto para las recetas */
             recetasText = new TgcText2d();
-            recetasText.Position = new Point((int)(upperLeftCorner.X + selectorMiddle.Width * 2.0f) + 40, (int)(upperLeftCorner.Y) + 47);
+            recetasText.Position = new Point(((int)upperLeftCorner.X) + 40, ((int)upperLeftCorner.Y) + 47);
             recetasText.Align = TgcText2d.TextAlign.LEFT;
             recetasText.Size = itemsTitle.Size;
             recetasText.Text = "";
             recetasText.Color = Color.White;
             /* Inicializacion del titulo de las recetas */
             ingredientesTitle = new TgcText2d();
-            ingredientesTitle.Position = new Point((int)(upperLeftCorner.X + selectorMiddle.Width * 4.0f) + 20, (int)(upperLeftCorner.Y) + 20);
+            ingredientesTitle.Position = new Point((int)(upperLeftCorner.X + selectorMiddle.Width * 2.0f) + 20, (int)(upperLeftCorner.Y) + 20);
             ingredientesTitle.Align = TgcText2d.TextAlign.LEFT;
             ingredientesTitle.Size = new Size(back.SrcRect.Width * 3 / 2, back.SrcRect.Height * 3 / 2);
             ingredientesTitle.Text = "Ingredientes:";
             ingredientesTitle.Color = Color.White;
             /* Inicializacion del texto para las recetas */
             ingredientesText = new TgcText2d();
-            ingredientesText.Position = new Point((int)(upperLeftCorner.X + selectorMiddle.Width * 4.0f) + 40, (int)(upperLeftCorner.Y) + 47);
+            ingredientesText.Position = new Point((int)(upperLeftCorner.X + selectorMiddle.Width * 2.0f) + 40, (int)(upperLeftCorner.Y) + 47);
             ingredientesText.Align = TgcText2d.TextAlign.LEFT;
             ingredientesText.Size = itemsTitle.Size;
             ingredientesText.Text = "";
@@ -121,77 +135,65 @@ namespace AlumnoEjemplos.RamboAxe.Player
             // Si esta abierto dibuja el fondo primero y despues el texto
             if(abierto){
                 GuiController.Instance.Drawer2D.beginDrawSprite();
-                /*Rectangle rectangle = new Rectangle(
-                    (int)GuiController.Instance.Modifiers["x"],
-                    (int)GuiController.Instance.Modifiers["y"],
-                    (int)GuiController.Instance.Modifiers["width"],
-                    (int)GuiController.Instance.Modifiers["height"]
-                );
-                back.SrcRect = rectangle;*/
                 back.render();
-                /* Start tab render */
-                int realWidth = (int) Math.Floor(back.SrcRect.Width * 1.5f);
-                int actualWidth = 10;
-                auxPoint.X = back.Position.X;
-                auxPoint.Y = tabBackground.Position.Y;
-                tabBackground.Position = auxPoint;
-                tabBackground.SrcRect = borderStart;
-                tabBackground.render();
-                tabBackground.SrcRect = borderMiddle;
-                while(actualWidth < (realWidth - 10)){
-                    actualWidth += 10;
-                    auxPoint.X += 10;
-                    tabBackground.Position = auxPoint;
-                    tabBackground.render();
-                }
-                tabBackground.SrcRect = borderEnd;
-                auxPoint.X = back.Position.X + realWidth - 10;
-                tabBackground.Position = auxPoint;
-                tabBackground.render();
-                //Console.WriteLine("Actual Width: {0} Start Width: {1}", actualWidth, realWidth);
-                /* End tab render */
                 if(currentRow != -1){
-                    int leftPadding = 0;
-                    if(esReceta){
-                        leftPadding = selectorMiddle.Width * 2;
-                    }
-                    renderLine(selector, currentRow, leftPadding);
+                    renderLine(selector, currentRow);
                 }
                 GuiController.Instance.Drawer2D.endDrawSprite();
-                itemsTitle.render();
-                items.render();
-                recetasTitle.render();
-                recetasText.render();
-                ingredientesText.render();
-                ingredientesTitle.render();
+                renderTab("Inventario", 0, tabWidth);
+                renderTab("Recetas", 1, tabWidth);
+                renderTab("Equipamiento", 2, tabWidth);
+                if(esInventario){
+                    itemsTitle.render();
+                    items.render();
+                } else if(esReceta){
+                    recetasTitle.render();
+                    recetasText.render();
+                    ingredientesText.render();
+                    ingredientesTitle.render();
+                }
             }
         }
 
         private void renderTab(string tabName, int tabIndex, int tabWidth)
         {
-            /* Start position + Tab padding */
-            auxPoint.X = back.Position.X + tabWidth * tabIndex;
+            float startPosition = back.Position.X + tabWidth * tabIndex;
+            GuiController.Instance.Drawer2D.beginDrawSprite();
+            auxPoint.X = startPosition;
             /* Start height - Tab Height */
             auxPoint.Y = back.Position.Y - 40;
             /* Render Tab Start */
-            int actualWidth = borderMiddle.Width;
+            int actualWidth = tabBorderMiddle.Width;
             tabBackground.Position = auxPoint;
-            tabBackground.SrcRect = borderStart;
+            tabBackground.SrcRect = tabBorderStart;
             tabBackground.render();
             /* Render Tab Middles until Full Width */
-            tabBackground.SrcRect = borderMiddle;
-            while (actualWidth < (tabWidth - borderMiddle.Width))
+            tabBackground.SrcRect = tabBorderMiddle;
+            while (actualWidth < (tabWidth - tabBorderMiddle.Width))
             {
-                actualWidth += borderMiddle.Width;
-                auxPoint.X += borderMiddle.Width;
+                actualWidth += tabBorderMiddle.Width;
+                auxPoint.X += tabBorderMiddle.Width;
                 tabBackground.Position = auxPoint;
                 tabBackground.render();
             }
             /* Render Tab End */
-            tabBackground.SrcRect = borderEnd;
-            auxPoint.X = back.Position.X + tabWidth - borderMiddle.Width;
+            tabBackground.SrcRect = tabBorderEnd;
+            auxPoint.X = startPosition + tabWidth - tabBorderMiddle.Width;
             tabBackground.Position = auxPoint;
             tabBackground.render();
+            GuiController.Instance.Drawer2D.endDrawSprite();
+            /* Render Tab Name */
+            if(currentTab == tabIndex){
+                tabText.Text = "> " + tabName;
+            }
+            else
+            {
+                tabText.Text = "   " + tabName;
+            }
+            tabTextPosition.X = (int)startPosition + tabBorderMiddle.Width;
+            tabTextPosition.Y = (int)back.Position.Y - 40 + tabBorderMiddle.Width;
+            tabText.Position = tabTextPosition;
+            tabText.render();
         }
 
         private void renderLine(TgcSprite lineSprite, int position, int leftPadding = 0)
@@ -304,9 +306,6 @@ namespace AlumnoEjemplos.RamboAxe.Player
         /// <returns></returns>
         private string generateIngredientesText()
         {
-            if(!esReceta){
-                return ingredientesText.Text;
-            }
             if(currentRow == -1){
                 return "";
             }
@@ -341,7 +340,10 @@ namespace AlumnoEjemplos.RamboAxe.Player
             {
                 currentRow++;
             }
-            ingredientesText.Text = generateIngredientesText();
+            if (esReceta)
+            {
+                ingredientesText.Text = generateIngredientesText();
+            }
         }
 
         public void anteriorItem()
@@ -354,7 +356,9 @@ namespace AlumnoEjemplos.RamboAxe.Player
             {
                 currentRow--;
             }
-            ingredientesText.Text = generateIngredientesText();
+            if(esReceta){
+                ingredientesText.Text = generateIngredientesText();
+            }
         }
 
         private int seleccionCount()
@@ -362,24 +366,39 @@ namespace AlumnoEjemplos.RamboAxe.Player
             if(esReceta){
                 return inv.contarRecetas();
             }
-            else
+            else if(esInventario)
             {
                 return inv.contarObjetos();
             }
+            else
+            {
+                return 0;
+            }
         }
 
-        public void invertirSeleccion()
+        public void cambiarTab()
         {
-            esReceta = !esReceta;
-            if (currentRow > (seleccionCount() - 1))
+            currentTab++;
+            if(currentTab > 2){
+                currentTab = 0;
+            }
+            int currentSelectionCount = seleccionCount();
+            if (currentRow > (currentSelectionCount - 1))
             {
-                currentRow = (seleccionCount() - 1);
+                currentRow = (currentSelectionCount - 1);
+            }
+            if (currentSelectionCount > 0 && currentRow == -1)
+            {
+                currentRow = 0;
+            }
+            if(esReceta){
+                ingredientesText.Text = generateIngredientesText();
             }
         }
 
         public string consumirActual()
         {
-            if (!esReceta)
+            if (esInventario)
             {
                 ObjetoInventario objeto = inv.obtenerObjetoEnPosicion(currentRow);
                 if (inv.consumir(currentRow))
