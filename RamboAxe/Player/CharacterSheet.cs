@@ -9,10 +9,13 @@ namespace AlumnoEjemplos.RamboAxe.Player
         int vida;
         int sed;
         int frio;
+        public int pesoMaximo { get; private set; }
+
         VistaInventario inv;
         private static CharacterSheet singleton;
         private CharacterSheet()
         {
+            pesoMaximo = 100;
             inv = new VistaInventario();
             
         }

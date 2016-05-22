@@ -31,5 +31,27 @@ namespace AlumnoEjemplos.RamboAxe.Inventario
         {
 
         }
+
+        # region Comportamiento custom de SubClases
+        public void alConsumir()
+        {
+
+        }
+
+        public void alEquipar()
+        {
+
+        }
+
+        public void alDesEquipar()
+        {
+
+        }
+
+        public void alConstruir()
+        {
+
+        }
+        # endregion
     }
 }

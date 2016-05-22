@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using AlumnoEjemplos.RamboAxe.Player;
 
 namespace AlumnoEjemplos.RamboAxe.Inventario
 {
@@ -10,7 +11,7 @@ namespace AlumnoEjemplos.RamboAxe.Inventario
         private List<string> ordenObjetos;
         private Dictionary<string, int> cantidadObjetos;
         private List<string> recetas;
-        private int pesoMaximo;
+        private int pesoMaximo { get { return CharacterSheet.getInstance().pesoMaximo; } }
         private int pesoActual;
 
         public ModeloInventario()
@@ -18,7 +19,6 @@ namespace AlumnoEjemplos.RamboAxe.Inventario
             ordenObjetos = new List<string>();
             cantidadObjetos = new Dictionary<string, int>();
             recetas = new List<string>();
-            pesoMaximo = 100;
             pesoActual = 0;
         }
 
@@ -85,6 +85,10 @@ namespace AlumnoEjemplos.RamboAxe.Inventario
                     else
                     {
                         cantidadObjetos[objeto.nombre] = cantidadActual;
+                    }
+                    while(cantidad > 0){
+                        objeto.alConsumir();
+                        cantidad--;
                     }
                 }
             }
