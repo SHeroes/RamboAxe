@@ -5,6 +5,7 @@ using System.Text;
 
 namespace AlumnoEjemplos.RamboAxe.Player
 {
+    
     class ObjetoInventario
     {
     }

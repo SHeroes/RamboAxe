@@ -33,13 +33,22 @@ namespace AlumnoEjemplos.RamboAxe.GameObjects
                             mesh = MapaDelJuego.getGameMesh(1).clone("comida_" + inCuadx.ToString() + inCuadz.ToString());
                             go = new Racion(mesh, inCuadx * 500, 0, inCuadz * 500);
                             go.getMesh().rotateY((float)(Math.PI * (new Random().Next(2))));
-                        }else if (rX.NextDouble() < 0.4)
+                        }
+                        else if (rX.NextDouble() < 0.4)
                         {
                             mesh = MapaDelJuego.getGameMesh(2).clone("metal_" + inCuadx.ToString() + inCuadz.ToString());
-                            go = new Obstaculo(mesh, inCuadx * 500, new Random().Next(-50,0), inCuadz * 500);
-                            go.getMesh().rotateY((float)(FastMath.ToRad(new Random().Next(-20,20))));
-                           
-                            
+                            go = new Obstaculo(mesh, inCuadx * 500, new Random().Next(-50, 0), inCuadz * 500);
+                            go.getMesh().rotateY((float)(FastMath.ToRad(new Random().Next(-20, 20))));
+
+
+                        }
+                        else if (rX.NextDouble() < 0.5)
+                        {
+                            mesh = MapaDelJuego.getGameMesh(4).clone("arbolin_" + inCuadx.ToString() + inCuadz.ToString());
+                            go = new Arbol(mesh, inCuadx * 500, new Random().Next(-50, 0), inCuadz * 500);
+                            go.getMesh().rotateY((float)(FastMath.ToRad(new Random().Next(-20, 20))));
+
+
                         }
                         else
                         {

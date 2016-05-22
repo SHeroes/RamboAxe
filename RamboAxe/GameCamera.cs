@@ -667,7 +667,7 @@ namespace AlumnoEjemplos.RamboAxe
                     currentVelocity = new Vector3(currentVelocity.X, 0, 0.0f);
                 }
 
-                direction.Z += 10.0f;
+                direction.Z += 1.5f;
             }
             else
             {
@@ -683,7 +683,7 @@ namespace AlumnoEjemplos.RamboAxe
                     currentVelocity = new Vector3(currentVelocity.X, 0, 0.0f);
                 }
 
-                direction.Z -= 10.0f;
+                direction.Z -= 1.5f;
             }
             else
             {
@@ -699,7 +699,7 @@ namespace AlumnoEjemplos.RamboAxe
                     currentVelocity = new Vector3(0.0f, 0, currentVelocity.Z);
                 }
 
-                direction.X += 10.0f;
+                direction.X += 1.5f;
             }
             else
             {
@@ -715,7 +715,7 @@ namespace AlumnoEjemplos.RamboAxe
                     currentVelocity = new Vector3(0.0f, 0, currentVelocity.Z);
                 }
 
-                direction.X -= 10.0f;
+                direction.X -= 1.5f;
             }
             else
             {

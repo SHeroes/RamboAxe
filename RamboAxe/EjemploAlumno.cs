@@ -22,7 +22,7 @@ namespace AlumnoEjemplos.RamboAxe
 {
     public class EjemploAlumno : TgcExample
     {
-        Barra barraInteraccion; Barra barraVida; BarraEstatica barraTermica;
+        Barra barraInteraccion; Barra barraHambre; BarraEstatica barraTermica;
         Barra barraHidratacion;
         float distanciaObjeto = 0;
         TgcPickingRay pickingRay;
@@ -45,7 +45,7 @@ namespace AlumnoEjemplos.RamboAxe
         }
         public Barra getBarraComida()
         {
-            return barraVida;
+            return barraHambre;
         }
 
         public override string getCategory()
@@ -87,7 +87,7 @@ namespace AlumnoEjemplos.RamboAxe
             Microsoft.DirectX.Direct3D.Device d3dDevice = GuiController.Instance.D3dDevice;
             //Iniciarlizar PickingRay
             pickingRay = new TgcPickingRay();
-            TgcTexture texture = TgcTexture.createTexture(d3dDevice, GuiController.Instance.AlumnoEjemplosMediaDir + "RamboAxe\\" + "tile_1.png");
+            TgcTexture texture = TgcTexture.createTexture(d3dDevice, GuiController.Instance.AlumnoEjemplosDir + "RamboAxe\\Media\\" + "tile_1.png");
            // string terrainHm = GuiController.Instance.AlumnoEjemplosMediaDir + "RamboAxe\\" + "fps2\\" + "hm.jpg";
 
             
@@ -136,17 +136,17 @@ namespace AlumnoEjemplos.RamboAxe
         public void initBarrasVida()
         {
             float barrasWidth = 280;
-            barraVida = new Barra();
+            barraHambre = new Barra();
             barraHidratacion = new Barra();
             barraTermica = new BarraEstatica();
-            barraVida.init(Barra.RED, false, 80, 460, 360);
+            barraHambre.init(Barra.RED, true, 80, 460, 360);
             barraHidratacion.init(Barra.VIOLET, false, (barrasWidth)+80, 460, 180);
 
-            barraTermica.init(Barra.YELLOW, (barrasWidth * 2) + 80, 460, - 40, 80);
-
-            barraTermica.barTitleText       = "FRIO / CALOR";
+            barraTermica.init(Barra.YELLOW, (barrasWidth * 2) + 80, 460, 0, 100);
+            barraTermica.valorActual = 0;
+            barraTermica.barTitleText       = "Vida";
             barraHidratacion.barTitleText   = "Nivel de Hidratacion";
-            barraVida.barTitleText          = "Nivel de Vida";
+            barraHambre.barTitleText          = "Hambre";
         }
 
         public void handleInput() {
@@ -235,6 +235,7 @@ namespace AlumnoEjemplos.RamboAxe
                 else
                 {
                     pj.getInventario().abrir();
+                    pj.getInventario().siguienteItem();
                 }
             }
             if(abierto){
@@ -268,11 +269,12 @@ namespace AlumnoEjemplos.RamboAxe
                     if (!pj.getInventario().esReceta)
                     {
                         string consumido = pj.getInventario().consumirActual();
-                        if(consumido == "Piedra Tallada"){
-                            agregarPiedraTallada();
+                        if(consumido == "Racion"){
+                           barraHambre.agregarPorcentajeABarra(0.1f);
                         }
                         // TODO: hacer algo al consumir
-                        Console.WriteLine("Item consumido: {0}", consumido);
+                       // Console.WriteLine("Item consumido: {0}", consumido);
+                       // GuiController.Instance.Logger.log
                     }
                     else
                     {
@@ -316,6 +318,7 @@ namespace AlumnoEjemplos.RamboAxe
             rec1.agregarIngrediente(obj2, 1);
             rec1.agregarIngrediente(obj1, 2);
             //.agregarReceta(rec1);
+            
             Objeto casa = new Objeto();
             casa.nombre = "Casa";
             objetos.Add(casa);
@@ -328,7 +331,11 @@ namespace AlumnoEjemplos.RamboAxe
             Receta rPiedra = new Receta(piedraTallada, 1);
             
             rPiedra.agregarIngrediente(obj1, 1);
-            //inv.agregarReceta(rPiedra);
+            pj.getInventario().agregar(obj1);
+            pj.getInventario().agregar(obj2);
+            pj.getInventario().agregar(obj3);
+            pj.getInventario().agregar(obj3);
+            pj.getInventario().agregarReceta(rec2);
         }
 
         public void initCamera()
@@ -365,7 +372,7 @@ namespace AlumnoEjemplos.RamboAxe
             {
                 barraHidratacion.render(elapsedTime);
                 barraTermica.render(elapsedTime);
-                barraVida.render(elapsedTime);
+                barraHambre.render(elapsedTime);
             }
             
             Microsoft.DirectX.Direct3D.Device d3dDevice = GuiController.Instance.D3dDevice;
@@ -410,8 +417,7 @@ namespace AlumnoEjemplos.RamboAxe
                         foreach (GameObjectAbstract go in mapa.getCuadrante((int)(currentCuadrantX + (x - 1)),((int) currentCuadrantZ + (z - 1))).getObjects())
                         {
                             TgcMesh mesh = go.getMesh();
-                            mesh.Position = new Vector3(go.getX() + nx, go.getY() + f.Position.Y, go.getZ() + nz);
-                            mesh.updateBoundingBox();
+                            go.move(new Vector3(go.getX() + nx, go.getY() + f.Position.Y, go.getZ() + nz));
                             if (x == 1 && z == 1)
                             {
                                 objetosColisionables.Add(BoundingBoxCollider.fromBoundingBox(mesh.BoundingBox));

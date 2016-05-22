@@ -9,7 +9,6 @@ using TgcViewer.Example;
 using TgcViewer.Utils.Input;
 
 using Microsoft.DirectX.Direct3D;
-using System.Drawing;
 using Microsoft.DirectX;
 
 using TgcViewer.Utils.Modifiers;

@@ -1,0 +1,17 @@
+remote: Counting objects: 51, done.
+remote: Compressing objects: 100% (20/20), done.
+remote: Total 51 (delta 16), reused 9 (delta 9), pack-reused 21
+Unpacking objects: 100% (51/51), done.
+From https://github.com/SHeroes/RamboAxe
+ * branch            master     -> FETCH_HEAD
+    475fcee..c9ea0c0  master     -> origin/master
+    Auto-merging RamboAxe/Player/Inventario.cs
+    CONFLICT (content): Merge conflict in RamboAxe/Player/Inventario.cs
+    Auto-merging RamboAxe/GameObjects/MapaDelJuego.cs
+    CONFLICT (content): Merge conflict in RamboAxe/GameObjects/MapaDelJuego.cs
+    Auto-merging RamboAxe/EjemploAlumno.cs
+    CONFLICT (content): Merge conflict in RamboAxe/EjemploAlumno.cs
+    Auto-merging AlumnoEjemplos.csproj
+    CONFLICT (content): Merge conflict in AlumnoEjemplos.csproj
+    Automatic merge failed; fix conflicts and then commit the result.
+
