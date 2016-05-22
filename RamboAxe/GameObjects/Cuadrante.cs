@@ -13,8 +13,35 @@ namespace AlumnoEjemplos.RamboAxe.GameObjects
         List<GameObjectAbstract> cuadrantObjects;
         int x; 
         int z;
+        private int temperatura;
+        private string temperaturaString;
+        public string getTempratura()
+        {
+            return temperaturaString;
+        }
+        public void setTempratura(int temp)
+        {
+            this.temperatura = temp;
+            switch (this.temperatura)
+            {
+                case 0: temperaturaString = "TEMPLADO"; break;
+                case 1: temperaturaString = "FRIO"; break;
+                case 2: temperaturaString = "CONGELADOR"; break;
+                case 3: temperaturaString = "FRIO"; break;
+                case 4: temperaturaString = "TEMPLADO"; break;
+                case 5: temperaturaString = "TEMPLADO"; break;
+                case 6: temperaturaString = "CALUROSO"; break;
+                case 7: temperaturaString = "ARDIENTE"; break;
+                case 8: temperaturaString = "CALUROSO"; break;
+                case 9: temperaturaString = "TEMPLADO"; break;              
+
+                default: temperaturaString = "TEMPLADO"; break;
+            }
+        }
         public Cuadrante(bool randomizedCuadrante,int width,int height,int x,int z)
         {
+            setTempratura( (x + z)%10); //el resto de la division por 10
+
             this.x = x;
             this.z = z;
             this.cuadrantObjects = new List<GameObjectAbstract>();

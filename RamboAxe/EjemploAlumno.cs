@@ -25,6 +25,7 @@ namespace AlumnoEjemplos.RamboAxe
     {
         Barra barraInteraccion; Barra barraHambre; BarraEstatica barraTermica;
         Barra barraHidratacion;
+
         float distanciaObjeto = 0;
         TgcPickingRay pickingRay;
         static EjemploAlumno game;
@@ -65,6 +66,7 @@ namespace AlumnoEjemplos.RamboAxe
         TgcD3dInput d3dInput;
         TgcText2d text;
         TgcText2d text2;
+        TgcText2d text3;
         SkyBox skyBox;
         GameCamera camera;
         TgcPlaneWall ground;
@@ -353,6 +355,10 @@ namespace AlumnoEjemplos.RamboAxe
             pj.getInventario().render();
             //box.render();
            // text.render();
+           // +"currentCuadrantX" + currentCuadrantX + "currentCuadrantZ" + currentCuadrantZ;// mapa.getCuadrante(1, 1).getTempratura().ToString(); 
+            text3.Text = "TEMPRATURA ACTUAL: " + mapa.getCuadrante((int)currentCuadrantX, (int)currentCuadrantZ).getTempratura() + "  x:" + currentCuadrantX + "  z:" + currentCuadrantZ;
+            
+            text3.render();
             text2.render();
             skyBox.Center = camera.Position;
             skyBox.updateValues();
@@ -474,13 +480,20 @@ namespace AlumnoEjemplos.RamboAxe
             text.Color = Color.Gold;
             text.Position = new Point(5, 20);
 
+
             text2 = new TgcText2d();
             text2.Text = "-\"wasd\" para moverse    -\"P\" para capturar el mouse    -\"I\" para el inventario    -\"Click Izq\" para interactuar" ;
             text2.Align = TgcText2d.TextAlign.LEFT;
-            text2.Position = new Point(5, 20);
             text2.Size = new Size(800, 100);
             text2.Color = Color.Gold;
             text2.Position = new Point(75, 10);
+
+            text3 = new TgcText2d();
+            text3.Text = "-TEMPERATURA: DESCONOCIDA VITEH";
+            text3.Align = TgcText2d.TextAlign.CENTER;
+            text3.Size = new Size(800, 100);
+            text3.Color = Color.Red;
+            text3.Position = new Point(115, 30);
 
         }
 
