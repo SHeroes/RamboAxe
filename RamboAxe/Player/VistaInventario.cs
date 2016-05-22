@@ -27,6 +27,7 @@ namespace AlumnoEjemplos.RamboAxe.Player
         Rectangle selectorMiddle;
         Vector2 auxPoint;
         Vector2 upperLeftCorner;
+        TgcText2d pesoText;
         /* Tab render variables */
         TgcSprite tabBackground;
         TgcText2d tabText;
@@ -126,7 +127,13 @@ namespace AlumnoEjemplos.RamboAxe.Player
             ingredientesText.Size = itemsTitle.Size;
             ingredientesText.Text = "";
             ingredientesText.Color = Color.White;
-
+            /* Inicializacion del texto con el peso actual y maximo del inventario */
+            pesoText = new TgcText2d();
+            pesoText.Align = TgcText2d.TextAlign.LEFT;
+            pesoText.Position = new Point(((int)upperLeftCorner.X) + 20, (int)(upperLeftCorner.Y + back.SrcRect.Height * 1.5f) - 35);
+            pesoText.Size = ingredientesText.Size;
+            pesoText.Color = Color.White;
+            /* Observando los datos del modelo */
             inv.agregarObservador(this);
             cambioObservable();
         }
@@ -153,6 +160,7 @@ namespace AlumnoEjemplos.RamboAxe.Player
                     ingredientesText.render();
                     ingredientesTitle.render();
                 }
+                pesoText.render();
             }
         }
 
@@ -221,6 +229,10 @@ namespace AlumnoEjemplos.RamboAxe.Player
 
         public void dispose()
         {
+            inv.sacarObservador(this);
+
+            tabBackground.dispose();
+            tabText.dispose();
             selector.Texture.dispose();
             selector.dispose();
             back.Texture.dispose();
@@ -401,6 +413,7 @@ namespace AlumnoEjemplos.RamboAxe.Player
             items.Text = generateItemText();
             recetasText.Text = generateRecetasText();
             ingredientesText.Text = generateIngredientesText();
+            pesoText.Text = "Peso: " + inv.pesoActual + "/" + CharacterSheet.getInstance().pesoMaximo;
         }
     }
 }

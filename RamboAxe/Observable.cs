@@ -19,7 +19,7 @@ namespace AlumnoEjemplos.RamboAxe
             this.observador = obs;
         }
 
-        public void sacarObservador()
+        public void sacarObservador(Observador obs)
         {
             this.observador = null;
         }
