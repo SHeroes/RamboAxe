@@ -9,11 +9,11 @@ namespace AlumnoEjemplos.RamboAxe.Player
         int vida;
         int sed;
         int frio;
-        Inventario inv;
+        VistaInventario inv;
         private static CharacterSheet singleton;
         private CharacterSheet()
         {
-            inv = new Inventario();
+            inv = new VistaInventario();
             
         }
 
@@ -24,7 +24,7 @@ namespace AlumnoEjemplos.RamboAxe.Player
             return singleton;
         }
 
-        public Inventario getInventario()
+        public VistaInventario getInventario()
         {
             return inv;
         }

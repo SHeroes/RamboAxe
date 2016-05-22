@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using TgcViewer.Utils.TgcSceneLoader;
+using Microsoft.DirectX;
 
 namespace AlumnoEjemplos.RamboAxe.GameObjects
 {
@@ -44,6 +45,7 @@ namespace AlumnoEjemplos.RamboAxe.GameObjects
         public abstract InteractuableResponse use();
 		public void move(Vector3 vector)
         {
+           
             this.getMesh().Position = vector;
             this.getMesh().Rotation = new Vector3(0.0f, 0.0f, 0.0f);
         }

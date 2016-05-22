@@ -18,6 +18,7 @@ using Microsoft.DirectX.DirectInput;
 using AlumnoEjemplos.RamboAxe;
 using AlumnoEjemplos.RamboAxe.GameObjects;
 using AlumnoEjemplos.RamboAxe.Player;
+using AlumnoEjemplos.RamboAxe.Inventario;
 namespace AlumnoEjemplos.RamboAxe
 {
     public class EjemploAlumno : TgcExample
@@ -29,7 +30,6 @@ namespace AlumnoEjemplos.RamboAxe
         static EjemploAlumno game;
         Vector3 collisionPoint;
         GameObjectAbstract selectedGameObject;
-        List<Objeto> objetos;
         double currentCuadrantX, currentCuadrantZ = 1;
         CharacterSheet pj = CharacterSheet.getInstance();
         bool firstRun = true;
@@ -246,15 +246,15 @@ namespace AlumnoEjemplos.RamboAxe
                 else if (input.keyPressed(Key.NumPad1) || input.keyPressed(Key.D1))
                 {
                     // TODO: desharcodear estos 3 agregar
-                    pj.getInventario().agregar(objetos[0]);
+                    pj.getInventario().agregar(InventarioManager.Palos);
                 }
                 else if (input.keyPressed(Key.NumPad2) || input.keyPressed(Key.D2))
                 {
-                    pj.getInventario().agregar(objetos[1]);
+                    pj.getInventario().agregar(InventarioManager.Leña);
                 }
                 else if (input.keyPressed(Key.NumPad3) || input.keyPressed(Key.D3))
                 {
-                    pj.getInventario().agregar(objetos[2]);
+                    pj.getInventario().agregar(InventarioManager.Piedra);
                 }
                 else if (input.keyPressed(Key.DownArrow))
                 {
@@ -302,40 +302,13 @@ namespace AlumnoEjemplos.RamboAxe
 
 
         public void initInventario() {
-            
-            objetos = new List<Objeto>();
-            // TODO: Agregar objetos reales
-            Objeto obj1 = new Objeto();
-            obj1.nombre = "Piedra";
-            objetos.Add(obj1);
-            Objeto obj2 = new Objeto();
-            obj2.nombre = "Leña";
-            objetos.Add(obj2);
-            Objeto obj3 = new Objeto();
-            obj3.nombre = "Palos";
-            objetos.Add(obj3);
-            Receta rec1 = new Receta(obj3, 3);
-            rec1.agregarIngrediente(obj2, 1);
-            rec1.agregarIngrediente(obj1, 2);
-            //.agregarReceta(rec1);
-            
-            Objeto casa = new Objeto();
-            casa.nombre = "Casa";
-            objetos.Add(casa);
-            Receta rec2 = new Receta(casa, 1);
-            rec2.agregarIngrediente(obj2, 10);
-            rec2.agregarIngrediente(obj3, 50);
-            //inv.agregarReceta(rec2);
-            Objeto piedraTallada = new Objeto();
-            piedraTallada.nombre = "Piedra Tallada";
-            Receta rPiedra = new Receta(piedraTallada, 1);
-            
-            rPiedra.agregarIngrediente(obj1, 1);
-            pj.getInventario().agregar(obj1);
-            pj.getInventario().agregar(obj2);
-            pj.getInventario().agregar(obj3);
-            pj.getInventario().agregar(obj3);
-            pj.getInventario().agregarReceta(rec2);
+            InventarioManager.init();
+
+            pj.getInventario().agregar(InventarioManager.Palos);
+            pj.getInventario().agregar(InventarioManager.Leña);
+            pj.getInventario().agregar(InventarioManager.Piedra);
+            pj.getInventario().agregar(InventarioManager.Piedra);
+            pj.getInventario().agregarReceta(InventarioManager.RecetaCasa);
         }
 
         public void initCamera()
@@ -554,10 +527,7 @@ namespace AlumnoEjemplos.RamboAxe
 
         public override void close()
         {
-            foreach (Objeto obj in objetos)
-            {
-                obj.dispose();
-            }
+            InventarioManager.dispose();
         }
     }
 }
