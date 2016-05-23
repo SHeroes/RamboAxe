@@ -33,6 +33,7 @@ namespace AlumnoEjemplos.RamboAxe
         double currentCuadrantX, currentCuadrantZ = 1;
         CharacterSheet pj = CharacterSheet.getInstance();
         VistaInventario vistaInventario;
+        VistaConstruyendo vistaConstruyendo;
         bool firstRun = true;
 
         MapaDelJuego mapa;
@@ -67,7 +68,7 @@ namespace AlumnoEjemplos.RamboAxe
         TgcText2d text;
         TgcText2d text2;
         SkyBox skyBox;
-        GameCamera camera;
+        public GameCamera camera;
         TgcPlaneWall ground;
         public bool falling = false;
         List<Collider> objetosColisionables = new List<Collider>();
@@ -84,6 +85,7 @@ namespace AlumnoEjemplos.RamboAxe
         
         public override void init()
         {
+
             EjemploAlumno.game = this;
             Microsoft.DirectX.Direct3D.Device d3dDevice = GuiController.Instance.D3dDevice;
             //Iniciarlizar PickingRay
@@ -118,6 +120,7 @@ namespace AlumnoEjemplos.RamboAxe
             this.initInventario();
             this.initCollisions();
             this.initCamera();
+            vistaConstruyendo = new VistaConstruyendo(this);
             this.hud();
             this.skyboxInit();
             this.initBarrasVida();
@@ -339,6 +342,8 @@ namespace AlumnoEjemplos.RamboAxe
             Microsoft.DirectX.Direct3D.Device d3dDevice = GuiController.Instance.D3dDevice;
             if (barraInteraccion != null) barraInteraccion.render(elapsedTime);
             vistaInventario.render();
+            // TODO: descomentar para ver el construyendo actual
+            //vistaConstruyendo.render();
             //box.render();
            // text.render();
             text2.render();
@@ -515,6 +520,7 @@ namespace AlumnoEjemplos.RamboAxe
 
         public override void close()
         {
+            vistaConstruyendo.dispose();
             vistaInventario.dispose();
             InventarioManager.dispose();
         }

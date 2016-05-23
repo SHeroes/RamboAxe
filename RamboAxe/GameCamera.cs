@@ -35,12 +35,12 @@ namespace AlumnoEjemplos.RamboAxe
 
 
         float accumPitchDegrees;
-        Vector3 eye;
+        public Vector3 eye;
         Vector3 xAxis;
         Vector3 yAxis;
         Vector3 zAxis;
         Vector3 viewDir;
-        Vector3 lookAt;
+        public Vector3 lookAt;
 
         //Banderas de Input
         bool moveForwardsPressed = false;
