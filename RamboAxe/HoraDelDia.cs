@@ -9,7 +9,7 @@ namespace AlumnoEjemplos.RamboAxe
     {
         private static int tiempoDelCiclo = 120;
         private static System.Timers.Timer aTimer;
-        private HoraDelDia instancia;
+        private static HoraDelDia instancia;
         private float tiempoTranscurridoDelCiclo;
         private HoraDelDia() {
             tiempoTranscurridoDelCiclo = 0;
@@ -45,7 +45,7 @@ namespace AlumnoEjemplos.RamboAxe
 
         }
 
-        public HoraDelDia getInstance() {
+        public static HoraDelDia getInstance() {
             if (instancia == null) { 
                 instancia = new HoraDelDia();
             }

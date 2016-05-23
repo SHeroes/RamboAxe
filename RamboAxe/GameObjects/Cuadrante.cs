@@ -14,28 +14,29 @@ namespace AlumnoEjemplos.RamboAxe.GameObjects
         int x; 
         int z;
         private int temperatura;
-        private string temperaturaString;
-        public string getTempratura()
+        public int getTempratura()
         {
-            return temperaturaString;
+            return temperatura;
         }
         public void setTempratura(int temp)
         {
             this.temperatura = temp;
             switch (this.temperatura)
             {
-                case 0: temperaturaString = "TEMPLADO"; break;
-                case 1: temperaturaString = "FRIO"; break;
-                case 2: temperaturaString = "CONGELADOR"; break;
-                case 3: temperaturaString = "FRIO"; break;
-                case 4: temperaturaString = "TEMPLADO"; break;
-                case 5: temperaturaString = "TEMPLADO"; break;
-                case 6: temperaturaString = "CALUROSO"; break;
-                case 7: temperaturaString = "ARDIENTE"; break;
-                case 8: temperaturaString = "CALUROSO"; break;
-                case 9: temperaturaString = "TEMPLADO"; break;              
+                // {"CONGELADOR","FRIO","TEMPLADO","CALUROSO","ARDIENTE"}; 
+                // {"0"         ,"1",   "2",        "3",        "4"}; 
+                case 0: temperatura = 2; break; // temperaturaString = "TEMPLADO";  break;
+                case 1: temperatura = 1; break; //temperaturaString = "FRIO"; break;
+                case 2: temperatura = 0; break; //temperaturaString = "CONGELADOR"; break;
+                case 3: temperatura = 1; break; //temperaturaString = "FRIO"; break;
+                case 4: temperatura = 2; break; //temperaturaString = "TEMPLADO"; break;
+                case 5: temperatura = 2; break; //temperaturaString = "TEMPLADO"; break;
+                case 6: temperatura = 3; break; //temperaturaString = "CALUROSO"; break;
+                case 7: temperatura = 4; break; //temperaturaString = "ARDIENTE"; break;
+                case 8: temperatura = 3; break; //temperaturaString = "CALUROSO"; break;
+                case 9: temperatura = 2; break; //temperaturaString = "TEMPLADO"; break;              
 
-                default: temperaturaString = "TEMPLADO"; break;
+                default: temperatura = 2; break; //temperaturaString = "TEMPLADO"; break;
             }
         }
         public Cuadrante(bool randomizedCuadrante,int width,int height,int x,int z)

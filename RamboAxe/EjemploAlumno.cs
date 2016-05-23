@@ -25,7 +25,10 @@ namespace AlumnoEjemplos.RamboAxe
     {
         Barra barraInteraccion; Barra barraHambre; BarraEstatica barraTermica;
         Barra barraHidratacion;
+        string[] vectorTemperaturas = new string[5] {"CONGELADOR","FRIO","TEMPLADO","CALUROSO","ARDIENTE"};
+        bool cambioCiclo = false;
 
+        int temperaturaCuadranteActual;
         float distanciaObjeto = 0;
         TgcPickingRay pickingRay;
         static EjemploAlumno game;
@@ -355,8 +358,22 @@ namespace AlumnoEjemplos.RamboAxe
             pj.getInventario().render();
             //box.render();
            // text.render();
-           // +"currentCuadrantX" + currentCuadrantX + "currentCuadrantZ" + currentCuadrantZ;// mapa.getCuadrante(1, 1).getTempratura().ToString(); 
-            text3.Text = "TEMPRATURA ACTUAL: " + mapa.getCuadrante((int)currentCuadrantX, (int)currentCuadrantZ).getTempratura() + "  x:" + currentCuadrantX + "  z:" + currentCuadrantZ;
+ 
+            temperaturaCuadranteActual = mapa.getCuadrante((int)currentCuadrantX, (int)currentCuadrantZ).getTempratura();
+
+
+            float tiempoDiaActual = HoraDelDia.getInstance().getHoraDia();
+            if (tiempoDiaActual > 0.66 && temperaturaCuadranteActual > 0 && cambioCiclo)
+            {
+                temperaturaCuadranteActual--; //noche
+                cambioCiclo = false;
+            }
+            else if (tiempoDiaActual > 0.33 && temperaturaCuadranteActual < vectorTemperaturas.Length - 1 && !cambioCiclo)
+            {
+                temperaturaCuadranteActual++; //mañana
+                cambioCiclo = true;
+            }
+            text3.Text = "TEMPERATURA: " + vectorTemperaturas[temperaturaCuadranteActual] + "  indiceVector:" + temperaturaCuadranteActual + "tiempoDiaActual:" + tiempoDiaActual + "  x:" + currentCuadrantX + "  z:" + currentCuadrantZ;
             
             text3.render();
             text2.render();
