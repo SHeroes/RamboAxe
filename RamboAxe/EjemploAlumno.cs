@@ -23,8 +23,9 @@ namespace AlumnoEjemplos.RamboAxe
 {
     public class EjemploAlumno : TgcExample
     {
-        Barra barraInteraccion; Barra barraHambre; BarraEstatica barraTermica;
-        Barra barraHidratacion;
+        Barra barraInteraccion;
+        BarraEstatica barraHambre; BarraEstatica barraVida;
+        BarraEstatica barraSed;
         string[] vectorTemperaturas = new string[5] {"CONGELADOR","FRIO","TEMPLADO","CALUROSO","ARDIENTE"};
         bool cambioCiclo = false;
 
@@ -44,11 +45,11 @@ namespace AlumnoEjemplos.RamboAxe
         {
             return game;
         }
-        public Barra getBarraHidratacion()
+        public BarraEstatica getBarraSed()
         {
-            return barraHidratacion;
+            return barraSed;
         }
-        public Barra getBarraComida()
+        public BarraEstatica getBarraComida()
         {
             return barraHambre;
         }
@@ -142,16 +143,17 @@ namespace AlumnoEjemplos.RamboAxe
         public void initBarrasVida()
         {
             float barrasWidth = 280;
-            barraHambre = new Barra();
-            barraHidratacion = new Barra();
-            barraTermica = new BarraEstatica();
-            barraHambre.init(Barra.RED, true, 80, 460, 360);
-            barraHidratacion.init(Barra.VIOLET, false, (barrasWidth)+80, 460, 180);
+            barraHambre = new BarraEstatica();
+            barraSed = new BarraEstatica();
+            barraVida = new BarraEstatica();
+            barraHambre.init(BarraEstatica.RED, 80, 460, 0, 100);
+            barraSed.init(BarraEstatica.VIOLET, (barrasWidth) + 80, 460, 0, 100);
+            barraVida.init(BarraEstatica.YELLOW, (barrasWidth * 2) + 80, 460, 0, 100);
 
-            barraTermica.init(Barra.YELLOW, (barrasWidth * 2) + 80, 460, 0, 100);
-            barraTermica.valorActual = 0;
-            barraTermica.barTitleText       = "Vida";
-            barraHidratacion.barTitleText   = "Nivel de Hidratacion";
+
+            barraVida.valorActual = 0.5f;
+            barraVida.barTitleText       = "Vida";
+            barraSed.barTitleText = "Nivel de Sed";
             barraHambre.barTitleText          = "Hambre";
         }
 
@@ -262,7 +264,7 @@ namespace AlumnoEjemplos.RamboAxe
                     {
                         string consumido = vistaInventario.consumirActual();
                         if(consumido == "Racion"){
-                           barraHambre.agregarPorcentajeABarra(0.1f);
+                           //barraHambre.agregarPorcentajeABarra(0.1f);
                         }
                         // TODO: hacer algo al consumir
                        // Console.WriteLine("Item consumido: {0}", consumido);
@@ -336,8 +338,8 @@ namespace AlumnoEjemplos.RamboAxe
             
             if (!vistaInventario.abierto)
             {
-                barraHidratacion.render(elapsedTime);
-                barraTermica.render(elapsedTime);
+                barraSed.render(elapsedTime);
+                barraVida.render(elapsedTime);
                 barraHambre.render(elapsedTime);
             }
             
@@ -358,7 +360,7 @@ namespace AlumnoEjemplos.RamboAxe
             }
             else if (tiempoDiaActual > 0.33 && temperaturaCuadranteActual < vectorTemperaturas.Length - 1 && !cambioCiclo)
             {
-                temperaturaCuadranteActual++; //mañana
+                temperaturaCuadranteActual++; //mediodía
                 cambioCiclo = true;
             }
             text3.Text = "TEMPERATURA: " + vectorTemperaturas[temperaturaCuadranteActual] + "  indiceVector:" + temperaturaCuadranteActual + "tiempoDiaActual:" + tiempoDiaActual + "  x:" + currentCuadrantX + "  z:" + currentCuadrantZ;
