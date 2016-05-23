@@ -117,6 +117,7 @@
     <Compile Include="RamboAxe\GameObjects\GameObjectAbstract.cs" />
     <Compile Include="RamboAxe\GameObjects\InteractuableResponse.cs" />
     <Compile Include="RamboAxe\GameObjects\MapaDelJuego.cs" />
+    <Compile Include="RamboAxe\HoraDelDia.cs" />
     <Compile Include="RamboAxe\Inventario\InventarioManager.cs" />
     <Compile Include="RamboAxe\Inventario\ModeloInventario.cs" />
     <Compile Include="RamboAxe\Observable.cs" />

@@ -23,8 +23,13 @@ namespace AlumnoEjemplos.RamboAxe
 {
     public class EjemploAlumno : TgcExample
     {
-        Barra barraInteraccion; Barra barraHambre; BarraEstatica barraTermica;
-        Barra barraHidratacion;
+        Barra barraInteraccion;
+        BarraEstatica barraHambre; BarraEstatica barraVida;
+        BarraEstatica barraSed;
+        string[] vectorTemperaturas = new string[5] {"CONGELADOR","FRIO","TEMPLADO","CALUROSO","ARDIENTE"};
+        bool cambioCiclo = false;
+
+        int temperaturaCuadranteActual;
         float distanciaObjeto = 0;
         TgcPickingRay pickingRay;
         static EjemploAlumno game;
@@ -41,11 +46,11 @@ namespace AlumnoEjemplos.RamboAxe
         {
             return game;
         }
-        public Barra getBarraHidratacion()
+        public BarraEstatica getBarraSed()
         {
-            return barraHidratacion;
+            return barraSed;
         }
-        public Barra getBarraComida()
+        public BarraEstatica getBarraComida()
         {
             return barraHambre;
         }
@@ -67,6 +72,7 @@ namespace AlumnoEjemplos.RamboAxe
         TgcD3dInput d3dInput;
         TgcText2d text;
         TgcText2d text2;
+        TgcText2d text3;
         SkyBox skyBox;
         public GameCamera camera;
         TgcPlaneWall ground;
@@ -140,16 +146,17 @@ namespace AlumnoEjemplos.RamboAxe
         public void initBarrasVida()
         {
             float barrasWidth = 280;
-            barraHambre = new Barra();
-            barraHidratacion = new Barra();
-            barraTermica = new BarraEstatica();
-            barraHambre.init(Barra.RED, true, 80, 460, 360);
-            barraHidratacion.init(Barra.VIOLET, false, (barrasWidth)+80, 460, 180);
+            barraHambre = new BarraEstatica();
+            barraSed = new BarraEstatica();
+            barraVida = new BarraEstatica();
+            barraHambre.init(BarraEstatica.RED, 80, 460, 0, 100);
+            barraSed.init(BarraEstatica.VIOLET, (barrasWidth) + 80, 460, 0, 100);
+            barraVida.init(BarraEstatica.YELLOW, (barrasWidth * 2) + 80, 460, 0, 100);
 
-            barraTermica.init(Barra.YELLOW, (barrasWidth * 2) + 80, 460, 0, 100);
-            barraTermica.valorActual = 0;
-            barraTermica.barTitleText       = "Vida";
-            barraHidratacion.barTitleText   = "Nivel de Hidratacion";
+
+            barraVida.valorActual = 0.5f;
+            barraVida.barTitleText       = "Vida";
+            barraSed.barTitleText = "Nivel de Sed";
             barraHambre.barTitleText          = "Hambre";
         }
 
@@ -260,7 +267,7 @@ namespace AlumnoEjemplos.RamboAxe
                     {
                         string consumido = vistaInventario.consumirActual();
                         if(consumido == "Racion"){
-                           barraHambre.agregarPorcentajeABarra(0.1f);
+                           //barraHambre.agregarPorcentajeABarra(0.1f);
                         }
                         // TODO: hacer algo al consumir
                        // Console.WriteLine("Item consumido: {0}", consumido);
@@ -334,8 +341,8 @@ namespace AlumnoEjemplos.RamboAxe
             
             if (!vistaInventario.abierto)
             {
-                barraHidratacion.render(elapsedTime);
-                barraTermica.render(elapsedTime);
+                barraSed.render(elapsedTime);
+                barraVida.render(elapsedTime);
                 barraHambre.render(elapsedTime);
             }
             
@@ -346,6 +353,24 @@ namespace AlumnoEjemplos.RamboAxe
             //vistaConstruyendo.render();
             //box.render();
            // text.render();
+ 
+            temperaturaCuadranteActual = mapa.getCuadrante((int)currentCuadrantX, (int)currentCuadrantZ).getTempratura();
+
+
+            float tiempoDiaActual = HoraDelDia.getInstance().getHoraDia();
+            if (tiempoDiaActual > 0.66 && temperaturaCuadranteActual > 0 && cambioCiclo)
+            {
+                temperaturaCuadranteActual--; //noche
+                cambioCiclo = false;
+            }
+            else if (tiempoDiaActual > 0.33 && temperaturaCuadranteActual < vectorTemperaturas.Length - 1 && !cambioCiclo)
+            {
+                temperaturaCuadranteActual++; //mediodía
+                cambioCiclo = true;
+            }
+            text3.Text = "TEMPERATURA: " + vectorTemperaturas[temperaturaCuadranteActual] + "  indiceVector:" + temperaturaCuadranteActual + "tiempoDiaActual:" + tiempoDiaActual + "  x:" + currentCuadrantX + "  z:" + currentCuadrantZ;
+            
+            text3.render();
             text2.render();
             skyBox.Center = camera.Position;
             skyBox.updateValues();
@@ -467,13 +492,20 @@ namespace AlumnoEjemplos.RamboAxe
             text.Color = Color.Gold;
             text.Position = new Point(5, 20);
 
+
             text2 = new TgcText2d();
             text2.Text = "-\"wasd\" para moverse    -\"P\" para capturar el mouse    -\"I\" para el inventario    -\"Click Izq\" para interactuar" ;
             text2.Align = TgcText2d.TextAlign.LEFT;
-            text2.Position = new Point(5, 20);
             text2.Size = new Size(800, 100);
             text2.Color = Color.Gold;
             text2.Position = new Point(75, 10);
+
+            text3 = new TgcText2d();
+            text3.Text = "-TEMPERATURA: DESCONOCIDA VITEH";
+            text3.Align = TgcText2d.TextAlign.CENTER;
+            text3.Size = new Size(800, 100);
+            text3.Color = Color.Red;
+            text3.Position = new Point(115, 30);
 
         }
 

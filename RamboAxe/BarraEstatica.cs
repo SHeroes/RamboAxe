@@ -11,7 +11,7 @@ using System.Drawing;
 
 namespace AlumnoEjemplos.RamboAxe
 {
-    class BarraEstatica
+    public class BarraEstatica
     {
         TgcText2d barTitle;
         TgcSprite barEmpty;
@@ -26,11 +26,11 @@ namespace AlumnoEjemplos.RamboAxe
         private float kte;
 
         //Color, Posicion X, Posicion Y, ValorMinimo ºC, ValorMaximo ºC
-        public void init(int color, float barraVaciaPosX = (float)60.0, float barraVaciaPosY = (float)460.0, int min = -40, int max = 80){
-            amplitudTerminaBarra = max - min;
+        public void init(int color, float barraVaciaPosX = (float)60.0, float barraVaciaPosY = (float)460.0, int min = 0, int max = 100){
+           amplitudTerminaBarra = max - min;
             barraAnchoCompleto = (float)0.23;
             kte = amplitudTerminaBarra / 100;
-            valorActual = (float)0.5;
+            valorActual = 0.01f;
             barEmpty = new TgcSprite();
             barColor = new TgcSprite();
             string colorPath = "";
