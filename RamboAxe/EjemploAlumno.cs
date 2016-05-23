@@ -36,6 +36,7 @@ namespace AlumnoEjemplos.RamboAxe
         GameObjectAbstract selectedGameObject;
         double currentCuadrantX, currentCuadrantZ = 1;
         CharacterSheet pj = CharacterSheet.getInstance();
+        VistaInventario vistaInventario;
         bool firstRun = true;
 
         MapaDelJuego mapa;
@@ -157,7 +158,7 @@ namespace AlumnoEjemplos.RamboAxe
         public void handleInput() {
             TgcD3dInput input = GuiController.Instance.D3dInput;
 
-            bool abierto = pj.getInventario().abierto;
+            bool abierto = vistaInventario.abierto;
             bool selected = false;
             if (!abierto) {
                 //if (GuiController.Instance.D3dInput.buttonUp(TgcViewer.Utils.Input.TgcD3dInput.MouseButtons.BUTTON_LEFT))
@@ -233,47 +234,33 @@ namespace AlumnoEjemplos.RamboAxe
 
             if (input.keyPressed(Key.I))
             {
-                if (pj.getInventario().abierto)
+                if (vistaInventario.abierto)
                 {
-                    pj.getInventario().cerrar();
+                    vistaInventario.cerrar();
                 }
                 else
                 {
-                    pj.getInventario().abrir();
-                    pj.getInventario().siguienteItem();
+                    vistaInventario.abrir();
                 }
             }
             if(abierto){
                 if (input.keyPressed(Key.RightArrow))
                 {
-                    pj.getInventario().cambiarTab();
-                }
-                else if (input.keyPressed(Key.NumPad1) || input.keyPressed(Key.D1))
-                {
-                    // TODO: desharcodear estos 3 agregar
-                    pj.getInventario().agregar(InventarioManager.Palos);
-                }
-                else if (input.keyPressed(Key.NumPad2) || input.keyPressed(Key.D2))
-                {
-                    pj.getInventario().agregar(InventarioManager.Leña);
-                }
-                else if (input.keyPressed(Key.NumPad3) || input.keyPressed(Key.D3))
-                {
-                    pj.getInventario().agregar(InventarioManager.Piedra);
+                    vistaInventario.cambiarTab();
                 }
                 else if (input.keyPressed(Key.DownArrow))
                 {
-                    pj.getInventario().siguienteItem();
+                    vistaInventario.siguienteItem();
                 }
                 else if (input.keyPressed(Key.UpArrow))
                 {
-                    pj.getInventario().anteriorItem();
+                    vistaInventario.anteriorItem();
                 }
                 else if (input.keyPressed(Key.Return))
                 {
-                    if (!pj.getInventario().esReceta)
+                    if (!vistaInventario.esReceta)
                     {
-                        string consumido = pj.getInventario().consumirActual();
+                        string consumido = vistaInventario.consumirActual();
                         if(consumido == "Racion"){
                            barraHambre.agregarPorcentajeABarra(0.1f);
                         }
@@ -283,7 +270,7 @@ namespace AlumnoEjemplos.RamboAxe
                     }
                     else
                     {
-                        pj.getInventario().fabricarActual();
+                        vistaInventario.fabricarActual();
                     }
                 }
             }
@@ -308,12 +295,13 @@ namespace AlumnoEjemplos.RamboAxe
 
         public void initInventario() {
             InventarioManager.init();
+            vistaInventario = new VistaInventario();
 
             pj.getInventario().agregar(InventarioManager.Palos);
             pj.getInventario().agregar(InventarioManager.Leña);
             pj.getInventario().agregar(InventarioManager.Piedra);
             pj.getInventario().agregar(InventarioManager.Piedra);
-            pj.getInventario().agregarReceta(InventarioManager.RecetaCasa);
+            pj.getInventario().agregar(InventarioManager.RecetaCasa);
         }
 
         public void initCamera()
@@ -346,7 +334,7 @@ namespace AlumnoEjemplos.RamboAxe
         {
             handleInput();
             
-            if (!pj.getInventario().abierto)
+            if (!vistaInventario.abierto)
             {
                 barraHidratacion.render(elapsedTime);
                 barraTermica.render(elapsedTime);
@@ -355,7 +343,7 @@ namespace AlumnoEjemplos.RamboAxe
             
             Microsoft.DirectX.Direct3D.Device d3dDevice = GuiController.Instance.D3dDevice;
             if (barraInteraccion != null) barraInteraccion.render(elapsedTime);
-            pj.getInventario().render();
+            vistaInventario.render();
             //box.render();
            // text.render();
  
@@ -557,6 +545,7 @@ namespace AlumnoEjemplos.RamboAxe
 
         public override void close()
         {
+            vistaInventario.dispose();
             InventarioManager.dispose();
         }
     }

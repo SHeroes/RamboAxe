@@ -11,9 +11,9 @@ using AlumnoEjemplos.RamboAxe.Inventario;
 
 namespace AlumnoEjemplos.RamboAxe.Player
 {
-    public class VistaInventario
+    public class VistaInventario: Observador
     {
-        ModeloInventario inv;
+        private ModeloInventario inv { get { return CharacterSheet.getInstance().getInventario(); } }
 
         TgcText2d itemsTitle;
         TgcText2d items;
@@ -27,6 +27,7 @@ namespace AlumnoEjemplos.RamboAxe.Player
         Rectangle selectorMiddle;
         Vector2 auxPoint;
         Vector2 upperLeftCorner;
+        TgcText2d pesoText;
         /* Tab render variables */
         TgcSprite tabBackground;
         TgcText2d tabText;
@@ -47,10 +48,8 @@ namespace AlumnoEjemplos.RamboAxe.Player
 
         public VistaInventario()
         {
-
             string basePath = GuiController.Instance.AlumnoEjemplosDir + "RamboAxe\\Media\\inventario\\";
             /* Inicializacion de los datos */
-            inv = new ModeloInventario();
             abierto = false;
             currentRow = -1;
             currentTab = 0;
@@ -128,6 +127,15 @@ namespace AlumnoEjemplos.RamboAxe.Player
             ingredientesText.Size = itemsTitle.Size;
             ingredientesText.Text = "";
             ingredientesText.Color = Color.White;
+            /* Inicializacion del texto con el peso actual y maximo del inventario */
+            pesoText = new TgcText2d();
+            pesoText.Align = TgcText2d.TextAlign.LEFT;
+            pesoText.Position = new Point(((int)upperLeftCorner.X) + 20, (int)(upperLeftCorner.Y + back.SrcRect.Height * 1.5f) - 35);
+            pesoText.Size = ingredientesText.Size;
+            pesoText.Color = Color.White;
+            /* Observando los datos del modelo */
+            inv.agregarObservador(this);
+            cambioObservable();
         }
 
         public void render()
@@ -152,6 +160,7 @@ namespace AlumnoEjemplos.RamboAxe.Player
                     ingredientesText.render();
                     ingredientesTitle.render();
                 }
+                pesoText.render();
             }
         }
 
@@ -161,7 +170,7 @@ namespace AlumnoEjemplos.RamboAxe.Player
             GuiController.Instance.Drawer2D.beginDrawSprite();
             auxPoint.X = startPosition;
             /* Start height - Tab Height */
-            auxPoint.Y = back.Position.Y - 40;
+            auxPoint.Y = back.Position.Y - 35;
             /* Render Tab Start */
             int actualWidth = tabBorderMiddle.Width;
             tabBackground.Position = auxPoint;
@@ -191,7 +200,7 @@ namespace AlumnoEjemplos.RamboAxe.Player
                 tabText.Text = "   " + tabName;
             }
             tabTextPosition.X = (int)startPosition + tabBorderMiddle.Width;
-            tabTextPosition.Y = (int)back.Position.Y - 40 + tabBorderMiddle.Width;
+            tabTextPosition.Y = (int)back.Position.Y - 35 + tabBorderMiddle.Width;
             tabText.Position = tabTextPosition;
             tabText.render();
         }
@@ -220,6 +229,10 @@ namespace AlumnoEjemplos.RamboAxe.Player
 
         public void dispose()
         {
+            inv.sacarObservador(this);
+
+            tabBackground.dispose();
+            tabText.dispose();
             selector.Texture.dispose();
             selector.dispose();
             back.Texture.dispose();
@@ -241,32 +254,6 @@ namespace AlumnoEjemplos.RamboAxe.Player
         public void cerrar()
         {
             abierto = false;
-        }
-
-        public void agregarReceta(Receta receta)
-        {
-            inv.agregar(receta);
-            recetasText.Text = generateRecetasText();
-        }
-
-        /// <summary>
-        /// Agrega un nuevo elemento al inventario
-        /// </summary>
-        /// <param name="obj"></param>
-        public void agregar(ObjetoInventario obj)
-        {
-            inv.agregar(obj);
-            items.Text = generateItemText();
-        }
-
-        /// <summary>
-        /// Devuelve la cantitad del objeto dado en el inventario
-        /// </summary>
-        /// <param name="obj"></param>
-        /// <returns></returns>
-        public int contar(ObjetoInventario obj)
-        {
-            return inv.cantidadPorObjeto(obj);
         }
 
         /// <summary>
@@ -318,7 +305,10 @@ namespace AlumnoEjemplos.RamboAxe.Player
                 {
                     count = 0;
                 }
-                itemList += name + " x" + count + "\n\n";
+                int currentCount = 0;
+                ObjetoInventario obj = InventarioManager.obtenerObjetoPorNombre(name);
+                currentCount = inv.cantidadPorObjeto(obj);
+                itemList += name + "  " + currentCount + "/" + count + "\n\n";
             }
             return itemList;
         }
@@ -416,6 +406,14 @@ namespace AlumnoEjemplos.RamboAxe.Player
             {
                 inv.fabricar(currentRow);
             }
+        }
+
+        public void cambioObservable()
+        {
+            items.Text = generateItemText();
+            recetasText.Text = generateRecetasText();
+            ingredientesText.Text = generateIngredientesText();
+            pesoText.Text = "Peso: " + inv.pesoActual + "/" + CharacterSheet.getInstance().pesoMaximo;
         }
     }
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using AlumnoEjemplos.RamboAxe.Inventario;
 namespace AlumnoEjemplos.RamboAxe.Player
 {
     class CharacterSheet
@@ -9,12 +10,14 @@ namespace AlumnoEjemplos.RamboAxe.Player
         int vida;
         int sed;
         int frio;
-        VistaInventario inv;
+        public int pesoMaximo { get; private set; }
+
+        ModeloInventario inv;
         private static CharacterSheet singleton;
         private CharacterSheet()
         {
-            inv = new VistaInventario();
-            
+            pesoMaximo = 100;
+            inv = new ModeloInventario();
         }
 
         public static CharacterSheet getInstance(){
@@ -24,7 +27,7 @@ namespace AlumnoEjemplos.RamboAxe.Player
             return singleton;
         }
 
-        public VistaInventario getInventario()
+        public ModeloInventario getInventario()
         {
             return inv;
         }

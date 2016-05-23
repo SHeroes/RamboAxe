@@ -2,20 +2,24 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using AlumnoEjemplos.RamboAxe.Player;
 
 namespace AlumnoEjemplos.RamboAxe.Inventario
 {
-    public class ModeloInventario
+    public class ModeloInventario: Observable
     {
         private List<string> ordenObjetos;
         private Dictionary<string, int> cantidadObjetos;
         private List<string> recetas;
+        private int pesoMaximo { get { return CharacterSheet.getInstance().pesoMaximo; } }
+        public int pesoActual { get; private set; }
 
         public ModeloInventario()
         {
             ordenObjetos = new List<string>();
             cantidadObjetos = new Dictionary<string, int>();
             recetas = new List<string>();
+            pesoActual = 0;
         }
 
         # region Cambiar objetos y recetas
@@ -30,6 +34,7 @@ namespace AlumnoEjemplos.RamboAxe.Inventario
             if(recetas.IndexOf(nombre) == -1){
                 recetas.Add(nombre);
             }
+            huboCambios();
         }
 
         /// <summary>
@@ -40,6 +45,11 @@ namespace AlumnoEjemplos.RamboAxe.Inventario
         /// <returns>Si se agrego o no el objeto</returns>
         public bool agregar(ObjetoInventario objeto, int cantidad = 1)
         {
+            int pesoAgregado = objeto.peso * cantidad;
+            if(pesoAgregado + pesoActual > pesoMaximo){
+                return false;
+            }
+            pesoActual += pesoAgregado;
             int cantidadActual;
             if(!cantidadObjetos.TryGetValue(objeto.nombre, out cantidadActual)){
                 ordenObjetos.Add(objeto.nombre);
@@ -50,6 +60,7 @@ namespace AlumnoEjemplos.RamboAxe.Inventario
                 cantidadActual += cantidad;
                 cantidadObjetos[objeto.nombre] = cantidadActual;
             }
+            huboCambios();
             return true;
         }
 
@@ -68,6 +79,7 @@ namespace AlumnoEjemplos.RamboAxe.Inventario
                 if(cantidadActual >= cantidad){
                     consumido = true;
                     cantidadActual -= cantidad;
+                    pesoActual -= objeto.peso * cantidad;
                     if(cantidadActual == 0){
                         ordenObjetos.Remove(objeto.nombre);
                         cantidadObjetos.Remove(objeto.nombre);
@@ -76,6 +88,11 @@ namespace AlumnoEjemplos.RamboAxe.Inventario
                     {
                         cantidadObjetos[objeto.nombre] = cantidadActual;
                     }
+                    while(cantidad > 0){
+                        objeto.alConsumir();
+                        cantidad--;
+                    }
+                    huboCambios();
                 }
             }
             return consumido;
@@ -109,10 +126,25 @@ namespace AlumnoEjemplos.RamboAxe.Inventario
                 int cantidad = receta.fabricar(cantidadObjetos);
                 if(cantidad >= 0){
                     seFabrico = true;
+                    /* Calculo el peso de los ingredientes y se lo saco al peso actual */
+                    int pesoIngredientes = 0;
+                    foreach (string name in receta.ingredientes)
+                    {
+                        ObjetoInventario obj = InventarioManager.obtenerObjetoPorNombre(name);
+                        int count;
+                        if (!receta.cantidadIngrediente.TryGetValue(name, out count))
+                        {
+                            count = 0;
+                        }
+                        pesoIngredientes += obj.peso * count;
+                    }
+                    pesoActual -= pesoIngredientes;
+
                     ObjetoInventario objeto = receta.resultado;
                     if(!objeto.esConstruible){
                         agregar(objeto, cantidad);
                     }
+                    huboCambios();
                 }
             }
             return seFabrico;

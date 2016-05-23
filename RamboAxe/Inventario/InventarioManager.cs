@@ -29,11 +29,11 @@ namespace AlumnoEjemplos.RamboAxe.Inventario
             objetos = new Dictionary<String, ObjetoInventario>();
             recetas = new Dictionary<String, Receta>();
             /* Listado de Objetos */
-            agregarObjeto("Piedra");
-            agregarObjeto("Leña");
-            agregarObjeto("Palos");
+            agregarObjeto("Piedra", TipoObjetoInventario.Ninguno, 2);
+            agregarObjeto("Leña", TipoObjetoInventario.Ninguno, 4);
+            agregarObjeto("Palos", TipoObjetoInventario.Ninguno, 1);
             agregarObjeto("Casa", TipoObjetoInventario.Construible);
-            agregarObjeto("Ramita");
+            agregarObjeto("Ramita", TipoObjetoInventario.Ninguno, 1);
             agregarObjeto("Racion", TipoObjetoInventario.Consumible);
             /* Listado de Recetas */
             agregarReceta(
@@ -57,47 +57,64 @@ namespace AlumnoEjemplos.RamboAxe.Inventario
         # region Metodos de Creacion
 
         /// <summary>
-        /// Agrega un nuevo objeto
+        /// Crea y agrega un objeto
         /// </summary>
         /// <param name="nombre">Nombre del objeto</param>
-        private static void agregarObjeto(String nombre, TipoObjetoInventario tipo = TipoObjetoInventario.Ninguno)
+        private static void agregarObjeto(String nombre, TipoObjetoInventario tipo = TipoObjetoInventario.Ninguno, int peso = 0)
         {
-            ObjetoInventario obj;
-            if(!objetos.TryGetValue(nombre, out obj)){
-                obj = new ObjetoInventario();
-                obj.nombre = nombre;
-                obj.tipo = tipo;
-                objetos.Add(nombre, obj);
+            ObjetoInventario obj = new ObjetoInventario();
+            obj.nombre = nombre;
+            obj.tipo = tipo;
+            obj.peso = peso;
+            agregarObjeto(obj);
+        }
+
+        /// <summary>
+        /// Agregar un objeto
+        /// </summary>
+        /// <param name="objeto"></param>
+        private static void agregarObjeto(ObjetoInventario objeto)
+        {
+            if (!objetos.ContainsKey(objeto.nombre))
+            {
+                objetos.Add(objeto.nombre, objeto);
             }
             else
             {
-                throw new Exception("Creado objeto repetido: " + nombre);
+                throw new Exception("Creado objeto repetido: " + objeto.nombre);
             }
         }
 
         /// <summary>
-        /// Agrega una nueva receta
+        /// Crea y Agrega una receta
         /// </summary>
         /// <param name="resultado">Objeto Resultado</param>
         /// <param name="cantidad">Cantidad del Objeto Resultado</param>
         /// <param name="ingredientes">Ingredientes</param>
         private static void agregarReceta(ObjetoInventario resultado, int cantidad = 1, Dictionary<ObjetoInventario, int> ingredientes = null)
         {
-            Receta receta;
-            if (!recetas.TryGetValue(resultado.nombre, out receta))
-            {
-                receta = new Receta(resultado, cantidad);
-                if(ingredientes != null){
-                    foreach (ObjetoInventario objeto in ingredientes.Keys)
-                    {
-                        receta.agregarIngrediente(objeto, ingredientes[objeto]);
-                    }
+            Receta receta = new Receta(resultado, cantidad);
+            if(ingredientes != null){
+                foreach (ObjetoInventario objeto in ingredientes.Keys)
+                {
+                    receta.agregarIngrediente(objeto, ingredientes[objeto]);
                 }
-                recetas.Add(resultado.nombre, receta);
+            }
+            agregarReceta(receta);
+        }
+
+        /// <summary>
+        /// Agrega una receta
+        /// </summary>
+        /// <param name="receta"></param>
+        private static void agregarReceta(Receta receta){
+            if (!recetas.ContainsKey(receta.resultado.nombre))
+            {
+                recetas.Add(receta.resultado.nombre, receta);
             }
             else
             {
-                throw new Exception("Creada receta repetida: " + resultado.nombre);
+                throw new Exception("Creada receta repetida: " + receta.resultado.nombre);
             }
         }
 
