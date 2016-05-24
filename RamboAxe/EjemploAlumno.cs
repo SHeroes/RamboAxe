@@ -40,8 +40,10 @@ namespace AlumnoEjemplos.RamboAxe
         VistaInventario vistaInventario;
         VistaConstruyendo vistaConstruyendo;
         bool firstRun = true;
+        bool hachaEquipada = true;
 
         MapaDelJuego mapa;
+        TgcSprite spriteHacha;
         public static EjemploAlumno getInstance()
         {
             return game;
@@ -101,7 +103,6 @@ namespace AlumnoEjemplos.RamboAxe
 
             
             ground = new TgcPlaneWall(new Vector3(0,0,0),new Vector3(width,0,height),TgcPlaneWall.Orientations.XZplane,texture);
-       
 
             for(int i = 0;i<3;i++){
                 floors[i] = new TgcPlaneWall[3];
@@ -120,6 +121,15 @@ namespace AlumnoEjemplos.RamboAxe
 
             d3dInput = GuiController.Instance.D3dInput;
 
+            spriteHacha = new TgcSprite();
+            spriteHacha.Texture = TgcTexture.createTexture(GuiController.Instance.AlumnoEjemplosDir + "RamboAxe\\Media\\hacha.png");
+            spriteHacha.Scaling = new Vector2(1.5f, 1.5f);
+
+            //Ubicado centrado en la pantalla
+            Size screenSize = GuiController.Instance.Panel3d.Size;
+            Size textureSize = spriteHacha.Texture.Size;
+            spriteHacha.Position = new Vector2(220,380);
+            GuiController.Instance.Logger.log(String.Format("Posicion sprite: X:{0} , Y:{1}",spriteHacha.Position.X,spriteHacha.Position.Y));
 
             characterElipsoid = new TgcElipsoid(new Vector3(0, 250, 0), new Vector3(12, 48, 12));
             this.initMapa();
@@ -269,6 +279,20 @@ namespace AlumnoEjemplos.RamboAxe
                         if(consumido == "Racion"){
                            //barraHambre.agregarPorcentajeABarra(0.1f);
                         }
+                        else
+                        {
+                            if (consumido == "Hacha")
+                            {
+                                if (!hachaEquipada)
+                                {
+                                    hachaEquipada = true;
+                                    GuiController.Instance.Drawer2D.beginDrawSprite();
+                                    spriteHacha.render();
+                                    GuiController.Instance.Drawer2D.endDrawSprite();
+                                }
+                                
+                            }
+                        }
                         // TODO: hacer algo al consumir
                        // Console.WriteLine("Item consumido: {0}", consumido);
                        // GuiController.Instance.Logger.log
@@ -338,6 +362,13 @@ namespace AlumnoEjemplos.RamboAxe
         public override void render(float elapsedTime)
         {
             handleInput();
+
+            if (hachaEquipada)
+            {
+                GuiController.Instance.Drawer2D.beginDrawSprite();
+                spriteHacha.render();
+                GuiController.Instance.Drawer2D.endDrawSprite();
+            }
             
             if (!vistaInventario.abierto)
             {

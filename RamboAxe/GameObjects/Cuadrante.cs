@@ -72,12 +72,17 @@ namespace AlumnoEjemplos.RamboAxe.GameObjects
                         }
                         else if (rX.NextDouble() < 0.5)
                         {
-                            mesh = MapaDelJuego.getGameMesh(4).clone("arbolin_" + inCuadx.ToString() + inCuadz.ToString());
+                            mesh = MapaDelJuego.getGameMesh(5).clone("arbolin_" + inCuadx.ToString() + inCuadz.ToString());
                             go = new Arbol(mesh, inCuadx * 500, new Random().Next(-50, 0), inCuadz * 500);
                             go.getMesh().rotateY((float)(FastMath.ToRad(new Random().Next(-20, 20))));
-
-
                         }
+                        else if (rX.NextDouble() < 0.6)
+                        {
+                            mesh = MapaDelJuego.getGameMesh(3).clone("hacha_" + inCuadx.ToString() + inCuadz.ToString());
+                            go = new Hacha(mesh, inCuadx * 500, new Random().Next(-50, 0), inCuadz * 500);
+                            go.getMesh().rotateY((float)(Math.PI * (new Random().Next(2))));
+                        }
+
                         else
                         {
                             mesh = MapaDelJuego.getGameMesh(0).clone("agua_" + inCuadx.ToString() + inCuadz.ToString());

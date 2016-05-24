@@ -52,6 +52,15 @@ namespace AlumnoEjemplos.RamboAxe.GameObjects
             //Esto se puede copiar y pegar con otro xml para tener mas objetos que crear en el cuadrante.
        
              }
+             meshFile = TgcViewer.GuiController.Instance.AlumnoEjemplosDir + "RamboAxe\\Media\\axefloor2-TgcScene.xml";
+             scene = loader.loadSceneFromFile(meshFile);
+             foreach (TgcMesh mesh in scene.Meshes)
+             {
+                 mesh.Scale = new Vector3(0.50f, 0.50f, 0.50f);
+                 mesh.updateBoundingBox();
+                 gameMeshes.Add(mesh);
+             }
+
              meshFile = TgcViewer.GuiController.Instance.AlumnoEjemplosDir + "RamboAxe\\Media\\ball-TgcScene.xml";
              scene = loader.loadSceneFromFile(meshFile);
              foreach (TgcMesh mesh in scene.Meshes)
