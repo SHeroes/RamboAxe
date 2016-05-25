@@ -121,6 +121,7 @@
     <Compile Include="RamboAxe\HoraDelDia.cs" />
     <Compile Include="RamboAxe\Inventario\InventarioManager.cs" />
     <Compile Include="RamboAxe\Inventario\ModeloInventario.cs" />
+    <Compile Include="RamboAxe\MeshManager.cs" />
     <Compile Include="RamboAxe\Observable.cs" />
     <Compile Include="RamboAxe\Player\VistaConstruyendo.cs" />
     <Compile Include="RamboAxe\Player\VistaInventario.cs" />

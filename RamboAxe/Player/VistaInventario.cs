@@ -297,11 +297,11 @@ namespace AlumnoEjemplos.RamboAxe.Player
                 return "";
             }
             Receta receta = inv.obtenerRecetaEnPosicion(currentRow);
-            string itemList = "";
-            if (receta != null)
+            if(receta == null)
             {
-
-            
+                return "";
+            }
+            string itemList = "";
             foreach (string name in receta.ingredientes)
             {
                 int count;
@@ -313,7 +313,6 @@ namespace AlumnoEjemplos.RamboAxe.Player
                 ObjetoInventario obj = InventarioManager.obtenerObjetoPorNombre(name);
                 currentCount = inv.cantidadPorObjeto(obj);
                 itemList += name + "  " + currentCount + "/" + count + "\n\n";
-            }
             }
             return itemList;
         }

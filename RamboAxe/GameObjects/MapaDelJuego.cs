@@ -4,10 +4,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using TgcViewer.Utils.TgcSceneLoader;
+using System.Drawing;
+using TgcViewer.Utils.TgcGeometry;
 
 namespace AlumnoEjemplos.RamboAxe.GameObjects
 {
-    class MapaDelJuego
+    public class MapaDelJuego
     {
         
         Dictionary<String,Dictionary<String,Cuadrante>> cuadrantes;
@@ -19,6 +21,7 @@ namespace AlumnoEjemplos.RamboAxe.GameObjects
              
              this.widthCuadrante = _widthCuadrante;
              this.heightCuadrante = _heightCuadrante;//Group_237
+            // TODO: pasar todos a mesh manager
              string meshFile = TgcViewer.GuiController.Instance.AlumnoEjemplosDir + "RamboAxe\\Media\\Group_237-TgcScene.xml";
              //Dispose de escena anterior
              //Cargar escena con herramienta TgcSceneLoader
@@ -79,7 +82,6 @@ namespace AlumnoEjemplos.RamboAxe.GameObjects
                  gameMeshes.Add(mesh);
              }
             //Hasta ACA
-
         }
         public static TgcMesh getGameMesh(int number)
         {
@@ -107,5 +109,37 @@ namespace AlumnoEjemplos.RamboAxe.GameObjects
             }
             return cuadrantes[x.ToString()][z.ToString()];
        }
+        public void placeObject(GameObjectAbstract go)
+        {
+            if(go != null){
+                Vector3 worldPosition = go.getMesh().Position;
+                Cuadrante cuadrante = getCuadranteForPosition(worldPosition);
+                Vector3 relativePosition = getCuadranteRelativePosition(worldPosition);
+                go.place(
+                    (int)Math.Ceiling(relativePosition.X),
+                    (int)Math.Ceiling(relativePosition.Y),
+                    (int)Math.Ceiling(relativePosition.Z)
+                );
+                cuadrante.getObjects().Add(go);
+                EjemploAlumno.getInstance().forceUpdate = true;
+            }
+        }
+
+        private Cuadrante getCuadranteForPosition(Vector3 position)
+        {
+            int x = (int)(Math.Floor(position.X / widthCuadrante) - 1);
+            int z = (int)(Math.Floor(position.Z / widthCuadrante) - 1);
+            return getCuadrante(x, z);
+        }
+        private Vector3 getCuadranteRelativePosition(Vector3 position)
+        {
+            Vector3 posiciones = new Vector3(0.0f, 0.0f, 0.0f);
+            int cuadranteX = (int)(Math.Floor(position.X / widthCuadrante) - 1);
+            int cuadranteZ = (int)(Math.Floor(position.Z / widthCuadrante) - 1);
+            posiciones.X = Math.Abs(position.X) - Math.Abs((cuadranteX + 1) * widthCuadrante);
+            posiciones.Y = position.Y;
+            posiciones.Z = Math.Abs(position.Z) - Math.Abs((cuadranteZ + 1) * widthCuadrante);
+            return posiciones;
+        }
     }
 }

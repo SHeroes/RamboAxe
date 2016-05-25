@@ -39,10 +39,10 @@ namespace AlumnoEjemplos.RamboAxe
         CharacterSheet pj = CharacterSheet.getInstance();
         VistaInventario vistaInventario;
         VistaConstruyendo vistaConstruyendo;
-        bool firstRun = true;
-        bool hachaEquipada = true;
+        public bool forceUpdate = true;
+        bool hachaEquipada = false;
 
-        MapaDelJuego mapa;
+        public MapaDelJuego mapa;
         TgcSprite spriteHacha;
         public static EjemploAlumno getInstance()
         {
@@ -93,7 +93,7 @@ namespace AlumnoEjemplos.RamboAxe
         
         public override void init()
         {
-
+            MeshManager.init();
             EjemploAlumno.game = this;
             Microsoft.DirectX.Direct3D.Device d3dDevice = GuiController.Instance.D3dDevice;
             //Iniciarlizar PickingRay
@@ -136,7 +136,7 @@ namespace AlumnoEjemplos.RamboAxe
             this.initInventario();
             this.initCollisions();
             this.initCamera();
-            vistaConstruyendo = new VistaConstruyendo(this);
+            vistaConstruyendo = new VistaConstruyendo();
             this.hud();
             this.skyboxInit();
             this.initBarrasVida();
@@ -244,7 +244,16 @@ namespace AlumnoEjemplos.RamboAxe
                     }
                 }
 
-                
+                // Handle input de vista construyendo
+                if(input.keyPressed(Key.C)){
+                    if(CharacterSheet.getInstance().estaConstruyendo){
+                        CharacterSheet.getInstance().construir();
+                    }
+                    else
+                    {
+                        CharacterSheet.getInstance().empezarConstruccion(InventarioManager.Arbol);
+                    }
+                }
             }
 
             if (input.keyPressed(Key.I))
@@ -327,9 +336,20 @@ namespace AlumnoEjemplos.RamboAxe
             vistaInventario = new VistaInventario();
             pj.getInventario().agregar(InventarioManager.Palos);
             pj.getInventario().agregar(InventarioManager.Leña);
+            pj.getInventario().agregar(InventarioManager.Leña);
+            pj.getInventario().agregar(InventarioManager.Leña);
+            pj.getInventario().agregar(InventarioManager.Leña);
+            pj.getInventario().agregar(InventarioManager.Leña);
+            pj.getInventario().agregar(InventarioManager.Leña);
+            pj.getInventario().agregar(InventarioManager.Leña);
+            pj.getInventario().agregar(InventarioManager.Leña);
+            pj.getInventario().agregar(InventarioManager.Leña);
+            pj.getInventario().agregar(InventarioManager.Leña);
+            pj.getInventario().agregar(InventarioManager.Leña);
             pj.getInventario().agregar(InventarioManager.Piedra);
             pj.getInventario().agregar(InventarioManager.Piedra);
             pj.getInventario().agregar(InventarioManager.RecetaCasa);
+            pj.getInventario().agregar(InventarioManager.RecetaArbol);
         }
 
         public void initCamera()
@@ -379,8 +399,7 @@ namespace AlumnoEjemplos.RamboAxe
             Microsoft.DirectX.Direct3D.Device d3dDevice = GuiController.Instance.D3dDevice;
             if (barraInteraccion != null) barraInteraccion.render(elapsedTime);
             vistaInventario.render();
-            // TODO: descomentar para ver el construyendo actual
-            //vistaConstruyendo.render();
+            vistaConstruyendo.render();
             //box.render();
            // text.render();
  
@@ -418,9 +437,9 @@ namespace AlumnoEjemplos.RamboAxe
             }
             currentCuadrantX = (Math.Floor(characterElipsoid.Position.X / width)-1);
             currentCuadrantZ = (Math.Floor(characterElipsoid.Position.Z / width)-1);
-            if (currentCuadrantX != prevCuadrantX || currentCuadrantZ != prevCuadrantZ || firstRun)
+            if (currentCuadrantX != prevCuadrantX || currentCuadrantZ != prevCuadrantZ || forceUpdate)
             {
-                firstRun = false;
+                forceUpdate = false;
 
                 collisionManager.GravityEnabled = false;
                 objetosColisionables.Clear();
@@ -585,6 +604,7 @@ namespace AlumnoEjemplos.RamboAxe
             vistaConstruyendo.dispose();
             vistaInventario.dispose();
             InventarioManager.dispose();
+            MeshManager.dispose();
         }
     }
 }
