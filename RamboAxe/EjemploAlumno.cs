@@ -325,7 +325,6 @@ namespace AlumnoEjemplos.RamboAxe
         public void initInventario() {
             InventarioManager.init();
             vistaInventario = new VistaInventario();
-
             pj.getInventario().agregar(InventarioManager.Palos);
             pj.getInventario().agregar(InventarioManager.Leña);
             pj.getInventario().agregar(InventarioManager.Piedra);
