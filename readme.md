@@ -1,4 +1,6 @@
-﻿   Ramboaxe A survival craft game made for UTN TGC 2016
+﻿
+
+    Ramboaxe A survival craft game made for UTN TGC 2016
     Copyright (C) <2016>  <Geruman, Shidoply, Sheroes and lucasg21 (@github)>
 
     This program is free software: you can redistribute it and/or modify
