@@ -27,7 +27,6 @@ namespace AlumnoEjemplos.RamboAxe
         BarraEstatica barraHambre; BarraEstatica barraVida;
         BarraEstatica barraSed;
         string[] vectorTemperaturas = new string[5] {"CONGELADOR","FRIO","TEMPLADO","CALUROSO","ARDIENTE"};
-        bool cambioCiclo = false;
 
         int temperaturaCuadranteActual;
         float distanciaObjeto = 0;
@@ -383,22 +382,11 @@ namespace AlumnoEjemplos.RamboAxe
             //vistaConstruyendo.render();
             //box.render();
            // text.render();
- 
-            temperaturaCuadranteActual = mapa.getCuadrante((int)currentCuadrantX, (int)currentCuadrantZ).getTempratura();
+
+            temperaturaCuadranteActual = mapa.getCuadrante((int)currentCuadrantX, (int)currentCuadrantZ).getTempratura() + HoraDelDia.getInstance().getMomentoDelDia();
 
 
-            float tiempoDiaActual = HoraDelDia.getInstance().getHoraDia();
-            if (tiempoDiaActual > 0.66 && temperaturaCuadranteActual > 0 && cambioCiclo)
-            {
-                temperaturaCuadranteActual--; //noche
-                cambioCiclo = false;
-            }
-            else if (tiempoDiaActual > 0.33 && temperaturaCuadranteActual < vectorTemperaturas.Length - 1 && !cambioCiclo)
-            {
-                temperaturaCuadranteActual++; //mediodía
-                cambioCiclo = true;
-            }
-            text3.Text = "TEMPERATURA: " + vectorTemperaturas[temperaturaCuadranteActual] + "  indiceVector:" + temperaturaCuadranteActual + "tiempoDiaActual:" + tiempoDiaActual + "  x:" + currentCuadrantX + "  z:" + currentCuadrantZ;
+           text3.Text = "TEMPERATURA: " + vectorTemperaturas[temperaturaCuadranteActual] + "  indiceVector:" + temperaturaCuadranteActual + "  x:" + currentCuadrantX + "  z:" + currentCuadrantZ;
             
             text3.render();
             text2.render();
