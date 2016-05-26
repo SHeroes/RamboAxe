@@ -175,6 +175,10 @@ namespace AlumnoEjemplos.RamboAxe
 
             bool abierto = vistaInventario.abierto;
             bool selected = false;
+            if(abierto && CharacterSheet.getInstance().estaConstruyendo){
+                abierto = false;
+                vistaInventario.cerrar();
+            }
             if (!abierto) {
                 //if (GuiController.Instance.D3dInput.buttonUp(TgcViewer.Utils.Input.TgcD3dInput.MouseButtons.BUTTON_LEFT))
                 if (GuiController.Instance.D3dInput.buttonDown(TgcViewer.Utils.Input.TgcD3dInput.MouseButtons.BUTTON_LEFT))
@@ -245,14 +249,11 @@ namespace AlumnoEjemplos.RamboAxe
                 }
 
                 // Handle input de vista construyendo
-                if(input.keyPressed(Key.C)){
-                    if(CharacterSheet.getInstance().estaConstruyendo){
-                        CharacterSheet.getInstance().construir();
-                    }
-                    else
-                    {
-                        CharacterSheet.getInstance().empezarConstruccion(InventarioManager.Arbol);
-                    }
+                if (input.keyPressed(Key.Return))
+                {
+                    CharacterSheet.getInstance().construir();
+                } else if(input.keyPressed(Key.C)){
+                    CharacterSheet.getInstance().cancelarConstruccion();
                 }
             }
 

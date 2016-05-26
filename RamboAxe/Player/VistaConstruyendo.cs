@@ -94,16 +94,15 @@ namespace AlumnoEjemplos.RamboAxe.Player
 
         public void cambioObservable()
         {
-            CharacterSheet sheet = CharacterSheet.getInstance();
             if(estaConstruyendo){
-                if (!sheet.estaConstruyendo)
+                if (!CharacterSheet.getInstance().estaConstruyendo)
                 {
                     dispose();
                 }
             }
             else
             {
-                if(sheet.estaConstruyendo){
+                if(CharacterSheet.getInstance().estaConstruyendo){
                     init();
                 }
             }

@@ -144,6 +144,10 @@ namespace AlumnoEjemplos.RamboAxe.Inventario
                     if(!objeto.esConstruible){
                         agregar(objeto, cantidad);
                     }
+                    else
+                    {
+                        CharacterSheet.getInstance().empezarConstruccion(objeto);
+                    }
                     huboCambios();
                 }
             }

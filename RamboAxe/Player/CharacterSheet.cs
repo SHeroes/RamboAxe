@@ -69,5 +69,16 @@ namespace AlumnoEjemplos.RamboAxe.Player
             EjemploAlumno.getInstance().mapa.placeObject(go);
             huboCambios();
         }
+
+        /// <summary>
+        /// Se cancela la construccion actual
+        /// </summary>
+        public void cancelarConstruccion()
+        {
+            if(estaConstruyendo){
+                construyendo = null;
+                huboCambios();
+            }
+        }
     }
 }
