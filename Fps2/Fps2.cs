@@ -75,8 +75,8 @@ namespace AlumnoEjemplos.Fps2
             string initialMeshFile = GuiController.Instance.AlumnoEjemplosMediaDir + "SelvaLoca\\" + "selva_4_game.xml";
             string terrainHm = GuiController.Instance.AlumnoEjemplosMediaDir + "fps2\\" + "hm.jpg";
             loadMesh(initialMeshFile);
-            //loadHeightmap(terrainHm,100f,6.5f);
-           
+            loadHeightmap(terrainHm,100f,6.5f);
+            
          
             Terrain.loadTexture(terrainHm);
 
@@ -168,7 +168,7 @@ namespace AlumnoEjemplos.Fps2
             box.render();
             characterElipsoid.render();
             userVarUpdates();
-          //  Terrain.render();
+           Terrain.render();
           
         
         }

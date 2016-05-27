@@ -19,7 +19,7 @@ namespace AlumnoEjemplos.RamboAxe
     {
         //Constantes de movimiento
         EjemploAlumno game;
-        const float DEFAULT_ROTATION_SPEED = 2f;
+        
         const float DEFAULT_MOVEMENT_SPEED = 100f;
         const float HEAD_POSITION = 50f;
         const float DEFAULT_JUMP_SPEED = 100f;
@@ -42,45 +42,15 @@ namespace AlumnoEjemplos.RamboAxe
         Vector3 viewDir;
         public Vector3 lookAt;
 
-        //Banderas de Input
-        bool moveForwardsPressed = false;
-        bool moveBackwardsPressed = false;
-        bool moveRightPressed = false;
-        bool moveLeftPressed = false;
-        bool moveUpPressed = false;
-        bool moveDownPressed = false;
 
 
-        private void captureMouse(){
-        if (GuiController.Instance.D3dInput.keyPressed(Microsoft.DirectX.DirectInput.Key.P))
-            {
-                rotateCameraWithMouse = !rotateCameraWithMouse;
-                if (rotateCameraWithMouse)
-                {
-                    Cursor.Hide();
-                }
-                else
-                {
-                    Cursor.Show();
-                }
-            }
-            if (rotateCameraWithMouse)
-            {
-                int ScreenWidth = GuiController.Instance.D3dDevice.Viewport.Width;
-                int ScreenHeight = GuiController.Instance.D3dDevice.Viewport.Height;
-                int ScreenX = GuiController.Instance.D3dDevice.Viewport.X;
-                int ScreenY = GuiController.Instance.D3dDevice.Viewport.Y;
        
-                Cursor.Position = new Point(ScreenX + ScreenWidth/2,ScreenY + ScreenHeight/2);
-            }
+        private void captureMouse(){
+        
         }
         #region Getters y Setters
 
-        public bool rotateCameraWithMouse
-        {
-            get;
-            set;
-        }
+      
         bool fpsModeEnable;
         private float previousY;
         
@@ -123,14 +93,7 @@ namespace AlumnoEjemplos.RamboAxe
             set { accelerationEnable = value; }
         }
 
-        Vector3 currentVelocity;
-        /// <summary>
-        /// Velocidad de desplazamiento actual, teniendo en cuenta la aceleracion
-        /// </summary>
-        public Vector3 CurrentVelocity
-        {
-            get { return currentVelocity; }
-        }
+        
 
         Vector3 velocity;
         /// <summary>
@@ -157,15 +120,7 @@ namespace AlumnoEjemplos.RamboAxe
 
       
 
-        float rotationSpeed;
-        /// <summary>
-        /// Velocidad de rotacion de la cámara
-        /// </summary>
-        public float RotationSpeed
-        {
-            get { return rotationSpeed; }
-            set { rotationSpeed = value; }
-        }
+        
 
         Matrix viewMatrix;
         /// <summary>
@@ -228,7 +183,7 @@ namespace AlumnoEjemplos.RamboAxe
         public void resetValues()
         {
             accumPitchDegrees = 0.0f;
-            rotationSpeed = DEFAULT_ROTATION_SPEED;
+            
             eye = new Vector3(0.0f, 0.0f, 0.0f);
             xAxis = new Vector3(1.0f, 0.0f, 0.0f);
             yAxis = new Vector3(0.0f, 1.0f, 0.0f);
@@ -238,7 +193,7 @@ namespace AlumnoEjemplos.RamboAxe
             HeadPosition = HEAD_POSITION;
             accelerationEnable = false;
             acceleration = CAMERA_ACCELERATION;
-            currentVelocity = new Vector3(0.0f, 0.0f, 0.0f);
+            
             velocity = CAMERA_VELOCITY;
             viewMatrix = Matrix.Identity;
             setPosition(CAMERA_POS + HeadPosition * WORLD_YAXIS);
@@ -301,7 +256,7 @@ namespace AlumnoEjemplos.RamboAxe
         /// world units upwards or downwards; and dz world units forwards
         /// or backwards.
         /// </summary>
-        private void move(float dx, float dy, float dz)
+        public void move(float dx, float dy, float dz)
         {
 
             Vector3 auxEye = this.eye;
@@ -331,7 +286,7 @@ namespace AlumnoEjemplos.RamboAxe
         /// axis toward the origin. Since the Z axis is pointing into the
         /// screen we need to negate rolls.
         /// </summary>
-        private void rotate(float headingDegrees, float pitchDegrees, float rollDegrees)
+        public void rotate(float headingDegrees, float pitchDegrees, float rollDegrees)
         {
             rollDegrees = -rollDegrees;
             rotateFirstPerson(headingDegrees, pitchDegrees);
@@ -344,21 +299,21 @@ namespace AlumnoEjemplos.RamboAxe
         /// called when the camera is being rotated using an input device (such as a
         /// mouse or a joystick).
         /// </summary>
-        private void rotateSmoothly(float headingDegrees, float pitchDegrees, float rollDegrees)
+      /*  private void rotateSmoothly(float headingDegrees, float pitchDegrees, float rollDegrees)
         {
             headingDegrees *= rotationSpeed;
             pitchDegrees *= rotationSpeed;
             rollDegrees *= rotationSpeed;
 
             rotate(headingDegrees, pitchDegrees, rollDegrees);
-        }
+        }*/
 
         /// <summary>
         /// Moves the camera using Newton's second law of motion. Unit mass is
         /// assumed here to somewhat simplify the calculations. The direction vector
         /// is in the range [-1,1].
         /// </summary>
-        private void updatePosition(Vector3 direction, float elapsedTimeSec)
+        public void updatePosition(Vector3 currentVelocity, Vector3 direction, float elapsedTimeSec)
         {
             if (Vector3.LengthSq(currentVelocity) != 0.0f)
             {
@@ -474,6 +429,7 @@ namespace AlumnoEjemplos.RamboAxe
         /// </summary>
         private void updateVelocity(Vector3 direction, float elapsedTimeSec)
         {
+            Vector3 currentVelocity = new Vector3(0,0,0);
             if (direction.X != 0.0f)
             {
                 // Camera is moving along the x axis.
@@ -540,9 +496,9 @@ namespace AlumnoEjemplos.RamboAxe
         /// </summary>
         private void updateVelocityNoAcceleration(Vector3 direction)
         {
-            currentVelocity.X = velocity.X * direction.X;
+            //currentVelocity.X = velocity.X * direction.X;
           
-            currentVelocity.Z = velocity.Z * direction.Z;
+           // currentVelocity.Z = velocity.Z * direction.Z;
         }
 
         /// <summary>
@@ -592,6 +548,7 @@ namespace AlumnoEjemplos.RamboAxe
         /// <summary>
         /// Actualiza los valores de la camara
         /// </summary>
+        
         public void updateCamera()
         {
             //Si la camara no está habilitada, no procesar el resto del input
@@ -603,38 +560,19 @@ namespace AlumnoEjemplos.RamboAxe
             float elapsedTimeSec = GuiController.Instance.ElapsedTime;
             TgcD3dInput d3dInput = GuiController.Instance.D3dInput;
 
-            //Imprimir por consola la posicion actual de la camara
-            if (d3dInput.keyDown(Key.LeftShift) || d3dInput.keyDown(Key.RightShift))
-            {
-                GuiController.Instance.Logger.logVector3(getPosition());
-                return;
-            }
 
-
-            float heading = 0.0f;
-            float pitch = 0.0f;
-
-            //Obtener direccion segun entrada de teclado
-            Vector3 direction = getMovementDirection(d3dInput);
-            captureMouse();
-            pitch = d3dInput.YposRelative * rotationSpeed;
-            heading = d3dInput.XposRelative * rotationSpeed;
-
-            //Solo rotar si se capturo el mouse.
-            // ignorar: aprentando el boton del mouse configurado d3dInput.buttonDown(rotateMouseButton) ||
-            if ( this.rotateCameraWithMouse)
-            {
-                rotate(heading, pitch, 0.0f);
-            }
-
-            
-           Vector3[] values = this.game.tryToMovePlayer(this.Position,direction);
-           Vector3 finalDirection = values[1];
            
-            this.setPosition(values[0]);
+            //Obtener direccion segun entrada de teclado
+            
+            
+            
+         //  Vector3[] values = this.game.tryToMovePlayer(this.Position,direction);
+           //Vector3 finalDirection = values[1];
+           
+            //this.setPosition(values[0]);
             
 
-           updatePosition(finalDirection, elapsedTimeSec);
+           
            
         }
 
@@ -651,104 +589,7 @@ namespace AlumnoEjemplos.RamboAxe
             d3dDevice.Transform.View = viewMatrix;
         }
 
-        /// <summary>
-        /// Obtiene la direccion a moverse por la camara en base a la entrada de teclado
-        /// </summary>
-        private Vector3 getMovementDirection(TgcD3dInput d3dInput)
-        {
-            Vector3 direction = new Vector3(0.0f, 0.0f, 0.0f);
-            //direction.Z += 5.0f;
-            //Forward
-            if (d3dInput.keyDown(Key.W))
-            {
-                if (!moveForwardsPressed)
-                {
-                    moveForwardsPressed = true;
-                    currentVelocity = new Vector3(currentVelocity.X, 0, 0.0f);
-                }
-
-                direction.Z += 1.5f;
-            }
-            else
-            {
-                moveForwardsPressed = false;
-            }
-
-            //Backward
-            if (d3dInput.keyDown(Key.S))
-            {
-                if (!moveBackwardsPressed)
-                {
-                    moveBackwardsPressed = true;
-                    currentVelocity = new Vector3(currentVelocity.X, 0, 0.0f);
-                }
-
-                direction.Z -= 1.5f;
-            }
-            else
-            {
-                moveBackwardsPressed = false;
-            }
-
-            //Strafe right
-            if (d3dInput.keyDown(Key.D))
-            {
-                if (!moveRightPressed)
-                {
-                    moveRightPressed = true;
-                    currentVelocity = new Vector3(0.0f, 0, currentVelocity.Z);
-                }
-
-                direction.X += 1.5f;
-            }
-            else
-            {
-                moveRightPressed = false;
-            }
-
-            //Strafe left
-            if (d3dInput.keyDown(Key.A))
-            {
-                if (!moveLeftPressed)
-                {
-                    moveLeftPressed = true;
-                    currentVelocity = new Vector3(0.0f, 0, currentVelocity.Z);
-                }
-
-                direction.X -= 1.5f;
-            }
-            else
-            {
-                moveLeftPressed = false;
-            }
-
-            //Jump
-            if (d3dInput.keyDown(Key.Space))
-            {
-                this.game.playerPrevJump();
-            }else if (d3dInput.keyUp(Key.Space))
-            {
-
-
-                this.game.playerJumps();
-            }
-            //Crouch
-            if (d3dInput.keyDown(Key.LeftControl))
-            {
-
-                this.game.playerCrouchs();
-            }
-            else
-            {
-                if (d3dInput.keyUp(Key.LeftControl))
-                {
-                    this.game.playerStands();
-                }
-                /*moveDownPressed = false;*/
-            }
-
-            return direction;
-        }
+     
 
         public Vector3 getPosition()
         {

@@ -72,7 +72,7 @@ namespace AlumnoEjemplos.Fps3
            
             TgcTexture texture =  TgcTexture.createTexture(d3dDevice,GuiController.Instance.AlumnoEjemplosMediaDir + "resources\\" + "piso.png");
             string initialMeshFile = GuiController.Instance.AlumnoEjemplosMediaDir + "ball-TgcScene.xml";
-           // string terrainHm = GuiController.Instance.AlumnoEjemplosMediaDir + "fps2\\" + "hm.jpg";
+           string terrainHm = GuiController.Instance.AlumnoEjemplosMediaDir + "fps2\\" + "hm.jpg";
             loadMesh(initialMeshFile);
             
             ground = new TgcPlaneWall(new Vector3(0,0,0),new Vector3(width,0,width),TgcPlaneWall.Orientations.XZplane,texture);

@@ -19,16 +19,29 @@ using AlumnoEjemplos.RamboAxe;
 using AlumnoEjemplos.RamboAxe.GameObjects;
 using AlumnoEjemplos.RamboAxe.Player;
 using AlumnoEjemplos.RamboAxe.Inventario;
+using AlumnoEjemplos.Ramboaxe;
+using System.Windows.Forms;
 namespace AlumnoEjemplos.RamboAxe
 {
     public class EjemploAlumno : TgcExample
     {
+
+        private SmartTerrain terrain;
+        //Banderas de Input
+        const float DEFAULT_ROTATION_SPEED = 2f;
+        bool moveForwardsPressed = false;
+        bool moveBackwardsPressed = false;
+        bool moveRightPressed = false;
+        bool moveLeftPressed = false;
+        bool moveUpPressed = false;
+        bool moveDownPressed = false;
+        float rotationSpeed = DEFAULT_ROTATION_SPEED;
         Barra barraInteraccion;
         BarraEstatica barraHambre; BarraEstatica barraVida;
         BarraEstatica barraSed;
         string[] vectorTemperaturas = new string[5] {"CONGELADOR","FRIO","TEMPLADO","CALUROSO","ARDIENTE"};
         bool cambioCiclo = false;
-
+        
         int temperaturaCuadranteActual;
         float distanciaObjeto = 0;
         TgcPickingRay pickingRay;
@@ -82,7 +95,7 @@ namespace AlumnoEjemplos.RamboAxe
         List<Collider> objetosColisionables = new List<Collider>();
         ElipsoidCollisionManager collisionManager;
 
-        TgcElipsoid characterElipsoid;
+        
         double prevCuadrantX = 1;
         double prevCuadrantZ = 1;
         float width = 2000;
@@ -93,7 +106,14 @@ namespace AlumnoEjemplos.RamboAxe
         
         public override void init()
         {
+            
+            terrain = new SmartTerrain();
+            string terrainHm = GuiController.Instance.AlumnoEjemplosMediaDir + "fps2\\" + "hm.jpg";
+          
+            
 
+            terrain.loadTexture(terrainHm);
+            GuiController.Instance.CustomRenderEnabled = true;
             EjemploAlumno.game = this;
             Microsoft.DirectX.Direct3D.Device d3dDevice = GuiController.Instance.D3dDevice;
             //Iniciarlizar PickingRay
@@ -110,14 +130,16 @@ namespace AlumnoEjemplos.RamboAxe
                     floors[i][x]= ground.clone();
                 }
             }
+            terrain.loadHeightmap(terrainHm, 100f, 6.5f, new Vector3(50, -100, 50));
             
-
             for(int i = 0;i<3;i++){
                 for(int x = 0;x<3;x++){
                     floors[i][x].setExtremes(new Vector3((1 + i) * width, 0, (1 + x) * height), new Vector3((1 + i) * width + width, 0, (1 + x) * height+height));
                     floors[i][x].updateValues();
                 }
             }
+
+            pj.position = new Vector3(floors[1][1].BoundingBox.calculateBoxCenter().X, floors[1][1].BoundingBox.calculateBoxCenter().Y + 125, floors[1][1].BoundingBox.calculateBoxCenter().Z);
 
             d3dInput = GuiController.Instance.D3dInput;
 
@@ -131,10 +153,11 @@ namespace AlumnoEjemplos.RamboAxe
             spriteHacha.Position = new Vector2(220,380);
             GuiController.Instance.Logger.log(String.Format("Posicion sprite: X:{0} , Y:{1}",spriteHacha.Position.X,spriteHacha.Position.Y));
 
-            characterElipsoid = new TgcElipsoid(new Vector3(0, 250, 0), new Vector3(12, 48, 12));
+         //   characterElipsoid = new TgcElipsoid(pj.position, new Vector3(12, 48, 12));
             this.initMapa();
             this.initInventario();
             this.initCollisions();
+
             this.initCamera();
             vistaConstruyendo = new VistaConstruyendo(this);
             this.hud();
@@ -169,9 +192,159 @@ namespace AlumnoEjemplos.RamboAxe
             barraSed.barTitleText = "Nivel de Sed";
             barraHambre.barTitleText          = "Hambre";
         }
-
+        private bool rotateCameraWithMouse = false;
         public void handleInput() {
             TgcD3dInput input = GuiController.Instance.D3dInput;
+            Vector3 direction = new Vector3(0.0f, 0.0f, 0.0f);
+            //direction.Z += 5.0f;
+            //Forward
+
+            if (GuiController.Instance.D3dInput.keyPressed(Microsoft.DirectX.DirectInput.Key.P))
+            {
+                rotateCameraWithMouse = !rotateCameraWithMouse;
+                if (rotateCameraWithMouse)
+                {
+                   // Cursor.Hide();
+                }
+                else
+                {
+                  //  Cursor.Show();
+                }
+            }
+            if (rotateCameraWithMouse)
+            {
+                int ScreenWidth = GuiController.Instance.D3dDevice.Viewport.Width;
+                int ScreenHeight = GuiController.Instance.D3dDevice.Viewport.Height;
+                int ScreenX = GuiController.Instance.D3dDevice.Viewport.X;
+                int ScreenY = GuiController.Instance.D3dDevice.Viewport.Y;
+                
+                Cursor.Position = new Point(MainForm.ActiveForm.Width/2, ScreenY + (ScreenHeight / 2));
+            }
+
+            float heading = 0.0f;
+            float pitch = 0.0f;
+
+
+            //Solo rotar si se capturo el mouse.
+            // ignorar: aprentando el boton del mouse configurado d3dInput.buttonDown(rotateMouseButton) ||
+            if (rotateCameraWithMouse)
+            {
+                pitch = d3dInput.YposRelative * rotationSpeed;
+                heading = d3dInput.XposRelative * rotationSpeed;
+                camera.rotate(heading, pitch, 0.0f);
+            }
+
+
+            if (d3dInput.keyDown(Key.W))
+            {
+                direction.Z = 1;
+            }
+
+            //Backward
+            if (d3dInput.keyDown(Key.S))
+            {
+                direction.Z =-1;
+            }
+           
+
+            //Strafe right
+            if (d3dInput.keyDown(Key.D))
+            {
+                direction.X = 1;
+            }
+      
+            //Strafe left
+            if (d3dInput.keyDown(Key.A))
+            {
+                direction.X = -1;
+            }
+         
+            //Jump
+            if (d3dInput.keyDown(Key.Space))
+            {
+                playerJumps();
+            }
+            //Crouch
+            if (d3dInput.keyDown(Key.LeftControl))
+            {
+                playerCrouchs();
+            }
+            else
+            {
+                if (d3dInput.keyUp(Key.LeftControl))
+                {
+                    playerStands();
+                }
+            }
+
+           // Vector3 realMovement = collisionManager.moveCharacter(characterElipsoid, direction, objetosColisionables);
+
+
+            Vector3 dest = new Vector3(camera.getLookAt().X,0,camera.getLookAt().Z);
+            Vector3 menosOrigen = new Vector3(-pj.position.X,0,-pj.position.Z);
+            Vector3 vectorCentro0 = new Vector3();
+            vectorCentro0.Add(dest); 
+            vectorCentro0.Add(menosOrigen);
+
+
+            //Comienza el movimiento  PJ.
+            //calculo los radianes de direfencia entre el lookAt de la camara y la posicion del pj(que tambien es el eye de la camara).
+            float rads = FastMath.ToRad(90);
+            if (vectorCentro0.X > 0 && vectorCentro0.Z > 0)
+            {
+                float tangente = vectorCentro0.Z / vectorCentro0.X;
+                rads = FastMath.Atan(tangente);
+            }
+            else if (vectorCentro0.X < 0 && vectorCentro0.Z > 0)
+            {
+                float tangente = vectorCentro0.Z / (-vectorCentro0.X);
+                rads = (FastMath.PI) - FastMath.Atan(tangente);
+            }
+            else if (vectorCentro0.X < 0 && vectorCentro0.Z < 0)
+            {
+                float tangente = vectorCentro0.Z / vectorCentro0.X;
+                rads = (FastMath.PI * (3 / 2)) + FastMath.Atan(tangente);
+            }
+            else if (vectorCentro0.X > 0 && vectorCentro0.Z < 0)
+            {
+                float tangente = -vectorCentro0.Z / vectorCentro0.X;
+                rads = (FastMath.PI * (2)) - FastMath.Atan(tangente);
+            }
+            text3.Text = FastMath.ToDeg(rads).ToString();
+      
+            //Calcula y mueve la posicion del pj de acuerdo a los radianes calculados en el paso anterior
+            if (direction.Z == 1)
+            {
+                Matrix rotMtx = Matrix.RotationY(-rads+(FastMath.PI/2));
+                Vector4 result = Vector3.Transform(new Vector3(0,0,pj.velocity), rotMtx);
+                Vector3 zAxis = new Vector3(result.X, result.Y, result.Z);
+                pj.position.Add(zAxis);
+            }
+            else if(direction.Z == -1)
+            {
+                Matrix rotMtx = Matrix.RotationY(-rads + (FastMath.PI / 2));
+                Vector4 result = Vector3.Transform(new Vector3(0, 0, -pj.velocity), rotMtx);
+                Vector3 zAxis = new Vector3(result.X, result.Y, result.Z);
+                pj.position.Add(zAxis);
+            }          
+            if (direction.X == 1)
+            {
+                Matrix rotMtx = Matrix.RotationY(-rads + (FastMath.PI / 2));
+                Vector4 result = Vector3.Transform(new Vector3(pj.velocity, 0, 0), rotMtx);
+                Vector3 zAxis = new Vector3(result.X, result.Y, result.Z);
+                pj.position.Add(zAxis);
+            }
+            else if (direction.X == -1)
+            {
+                Matrix rotMtx = Matrix.RotationY(-rads + (FastMath.PI / 2));
+                Vector4 result = Vector3.Transform(new Vector3(-pj.velocity, 0, 0), rotMtx);
+                Vector3 zAxis = new Vector3(result.X, result.Y, result.Z);
+                pj.position.Add(zAxis);
+            }
+               
+            //Fin movimiento PJ.
+
+
 
             bool abierto = vistaInventario.abierto;
             bool selected = false;
@@ -311,14 +484,11 @@ namespace AlumnoEjemplos.RamboAxe
                 //Dibujar caja que representa el punto de colision
                // collisionPointMesh.Position = collisionPoint;
                //  collisionPointMesh.render();
-            }            
+            }
+            camera.setPosition(pj.position);
         }
 
-        public void agregarPiedraTallada()
-        {
-           //TODO
-        }
-
+       
 
 
 
@@ -338,8 +508,10 @@ namespace AlumnoEjemplos.RamboAxe
            
             //Configurar FPS Camara
             camera.Enable = true;
-            //            camera.setCamera(new Vector3(-722.6171f, 495.0046f, -31.2611f), new Vector3(164.9481f, 35.3185f, -61.5394f));
-            camera.setCamera(new Vector3(floors[1][1].BoundingBox.calculateBoxCenter().X, floors[1][1].BoundingBox.calculateBoxCenter().Y + 125, floors[1][1].BoundingBox.calculateBoxCenter().Z), new Vector3(floors[1][1].BoundingBox.calculateBoxCenter().X + 50, floors[1][1].BoundingBox.calculateBoxCenter().Y, floors[1][1].BoundingBox.calculateBoxCenter().Z));
+            Vector3 lookAt = new Vector3(0,0,0);
+            lookAt.Add(pj.position);
+            lookAt.Add(new Vector3(0,0,1));
+            camera.setCamera(pj.position,lookAt );
         }
         public void initCollisions()
         {
@@ -358,36 +530,15 @@ namespace AlumnoEjemplos.RamboAxe
         }
 
 
-        public override void render(float elapsedTime)
+        float tiempoDiaActual;
+        
+        private void gameLoop(float elapsedTime)
         {
             handleInput();
 
-            if (hachaEquipada)
-            {
-                GuiController.Instance.Drawer2D.beginDrawSprite();
-                spriteHacha.render();
-                GuiController.Instance.Drawer2D.endDrawSprite();
-            }
-            
-            if (!vistaInventario.abierto)
-            {
-                barraSed.render(elapsedTime);
-                barraVida.render(elapsedTime);
-                barraHambre.render(elapsedTime);
-            }
-            
-            Microsoft.DirectX.Direct3D.Device d3dDevice = GuiController.Instance.D3dDevice;
-            if (barraInteraccion != null) barraInteraccion.render(elapsedTime);
-            vistaInventario.render();
-            // TODO: descomentar para ver el construyendo actual
-            //vistaConstruyendo.render();
-            //box.render();
-           // text.render();
- 
             temperaturaCuadranteActual = mapa.getCuadrante((int)currentCuadrantX, (int)currentCuadrantZ).getTempratura();
 
-
-            float tiempoDiaActual = HoraDelDia.getInstance().getHoraDia();
+             tiempoDiaActual = HoraDelDia.getInstance().getHoraDia();
             if (tiempoDiaActual > 0.66 && temperaturaCuadranteActual > 0 && cambioCiclo)
             {
                 temperaturaCuadranteActual--; //noche
@@ -398,26 +549,9 @@ namespace AlumnoEjemplos.RamboAxe
                 temperaturaCuadranteActual++; //mediodía
                 cambioCiclo = true;
             }
-            text3.Text = "TEMPERATURA: " + vectorTemperaturas[temperaturaCuadranteActual] + "  indiceVector:" + temperaturaCuadranteActual + "tiempoDiaActual:" + tiempoDiaActual + "  x:" + currentCuadrantX + "  z:" + currentCuadrantZ;
-            
-            text3.render();
-            text2.render();
-            skyBox.Center = camera.Position;
-            skyBox.updateValues();
-            skyBox.render();
-           
-          //  currentScene.renderAll();
-            String floorCords ="";
-            for (int i = 0; i < 3; i++)
-            {
-                for (int x = 0; x < 3; x++)
-                {
-                    floors[i][x].render();
-                    floorCords+= "\n["+i.ToString()+"/"+x.ToString()+"]"+floors[i][x].Position.X+floors[i][x].Position.Z;
-                }
-            }
-            currentCuadrantX = (Math.Floor(characterElipsoid.Position.X / width)-1);
-            currentCuadrantZ = (Math.Floor(characterElipsoid.Position.Z / width)-1);
+
+            currentCuadrantX = (Math.Floor(pj.position.X / width) - 1);
+            currentCuadrantZ = (Math.Floor(pj.position.Z / width) - 1);
             if (currentCuadrantX != prevCuadrantX || currentCuadrantZ != prevCuadrantZ || firstRun)
             {
                 firstRun = false;
@@ -435,7 +569,7 @@ namespace AlumnoEjemplos.RamboAxe
                         f.updateValues();
                         objetosColisionables.Add(BoundingBoxCollider.fromBoundingBox(floors[x][z].BoundingBox));
 
-                        foreach (GameObjectAbstract go in mapa.getCuadrante((int)(currentCuadrantX + (x - 1)),((int) currentCuadrantZ + (z - 1))).getObjects())
+                        foreach (GameObjectAbstract go in mapa.getCuadrante((int)(currentCuadrantX + (x - 1)), ((int)currentCuadrantZ + (z - 1))).getObjects())
                         {
                             TgcMesh mesh = go.getMesh();
                             go.move(new Vector3(go.getX() + nx, go.getY() + f.Position.Y, go.getZ() + nz));
@@ -452,6 +586,65 @@ namespace AlumnoEjemplos.RamboAxe
                 prevCuadrantZ = currentCuadrantZ;
 
             }
+
+            if (selectedGameObject != null)
+            {
+                if (barraInteraccion != null && !barraInteraccion.isActive())
+                {
+                    barraInteraccion.dispose();
+                    barraInteraccion = null;
+                    selectedGameObject.use();
+                }
+            }
+
+            
+            
+        }
+
+     
+        public override void render(float elapsedTime)
+        {
+            
+            Microsoft.DirectX.Direct3D.Device d3dDevice = GuiController.Instance.D3dDevice;
+            
+            d3dDevice.BeginScene();
+            terrain.render();
+            gameLoop(elapsedTime);
+                
+
+            barraSed.render(elapsedTime);
+            barraVida.render(elapsedTime);
+            barraHambre.render(elapsedTime);
+
+
+            if (barraInteraccion != null)
+            {
+                barraInteraccion.render(elapsedTime);
+            }
+
+            vistaInventario.render();
+           
+ 
+           // text3.Text = "TEMPERATURA: " + vectorTemperaturas[temperaturaCuadranteActual] + "  indiceVector:" + temperaturaCuadranteActual + "tiempoDiaActual:" + tiempoDiaActual + "  x:" + currentCuadrantX + "  z:" + currentCuadrantZ;
+            
+            text3.render();
+            text2.render();
+            skyBox.Center = camera.Position;
+            skyBox.updateValues();
+            skyBox.render();
+           
+          
+            String floorCords ="";
+            for (int i = 0; i < 3; i++)
+            {
+                for (int x = 0; x < 3; x++)
+                {
+                    //floors[i][x].render();
+                    floorCords+= "\n["+i.ToString()+"/"+x.ToString()+"]"+floors[i][x].Position.X+floors[i][x].Position.Z;
+                }
+            }
+
+            
             for (int x = 0; x < 3; x++)
             {
                 for (int z = 0; z < 3; z++)
@@ -464,16 +657,9 @@ namespace AlumnoEjemplos.RamboAxe
                 }
             }
         //   text.Text = floorCords + "\nCharacter: "+ characterElipsoid.Position.Z.ToString()+  " "  + characterElipsoid.Position.X.ToString() + "\n" + currentCuadrantZ.ToString() + " " + currentCuadrantX.ToString()+"\n"+characterElipsoid.Center.Y+" \n"+distanciaObjeto;
-           if (selectedGameObject != null)
-           {
-               if (barraInteraccion != null && !barraInteraccion.isActive())
-               {
-                   barraInteraccion.dispose();
-                   barraInteraccion = null;
-                   selectedGameObject.use();
-               }
-           }
-           
+        
+
+           GuiController.Instance.D3dDevice.EndScene();
         }
 
 
@@ -515,7 +701,7 @@ namespace AlumnoEjemplos.RamboAxe
            public void hud()
         {
             text = new TgcText2d();
-            text.Text = "Texto del hud.";
+            //text.Text = "Texto del hud.";
             text.Align = TgcText2d.TextAlign.LEFT;
             text.Position = new Point(5, 20);
             text.Size = new Size(310, 100);
@@ -524,14 +710,14 @@ namespace AlumnoEjemplos.RamboAxe
 
 
             text2 = new TgcText2d();
-            text2.Text = "-\"wasd\" para moverse    -\"P\" para capturar el mouse    -\"I\" para el inventario    -\"Click Izq\" para interactuar" ;
+           // text2.Text = "-\"wasd\" para moverse    -\"P\" para capturar el mouse    -\"I\" para el inventario    -\"Click Izq\" para interactuar" ;
             text2.Align = TgcText2d.TextAlign.LEFT;
             text2.Size = new Size(800, 100);
             text2.Color = Color.Gold;
             text2.Position = new Point(75, 10);
 
             text3 = new TgcText2d();
-            text3.Text = "-TEMPERATURA: DESCONOCIDA VITEH";
+            
             text3.Align = TgcText2d.TextAlign.CENTER;
             text3.Size = new Size(800, 100);
             text3.Color = Color.Red;
@@ -540,44 +726,33 @@ namespace AlumnoEjemplos.RamboAxe
         }
 
 
-           public Vector3[] tryToMovePlayer(Vector3 from, Vector3 direction)
-           {
-               Vector3 elipsoidCorrection = new Vector3(from.X - characterElipsoid.Position.X, 0, from.Z - characterElipsoid.Position.Z);
 
-               Vector3 realMovement = collisionManager.moveCharacter(characterElipsoid, elipsoidCorrection, objetosColisionables);
-
-               Vector3 prevPos = new Vector3(characterElipsoid.Position.X, characterElipsoid.Position.Y, characterElipsoid.Position.Z);
-
-
-               realMovement = collisionManager.moveCharacter(characterElipsoid, direction, objetosColisionables);
-
-               Vector3[] returnValues = new Vector3[2];
-
-
-               returnValues[0] = prevPos;
-               returnValues[1] = realMovement;
-               return returnValues;
-           }
-
+           bool crouching = false;
            public void playerCrouchs()
            {
-               characterElipsoid.setValues(characterElipsoid.Center + new Vector3(0, 0, 0), new Vector3(12, 28, 12));
-             //  camera.setPosition(characterElipsoid.Position);
+               if (jumping)
+               {
+                   jumping = false;
+                   pj.position.Add(new Vector3(0,-120,0));
+               }
+               if (!crouching) {
+                   pj.position.Add(new Vector3(0, -40, 0));
+                   crouching = true;
+               }
+               
            }
            public void playerStands()
            {
-               characterElipsoid.setValues(characterElipsoid.Center + new Vector3(0, +20, 0), new Vector3(12, 48, 12));
-              // camera.setPosition(characterElipsoid.Position);
+               crouching = false;
+               pj.position.Add(new Vector3(0, 40, 0)); 
            }
-           public void playerPrevJump()
-           {
-               characterElipsoid.setValues(characterElipsoid.Center + new Vector3(0, 0, 0), new Vector3(12, 38, 12));
-               
-           }
+           bool jumping = false;
            public void playerJumps()
            {
-               characterElipsoid.setValues(characterElipsoid.Center + new Vector3(0, +120, 0), new Vector3(12, 48, 12));
-               camera.setPosition(characterElipsoid.Position);
+               if (!jumping) {
+                   jumping = true;
+                   pj.position.Add(new Vector3(0, 120, 0));
+               } 
            }
 
         public override void close()
