@@ -5,11 +5,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using TgcViewer.Utils.TgcSceneLoader;
+using AlumnoEjemplos.RamboAxe.Player;
 
 namespace AlumnoEjemplos.RamboAxe.GameObjects
 {
     class Dispencer:GameObjectAbstract
     {
+        CharacterSheet pj = CharacterSheet.getInstance();
         float uses = 2;
         public Dispencer(TgcMesh mesh,int x, int y,int z):base(mesh,x,y,z)
         {
@@ -29,6 +31,7 @@ namespace AlumnoEjemplos.RamboAxe.GameObjects
 
 
              //   EjemploAlumno.getInstance().getBarraHidratacion().agregarPorcentajeABarra(0.2f);
+                pj.addLevelSed(-0.2f);
                 if (uses == 0)
                 {
                     getMesh().Scale = new Vector3(0f, 0f, 0f);

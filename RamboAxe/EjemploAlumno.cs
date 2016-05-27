@@ -162,8 +162,10 @@ namespace AlumnoEjemplos.RamboAxe
             barraSed.init(BarraEstatica.VIOLET, (barrasWidth) + 80, 460, 0, 100);
             barraVida.init(BarraEstatica.YELLOW, (barrasWidth * 2) + 80, 460, 0, 100);
 
+            barraHambre.valorActual = pj.hambre;
+            barraVida.valorActual = pj.vida;
+            barraSed.valorActual = pj.sed;
 
-            barraVida.valorActual = 0.5f;
             barraVida.barTitleText       = "Vida";
             barraSed.barTitleText = "Nivel de Sed";
             barraHambre.barTitleText          = "Hambre";
@@ -370,6 +372,10 @@ namespace AlumnoEjemplos.RamboAxe
             
             if (!vistaInventario.abierto)
             {
+                barraHambre.valorActual = pj.hambre;
+                barraVida.valorActual = pj.vida;
+                barraSed.valorActual = pj.sed;
+
                 barraSed.render(elapsedTime);
                 barraVida.render(elapsedTime);
                 barraHambre.render(elapsedTime);

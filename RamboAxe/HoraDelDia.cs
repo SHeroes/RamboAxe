@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using AlumnoEjemplos.RamboAxe.Player;
 
 namespace AlumnoEjemplos.RamboAxe
 {
@@ -13,6 +14,7 @@ namespace AlumnoEjemplos.RamboAxe
         private float tiempoTranscurridoDelCiclo;
         private float horaDelDia;
         private int momentoDia;
+        CharacterSheet pj = CharacterSheet.getInstance();
         private HoraDelDia() {
             tiempoTranscurridoDelCiclo = 0;
             // Create a timer with a two second interval.
@@ -32,6 +34,14 @@ namespace AlumnoEjemplos.RamboAxe
             }
             setHoraDia();
             momentoDia = momentoDelDia();
+
+            // test de que aumente la sed.... /// recordar que se esta ejecutando cada 1 segundo  aTimer = new System.Timers.Timer(1000);
+            pj.addLevelSed(0.01f); 
+            //
+            // test de que aumente la sed.... /// recordar que se esta ejecutando cada 1 segundo  aTimer = new System.Timers.Timer(1000);
+            pj.addLevelHambre(0.005f);
+            //
+           
         }
         private float setHoraDia()
         { // mayor a 0.5 es que paso la mitad del dia
