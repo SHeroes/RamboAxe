@@ -310,8 +310,11 @@ namespace AlumnoEjemplos.RamboAxe
                 float tangente = -vectorCentro0.Z / vectorCentro0.X;
                 rads = (FastMath.PI * (2)) - FastMath.Atan(tangente);
             }
-            text3.Text = FastMath.ToDeg(rads).ToString();
+            //  Estos son los grados a los que apunta la camara con respecto al eje x,z del mundo.
+            //  FastMath.ToDeg(rads).ToString();
       
+
+
             //Calcula y mueve la posicion del pj de acuerdo a los radianes calculados en el paso anterior
             if (direction.Z == 1)
             {
@@ -352,7 +355,7 @@ namespace AlumnoEjemplos.RamboAxe
                 pj.position.Y += pj.jumpHeight;
             }
             //Fin movimiento PJ.
-
+            text3.Text = HighResolutionTimer.Instance.FramesPerSecond.ToString();
 
 
             bool abierto = vistaInventario.abierto;
