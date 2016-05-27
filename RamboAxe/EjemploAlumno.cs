@@ -235,26 +235,26 @@ namespace AlumnoEjemplos.RamboAxe
             }
 
 
-            if (d3dInput.keyDown(Key.W))
+            if (d3dInput.keyDown(Key.W) || d3dInput.keyDown(Key.UpArrow))
             {
                 direction.Z = 1;
             }
 
             //Backward
-            if (d3dInput.keyDown(Key.S))
+            if (d3dInput.keyDown(Key.S) || d3dInput.keyDown(Key.DownArrow))
             {
                 direction.Z =-1;
             }
            
 
             //Strafe right
-            if (d3dInput.keyDown(Key.D))
+            if (d3dInput.keyDown(Key.D) || d3dInput.keyDown(Key.RightArrow))
             {
                 direction.X = 1;
             }
       
             //Strafe left
-            if (d3dInput.keyDown(Key.A))
+            if (d3dInput.keyDown(Key.A) || d3dInput.keyDown(Key.LeftArrow))
             {
                 direction.X = -1;
             }
@@ -262,18 +262,18 @@ namespace AlumnoEjemplos.RamboAxe
             //Jump
             if (d3dInput.keyDown(Key.Space))
             {
-                playerJumps();
+                pj.jump();
             }
             //Crouch
-            if (d3dInput.keyDown(Key.LeftControl))
+            if (d3dInput.keyDown(Key.LeftControl) || d3dInput.keyDown(Key.RightControl))
             {
-                playerCrouchs();
+                pj.crouch();
             }
             else
             {
-                if (d3dInput.keyUp(Key.LeftControl))
+                if (d3dInput.keyUp(Key.LeftControl) || d3dInput.keyUp(Key.RightControl))
                 {
-                    playerStands();
+                    pj.stand();
                 }
             }
 
@@ -341,7 +341,16 @@ namespace AlumnoEjemplos.RamboAxe
                 Vector3 zAxis = new Vector3(result.X, result.Y, result.Z);
                 pj.position.Add(zAxis);
             }
-               
+              
+            //Buscando la altura del HeightMap del floor en la coordenada actual.
+            
+            terrain.interpoledHeight(pj.position.X, pj.position.Z ,out pj.position.Y);
+            pj.position.Y = pj.position.Y + pj.playerHeight;
+            if (pj.jumpHeight>0)
+            {
+                pj.fall();
+                pj.position.Y += pj.jumpHeight;
+            }
             //Fin movimiento PJ.
 
 
@@ -727,33 +736,8 @@ namespace AlumnoEjemplos.RamboAxe
 
 
 
-           bool crouching = false;
-           public void playerCrouchs()
-           {
-               if (jumping)
-               {
-                   jumping = false;
-                   pj.position.Add(new Vector3(0,-120,0));
-               }
-               if (!crouching) {
-                   pj.position.Add(new Vector3(0, -40, 0));
-                   crouching = true;
-               }
-               
-           }
-           public void playerStands()
-           {
-               crouching = false;
-               pj.position.Add(new Vector3(0, 40, 0)); 
-           }
-           bool jumping = false;
-           public void playerJumps()
-           {
-               if (!jumping) {
-                   jumping = true;
-                   pj.position.Add(new Vector3(0, 120, 0));
-               } 
-           }
+           
+       
 
         public override void close()
         {
