@@ -39,7 +39,7 @@ namespace AlumnoEjemplos.RamboAxe
         VistaInventario vistaInventario;
         VistaConstruyendo vistaConstruyendo;
         bool firstRun = true;
-        bool hachaEquipada = true;
+        bool hachaEquipada = false;
 
         MapaDelJuego mapa;
         TgcSprite spriteHacha;

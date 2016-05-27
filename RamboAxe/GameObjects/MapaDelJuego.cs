@@ -78,6 +78,15 @@ namespace AlumnoEjemplos.RamboAxe.GameObjects
                  mesh.updateBoundingBox();
                  gameMeshes.Add(mesh);
              }
+
+             meshFile = TgcViewer.GuiController.Instance.ExamplesMediaDir + "MeshCreator\\Meshes\\Vegetacion\\Roca\\Roca-TgcScene.xml";
+             scene = loader.loadSceneFromFile(meshFile);
+             foreach (TgcMesh mesh in scene.Meshes)
+             {
+                 mesh.Scale = new Vector3(1.5f, 1.5f, 1.5f);
+                 mesh.updateBoundingBox();
+                 gameMeshes.Add(mesh);
+             }
             //Hasta ACA
 
         }
