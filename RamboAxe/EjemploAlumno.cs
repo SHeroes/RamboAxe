@@ -74,7 +74,7 @@ namespace AlumnoEjemplos.RamboAxe
         TgcText2d text;
         TgcText2d text2;
         TgcText2d text3;
-        SkyBox skyBox;
+        SkyBox skyBox0, skyBox1, skyBox2;
         public GameCamera camera;
         TgcPlaneWall ground;
         public bool falling = false;
@@ -384,16 +384,36 @@ namespace AlumnoEjemplos.RamboAxe
            // text.render();
 
             temperaturaCuadranteActual = mapa.getCuadrante((int)currentCuadrantX, (int)currentCuadrantZ).getTempratura() + HoraDelDia.getInstance().getMomentoDelDia();
-
+            if (temperaturaCuadranteActual < 0 ) temperaturaCuadranteActual = 0; // o Game Over por congelamiento ?
+            if (temperaturaCuadranteActual > 4) temperaturaCuadranteActual = 4; // Game Over por incineracion ?
 
            text3.Text = "TEMPERATURA: " + vectorTemperaturas[temperaturaCuadranteActual] + "  indiceVector:" + temperaturaCuadranteActual + "  x:" + currentCuadrantX + "  z:" + currentCuadrantZ;
             
             text3.render();
             text2.render();
-            skyBox.Center = camera.Position;
-            skyBox.updateValues();
-            skyBox.render();
+            switch (HoraDelDia.getInstance().getMomentoDelDia()) { 
+                case 0 :  { //MAÑANA
+                            skyBox0.Center = camera.Position;
+                            skyBox0.updateValues();
+                            skyBox0.render();
+                            break;
+                            }
+                case 1:   { //MEDIO DIA
+                        skyBox1.Center = camera.Position;
+                        skyBox1.updateValues();
+                        skyBox1.render();
+                        break;
+                    }
+                case -1:  { //NOCHE
+                        skyBox2.Center = camera.Position;
+                        skyBox2.updateValues();
+                        skyBox2.render();
+                        break;
+                    }           
+            }
+
            
+
           //  currentScene.renderAll();
             String floorCords ="";
             for (int i = 0; i < 3; i++)
@@ -487,17 +507,43 @@ namespace AlumnoEjemplos.RamboAxe
         public void skyboxInit()
         {
 
-            skyBox = new SkyBox();
-            skyBox.Center = new Vector3(0, 500, 0);
-            skyBox.Size = new Vector3(10000, 10000, 10000);
-            string texturesPath = GuiController.Instance.ExamplesMediaDir + "Texturas\\Quake\\SkyBox LostAtSeaDay\\";
-            skyBox.setFaceTexture(SkyBox.SkyFaces.Up, texturesPath + "lostatseaday_up.jpg");
-            skyBox.setFaceTexture(SkyBox.SkyFaces.Down, texturesPath + "lostatseaday_dn.jpg");
-            skyBox.setFaceTexture(SkyBox.SkyFaces.Left, texturesPath + "lostatseaday_lf.jpg");
-            skyBox.setFaceTexture(SkyBox.SkyFaces.Right, texturesPath + "lostatseaday_rt.jpg");
-            skyBox.setFaceTexture(SkyBox.SkyFaces.Front, texturesPath + "lostatseaday_bk.jpg");
-            skyBox.setFaceTexture(SkyBox.SkyFaces.Back, texturesPath + "lostatseaday_ft.jpg");
-            skyBox.updateValues();
+            skyBox0 = new SkyBox();
+            skyBox0.Center = new Vector3(0, 500, 0);
+            skyBox0.Size = new Vector3(10000, 10000, 10000);
+            skyBox1 = new SkyBox();
+            skyBox1.Center = new Vector3(0, 500, 0);
+            skyBox1.Size = new Vector3(10000, 10000, 10000);
+            skyBox2 = new SkyBox();
+            skyBox2.Center = new Vector3(0, 500, 0);
+            skyBox2.Size = new Vector3(10000, 10000, 10000);
+            string texturesPath0 = GuiController.Instance.ExamplesMediaDir + "Texturas\\Quake\\SkyBox LostAtSeaDay\\";
+            string texturesPath1 = GuiController.Instance.AlumnoEjemplosDir + "RamboAxe\\Media\\skyBoxMidDay\\";
+            string texturesPath2 = GuiController.Instance.AlumnoEjemplosDir + "RamboAxe\\Media\\skyBoxNight\\";
+
+            skyBox0.setFaceTexture(SkyBox.SkyFaces.Up, texturesPath0 + "lostatseaday_up.jpg");
+            skyBox0.setFaceTexture(SkyBox.SkyFaces.Down, texturesPath0 + "lostatseaday_dn.jpg");
+            skyBox0.setFaceTexture(SkyBox.SkyFaces.Left, texturesPath0 + "lostatseaday_lf.jpg");
+            skyBox0.setFaceTexture(SkyBox.SkyFaces.Right, texturesPath0 + "lostatseaday_rt.jpg");
+            skyBox0.setFaceTexture(SkyBox.SkyFaces.Front, texturesPath0 + "lostatseaday_bk.jpg");
+            skyBox0.setFaceTexture(SkyBox.SkyFaces.Back, texturesPath0 + "lostatseaday_ft.jpg");
+
+            skyBox1.setFaceTexture(SkyBox.SkyFaces.Up, texturesPath1 + "lostatseaday_up.jpg");
+            skyBox1.setFaceTexture(SkyBox.SkyFaces.Down, texturesPath1 + "lostatseaday_dn.jpg");
+            skyBox1.setFaceTexture(SkyBox.SkyFaces.Left, texturesPath1 + "lostatseaday_lf.jpg");
+            skyBox1.setFaceTexture(SkyBox.SkyFaces.Right, texturesPath1 + "lostatseaday_rt.jpg");
+            skyBox1.setFaceTexture(SkyBox.SkyFaces.Front, texturesPath1 + "lostatseaday_bk.jpg");
+            skyBox1.setFaceTexture(SkyBox.SkyFaces.Back, texturesPath1 + "lostatseaday_ft.jpg");
+
+            skyBox2.setFaceTexture(SkyBox.SkyFaces.Up, texturesPath2 + "lostatseaday_up.jpg");
+            skyBox2.setFaceTexture(SkyBox.SkyFaces.Down, texturesPath2 + "lostatseaday_dn.jpg");
+            skyBox2.setFaceTexture(SkyBox.SkyFaces.Left, texturesPath2 + "lostatseaday_lf.jpg");
+            skyBox2.setFaceTexture(SkyBox.SkyFaces.Right, texturesPath2 + "lostatseaday_rt.jpg");
+            skyBox2.setFaceTexture(SkyBox.SkyFaces.Front, texturesPath2 + "lostatseaday_bk.jpg");
+            skyBox2.setFaceTexture(SkyBox.SkyFaces.Back, texturesPath2 + "lostatseaday_ft.jpg");
+
+            skyBox0.updateValues();
+            skyBox1.updateValues();
+            skyBox2.updateValues();
         }
      
            public void hud()
