@@ -83,7 +83,7 @@ namespace AlumnoEjemplos.RamboAxe.GameObjects
              scene = loader.loadSceneFromFile(meshFile);
              foreach (TgcMesh mesh in scene.Meshes)
              {
-                 mesh.Scale = new Vector3(1.5f, 1.5f, 1.5f);
+                 mesh.Scale = new Vector3(1.0f, 1.0f, 1.0f);
                  mesh.updateBoundingBox();
                  gameMeshes.Add(mesh);
              }
