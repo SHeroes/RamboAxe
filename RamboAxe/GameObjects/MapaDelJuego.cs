@@ -19,13 +19,13 @@ namespace AlumnoEjemplos.RamboAxe.GameObjects
              
              this.widthCuadrante = _widthCuadrante;
              this.heightCuadrante = _heightCuadrante;//Group_237
-             string meshFile = TgcViewer.GuiController.Instance.AlumnoEjemplosDir + "RamboAxe\\Media\\Group_237-TgcScene.xml";
+             string meshFile = TgcViewer.GuiController.Instance.AlumnoEjemplosDir + "RamboAxe\\Media\\dispenser\\DispenserAgua-TgcScene.xml";
              //Dispose de escena anterior
              //Cargar escena con herramienta TgcSceneLoader
              TgcScene scene = loader.loadSceneFromFile(meshFile);
              foreach (TgcMesh mesh in scene.Meshes)
              {
-                 mesh.Scale = new Vector3(0.3f, 0.3f, 0.3f);
+                 mesh.Scale = new Vector3(0.66f, 0.66f, 0.66f);
                  mesh.updateBoundingBox();
                  gameMeshes.Add(mesh);
              }
@@ -78,7 +78,14 @@ namespace AlumnoEjemplos.RamboAxe.GameObjects
                  mesh.updateBoundingBox();
                  gameMeshes.Add(mesh);
              }
-
+             meshFile = TgcViewer.GuiController.Instance.AlumnoEjemplosDir + "RamboAxe\\Media\\ruins_portal\\ruins_portal-TgcScene.xml";
+             scene = loader.loadSceneFromFile(meshFile);
+             foreach (TgcMesh mesh in scene.Meshes)
+             {
+                 mesh.Scale = new Vector3(3f,3f, 3f);
+                 mesh.updateBoundingBox();
+                 gameMeshes.Add(mesh);
+             }
              meshFile = TgcViewer.GuiController.Instance.ExamplesMediaDir + "MeshCreator\\Meshes\\Vegetacion\\Roca\\Roca-TgcScene.xml";
              scene = loader.loadSceneFromFile(meshFile);
              foreach (TgcMesh mesh in scene.Meshes)
@@ -88,6 +95,8 @@ namespace AlumnoEjemplos.RamboAxe.GameObjects
                  gameMeshes.Add(mesh);
              }
             //Hasta ACA
+
+
 
         }
         public static TgcMesh getGameMesh(int number)

@@ -113,6 +113,7 @@
     <Compile Include="RamboAxe\GameObjects\Cuadrante.cs" />
     <Compile Include="RamboAxe\GameObjects\Hacha.cs" />
     <Compile Include="RamboAxe\GameObjects\Obstaculo.cs" />
+    <Compile Include="RamboAxe\GameObjects\RuinaPortal.cs" />
     <Compile Include="RamboAxe\GameObjects\Piedra.cs" />
     <Compile Include="RamboAxe\GameObjects\Racion.cs" />
     <Compile Include="RamboAxe\GameObjects\Dispencer.cs" />

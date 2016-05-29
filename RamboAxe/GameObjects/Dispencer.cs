@@ -31,7 +31,7 @@ namespace AlumnoEjemplos.RamboAxe.GameObjects
 
 
              //   EjemploAlumno.getInstance().getBarraHidratacion().agregarPorcentajeABarra(0.2f);
-                pj.addLevelSed(-0.2f);
+                pj.addLevelSed(-20);
                 if (uses == 0)
                 {
                     getMesh().Scale = new Vector3(0f, 0f, 0f);

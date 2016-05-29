@@ -78,7 +78,7 @@ namespace AlumnoEjemplos.RamboAxe.GameObjects
                         }
                         else if (rX.NextDouble() < 0.55)
                         {
-                            mesh = MapaDelJuego.getGameMesh(6).clone("piedra_" + inCuadx.ToString() + inCuadz.ToString());
+                            mesh = MapaDelJuego.getGameMesh(7).clone("piedra_" + inCuadx.ToString() + inCuadz.ToString());
                             go = new Piedra(mesh, 0, new Random().Next(-50, 0), inCuadz * 500);
                             go.getMesh().rotateY((float)(FastMath.ToRad(new Random().Next(-20, 20))));
                         }
@@ -88,7 +88,12 @@ namespace AlumnoEjemplos.RamboAxe.GameObjects
                             go = new Hacha(mesh, 0, new Random().Next(-50, 0), inCuadz * 500);
                             go.getMesh().rotateY((float)(Math.PI * (new Random().Next(2))));
                         }
-
+                        else if (rX.NextDouble() < 0.61)
+                        {
+                            mesh = MapaDelJuego.getGameMesh(6).clone("ruina_portal" + inCuadx.ToString() + inCuadz.ToString());
+                            go = new RuinaPortal(mesh, 0, new Random().Next(-50, 0), inCuadz * 500);
+                            go.getMesh().rotateY((float)(FastMath.ToRad(new Random().Next(-20, 20))));
+                        }
                         else
                         {
                             mesh = MapaDelJuego.getGameMesh(0).clone("agua_" + inCuadx.ToString() + inCuadz.ToString());

@@ -7,18 +7,25 @@ namespace AlumnoEjemplos.RamboAxe.Player
 {
     class CharacterSheet
     {
-        public float vida { get; private set; }
-        public float sed { get; private set; }
-        public float hambre { get; private set; }
+        public int vida { get; private set; }
+        public int sed { get; private set; }
+        public int hambre { get; private set; }
         public int pesoMaximo { get; private set; }
+
+        public int maximaSed  { get; private set; }
+        public int maximaHambre  { get; private set; }
+        public int maximaVida { get; private set; }
 
         ModeloInventario inv;
         private static CharacterSheet singleton;
         private CharacterSheet()
         {
+            maximaSed = 40;
+            maximaHambre = 80;
+            maximaVida = 100;
             pesoMaximo = 100;
-            vida = 1.0f;
-            hambre = 0.001f; sed = 0.001f;
+            vida = maximaVida;
+            hambre = 0; sed = 0;
 
             inv = new ModeloInventario();
         }
@@ -34,14 +41,35 @@ namespace AlumnoEjemplos.RamboAxe.Player
         {
             return inv;
         }
-        public void addLevelSed(float valor){
-            sed = (float)sed + valor;
-            if (sed > 1.0f) sed = 1.0f; // Te estas muriendo de Sed Pah!
+        public void addLevelSed(int valor){
+            sed = sed + valor;
+            if (sed >= maximaSed)
+            {
+                sed = maximaSed; // Te estas muriendo de Sed Pah!
+                afectarNivelVida(-5);
+            }
+            else if (sed <= 0) sed = 0; // Te estas muriendo de Sed Pah!
         }
-        public void addLevelHambre(float valor)
+
+        public void addLevelHambre(int valor)
         {
-            hambre = (float)hambre + valor;
-            if (hambre > 1.0f) hambre = 1.0f; // Te estas muriendo de hambre Pah!
-        }       
+            hambre = hambre  + valor;
+            if (hambre >= maximaHambre) {
+                hambre = maximaHambre; // Te estas muriendo de hambre Pah!
+                afectarNivelVida(-5);
+            }
+            else if (hambre <= 0) hambre = 0; // Te estas muriendo de Sed Pah!
+        }
+
+        public void afectarNivelVida(int valor)
+        {
+            vida = vida + valor;
+            if (vida >= maximaVida)
+            {
+                vida = maximaVida;
+            }
+            else if (vida <= 0) vida = 0; // GAME OVER!!
+
+        }      
     }
 }

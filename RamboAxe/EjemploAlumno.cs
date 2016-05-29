@@ -40,6 +40,7 @@ namespace AlumnoEjemplos.RamboAxe
         VistaConstruyendo vistaConstruyendo;
         bool firstRun = true;
         bool hachaEquipada = false;
+        bool gameOver = false;
 
         MapaDelJuego mapa;
         TgcSprite spriteHacha;
@@ -74,6 +75,7 @@ namespace AlumnoEjemplos.RamboAxe
         TgcText2d text;
         TgcText2d text2;
         TgcText2d text3;
+        TgcText2d textGameOver;
         SkyBox skyBox0, skyBox1, skyBox2;
         public GameCamera camera;
         TgcPlaneWall ground;
@@ -85,9 +87,10 @@ namespace AlumnoEjemplos.RamboAxe
         double prevCuadrantX = 1;
         double prevCuadrantZ = 1;
         float width = 2000;
-        float height = 2000;
+        float height = 2000;    
+        int ScreenWidth = GuiController.Instance.D3dDevice.Viewport.Width;
+        int ScreenHeight = GuiController.Instance.D3dDevice.Viewport.Height;
 
-        
         TgcPlaneWall[][] floors = new TgcPlaneWall [3][];
         
         public override void init()
@@ -158,9 +161,9 @@ namespace AlumnoEjemplos.RamboAxe
             barraHambre = new BarraEstatica();
             barraSed = new BarraEstatica();
             barraVida = new BarraEstatica();
-            barraHambre.init(BarraEstatica.RED, 80, 460, 0, 100);
-            barraSed.init(BarraEstatica.VIOLET, (barrasWidth) + 80, 460, 0, 100);
-            barraVida.init(BarraEstatica.YELLOW, (barrasWidth * 2) + 80, 460, 0, 100);
+            barraHambre.init(BarraEstatica.RED, 80, 460, 0, pj.maximaHambre);
+            barraSed.init(BarraEstatica.VIOLET, (barrasWidth) + 80, 460, 0, pj.maximaSed);
+            barraVida.init(BarraEstatica.YELLOW, (barrasWidth * 2) + 80, 460, 0, pj.maximaVida);
 
             barraHambre.valorActual = pj.hambre;
             barraVida.valorActual = pj.vida;
@@ -278,7 +281,7 @@ namespace AlumnoEjemplos.RamboAxe
                     {
                         string consumido = vistaInventario.consumirActual();
                         if(consumido == "Racion"){
-                           //barraHambre.agregarPorcentajeABarra(0.1f);
+                            pj.addLevelHambre(-20);
                         }
                         else
                         {
@@ -363,6 +366,12 @@ namespace AlumnoEjemplos.RamboAxe
         {
             handleInput();
 
+            if (pj.vida == 0)
+            {
+                gameOver = true;
+                textGameOver.render();
+            }
+
             if (hachaEquipada)
             {
                 GuiController.Instance.Drawer2D.beginDrawSprite();
@@ -385,8 +394,8 @@ namespace AlumnoEjemplos.RamboAxe
             if (barraInteraccion != null) barraInteraccion.render(elapsedTime);
             vistaInventario.render();
             // TODO: descomentar para ver el construyendo actual
-            //vistaConstruyendo.render();
-            //box.render();
+           // vistaConstruyendo.render();
+           // box.render();
            // text.render();
 
             temperaturaCuadranteActual = mapa.getCuadrante((int)currentCuadrantX, (int)currentCuadrantZ).getTempratura() + HoraDelDia.getInstance().getMomentoDelDia();
@@ -576,6 +585,18 @@ namespace AlumnoEjemplos.RamboAxe
             text3.Size = new Size(800, 100);
             text3.Color = Color.Red;
             text3.Position = new Point(115, 30);
+
+
+            textGameOver = new TgcText2d();
+            textGameOver.Text = "textGameOver VITEH";
+            textGameOver.Align = TgcText2d.TextAlign.CENTER;
+            textGameOver.Size = new Size(300, 100);
+            textGameOver.Color = Color.Red;
+            //textGameOver.Position = new Point(115, 30);
+            System.Drawing.Font font1 = new System.Drawing.Font("Arial", 24);
+            textGameOver.Position = new Point( ScreenWidth / 2 - 300, ScreenHeight / 2 + 50);
+               
+
 
         }
 
