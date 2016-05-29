@@ -52,23 +52,32 @@ namespace AlumnoEjemplos.RamboAxe.GameObjects
             {
                 for (int inCuadz = 1; inCuadz < 4; inCuadz++)
                 {
-                    if (rX.NextDouble() > 0.5)
+                    /*TgcMesh arbolMesh;
+                    GameObjectAbstract arbolObject;
+                    for (int i = 1; i < 2; i++)
                     {
-                        
-                        TgcMesh mesh;
-                        GameObjectAbstract go;
-                        if (rX.NextDouble() < 0.3) {
-                            mesh = MapaDelJuego.getGameMesh(1).clone("comida_" + inCuadx.ToString() + inCuadz.ToString());
-                            go = new Racion(mesh, inCuadx * 500, 0, inCuadz * 500);
-                            go.getMesh().rotateY((float)(Math.PI * (new Random().Next(2))));
-                        }
-                        else if (rX.NextDouble() < 0.4)
+                        arbolMesh = MapaDelJuego.getGameMesh(5).clone("arbolin_" + inCuadx.ToString() + inCuadz.ToString());
+                        arbolObject = new Arbol(arbolMesh, inCuadx * 500, new Random().Next(-50, 0), inCuadz * 500);
+                        arbolObject.getMesh().rotateY((float)(FastMath.ToRad(new Random().Next(-20, 20))));
+                        this.cuadrantObjects.Add(arbolObject);
+                    }*/
+                        //Crear cierta cantidad de arboles en cada zona. Y en lo posible, dar la sensación de pegados, como si fuese zona de arboles.
+                        if (rX.NextDouble() > 0.5)
                         {
-                            mesh = MapaDelJuego.getGameMesh(2).clone("metal_" + inCuadx.ToString() + inCuadz.ToString());
-                            go = new Obstaculo(mesh, inCuadx * 500, new Random().Next(-50, 0), inCuadz * 500);
-                            go.getMesh().rotateY((float)(FastMath.ToRad(new Random().Next(-20, 20))));
 
-
+                            TgcMesh mesh;
+                            GameObjectAbstract go;
+                            if (rX.NextDouble() < 0.3)
+                            {
+                                mesh = MapaDelJuego.getGameMesh(1).clone("comida_" + inCuadx.ToString() + inCuadz.ToString());
+                                go = new Racion(mesh, inCuadx * 500, 0, inCuadz * 500);
+                                go.getMesh().rotateY((float)(Math.PI * (new Random().Next(2))));
+                            }
+                            else if (rX.NextDouble() < 0.4)
+                            {
+                                mesh = MapaDelJuego.getGameMesh(2).clone("metal_" + inCuadx.ToString() + inCuadz.ToString());
+                                go = new Obstaculo(mesh, inCuadx * 500, new Random().Next(-50, 0), inCuadz * 500);
+                                go.getMesh().rotateY((float)(FastMath.ToRad(new Random().Next(-20, 20))));
                         }
                         else if (rX.NextDouble() < 0.5)
                         {
@@ -100,9 +109,8 @@ namespace AlumnoEjemplos.RamboAxe.GameObjects
                             go = new Dispencer(mesh, inCuadx * 500, 0, inCuadz * 500);
                             go.getMesh().rotateY((float)(Math.PI * (new Random().Next(2))));
                         }
-
-                        this.cuadrantObjects.Add(go);
-                    }
+                            this.cuadrantObjects.Add(go);
+                        }
                 }
             }
           /*  int randomX = new Random().Next(-500, 500);
