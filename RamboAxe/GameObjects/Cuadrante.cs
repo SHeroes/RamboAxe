@@ -1,8 +1,10 @@
-﻿using Microsoft.DirectX;
+﻿using AlumnoEjemplos.Ramboaxe;
+using Microsoft.DirectX;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using TgcViewer;
 using TgcViewer.Utils.TgcGeometry;
 using TgcViewer.Utils.TgcSceneLoader;
 
@@ -11,53 +13,37 @@ namespace AlumnoEjemplos.RamboAxe.GameObjects
     class Cuadrante
     {
         List<GameObjectAbstract> cuadrantObjects;
-        int x; 
-        int z;
+        int latitud; 
+        int longitud;
+        Vector3[][] puntas;
         private int temperatura;
-        public int getTempratura()
+        private HeightMapTerrain terrain;
+        public Cuadrante(bool randomizedCuadrante, int width, int height, int latitud, int longitud)
         {
-            return temperatura;
-        }
-        public void setTempratura(int temp)
-        {
-            this.temperatura = temp;
-            switch (this.temperatura)
-            {
-                // {"CONGELADOR","FRIO","TEMPLADO","CALUROSO","ARDIENTE"}; 
-                // {"0"         ,"1",   "2",        "3",        "4"}; 
-                case 0: temperatura = 2; break; // temperaturaString = "TEMPLADO";  break;
-                case 1: temperatura = 1; break; //temperaturaString = "FRIO"; break;
-                case 2: temperatura = 0; break; //temperaturaString = "CONGELADOR"; break;
-                case 3: temperatura = 1; break; //temperaturaString = "FRIO"; break;
-                case 4: temperatura = 2; break; //temperaturaString = "TEMPLADO"; break;
-                case 5: temperatura = 2; break; //temperaturaString = "TEMPLADO"; break;
-                case 6: temperatura = 3; break; //temperaturaString = "CALUROSO"; break;
-                case 7: temperatura = 4; break; //temperaturaString = "ARDIENTE"; break;
-                case 8: temperatura = 3; break; //temperaturaString = "CALUROSO"; break;
-                case 9: temperatura = 2; break; //temperaturaString = "TEMPLADO"; break;              
+            terrain = new HeightMapTerrain();
+            string terrainHm = GuiController.Instance.AlumnoEjemplosDir+ "Ramboaxe\\Media\\" + "hm_plain_border.jpg";
+            terrain.loadTexture(terrainHm);
+            terrain.loadHeightmap(terrainHm, 10f, 0.7f, new Vector3(((float)(latitud + 0.5f) * (width/10)), 0, (longitud + 0.5f) * (height/10)));
+            //terrain.loadPlainHeightmap(100, 100, 50, 100, 1, new Vector3(500, 0, 500));
 
-                default: temperatura = 2; break; //temperaturaString = "TEMPLADO"; break;
-            }
-        }
-        public Cuadrante(bool randomizedCuadrante,int width,int height,int x,int z)
-        {
-            setTempratura( (x + z)%10); //el resto de la division por 10
+            setTempratura((latitud + longitud) % 10); //el resto de la division por 10
 
-            this.x = x;
-            this.z = z;
+            this.latitud = latitud;
+            this.longitud = longitud;
             this.cuadrantObjects = new List<GameObjectAbstract>();
             Random rX = new Random();
-            
+
             for (int inCuadx = 1; inCuadx < 4; inCuadx++)
             {
                 for (int inCuadz = 1; inCuadz < 4; inCuadz++)
                 {
                     if (rX.NextDouble() > 0.5)
                     {
-                        
+
                         TgcMesh mesh;
                         GameObjectAbstract go;
-                        if (rX.NextDouble() < 0.3) {
+                        if (rX.NextDouble() < 0.3)
+                        {
                             mesh = MapaDelJuego.getGameMesh(1).clone("comida_" + inCuadx.ToString() + inCuadz.ToString());
                             go = new Racion(mesh, inCuadx * 500, 0, inCuadz * 500);
                             go.getMesh().rotateY((float)(Math.PI * (new Random().Next(2))));
@@ -89,23 +75,45 @@ namespace AlumnoEjemplos.RamboAxe.GameObjects
                             go = new Dispencer(mesh, inCuadx * 500, 0, inCuadz * 500);
                             go.getMesh().rotateY((float)(Math.PI * (new Random().Next(2))));
                         }
-
                         this.cuadrantObjects.Add(go);
                     }
                 }
             }
-          /*  int randomX = new Random().Next(-500, 500);
-            int randomZ = new Random().Next(-500, 500);
-            TgcMesh amesh = MapaDelJuego.getGameMesh(3).clone("groundBall" + x.ToString() + z.ToString());
-            amesh.Scale = new Vector3(10f, 0.3f, 10f);
-            amesh.updateBoundingBox();
-            GameObjectAbstract ago = new BallGround(amesh, 1250+randomX, -50, 1250+randomZ);
-            
-            ago.getMesh().rotateY((float)(Math.PI * (new Random().Next(2))));
-            this.cuadrantObjects.Add(ago);*/
- 
- 
+          
         }
+
+
+        public HeightMapTerrain getTerrain()
+        {
+            return terrain;
+        }
+
+        public int getTempratura()
+        {
+            return temperatura;
+        }
+        public void setTempratura(int temp)
+        {
+            this.temperatura = temp;
+            switch (this.temperatura)
+            {
+                // {"CONGELADOR","FRIO","TEMPLADO","CALUROSO","ARDIENTE"}; 
+                // {"0"         ,"1",   "2",        "3",        "4"}; 
+                case 0: temperatura = 2; break; // temperaturaString = "TEMPLADO";  break;
+                case 1: temperatura = 1; break; //temperaturaString = "FRIO"; break;
+                case 2: temperatura = 0; break; //temperaturaString = "CONGELADOR"; break;
+                case 3: temperatura = 1; break; //temperaturaString = "FRIO"; break;
+                case 4: temperatura = 2; break; //temperaturaString = "TEMPLADO"; break;
+                case 5: temperatura = 2; break; //temperaturaString = "TEMPLADO"; break;
+                case 6: temperatura = 3; break; //temperaturaString = "CALUROSO"; break;
+                case 7: temperatura = 4; break; //temperaturaString = "ARDIENTE"; break;
+                case 8: temperatura = 3; break; //temperaturaString = "CALUROSO"; break;
+                case 9: temperatura = 2; break; //temperaturaString = "TEMPLADO"; break;              
+
+                default: temperatura = 2; break; //temperaturaString = "TEMPLADO"; break;
+            }
+        }
+
         public void removeMesh(GameObjectAbstract anObject){
             this.cuadrantObjects.Remove(anObject);
         }

@@ -10,7 +10,7 @@ using System.Collections.Generic;
 
 namespace AlumnoEjemplos.Ramboaxe
 {
-    public class SmartTerrain
+    public class HeightMapTerrain
     {
         #region Private fields
 
@@ -104,7 +104,7 @@ namespace AlumnoEjemplos.Ramboaxe
 
 
 
-        public SmartTerrain()
+        public HeightMapTerrain()
         {
             enabled = true;
             alphaBlendEnable = false;
@@ -119,7 +119,11 @@ namespace AlumnoEjemplos.Ramboaxe
 
 
         #region Load heightmap
-
+        public TgcBoundingBox getAABB()
+        {
+            return aabb;
+        }
+      
         /// <summary>
         /// Carga los valores del Heightmap en una matriz
         /// </summary>
@@ -210,14 +214,15 @@ namespace AlumnoEjemplos.Ramboaxe
 
             //Crear vertexBuffer
             totalVertices = 2 * 3 * (heightmapData.GetLength(0) - 1) * (heightmapData.GetLength(1) - 1);
+            
             vbTerrain = new VertexBuffer(typeof(CustomVertex.PositionColoredTextured), totalVertices, d3dDevice, Usage.Dynamic | Usage.WriteOnly, CustomVertex.PositionColoredTextured.Format, Pool.Default);
 
             float width = (float)heightmapData.GetLength(0);
             float length = (float)heightmapData.GetLength(1);
 
-            traslation.X = center.X - (width / 2);
+            traslation.X =center.X -  (width / 2);
             traslation.Y = center.Y;
-            traslation.Z = center.Z - (length / 2);
+            traslation.Z =center.Z - (length / 2);
 
             //Cargar vertices
             loadVertices();
@@ -262,7 +267,6 @@ namespace AlumnoEjemplos.Ramboaxe
 
             vbTerrain.SetData(vertices, 0, LockFlags.None);
             aabb.setExtremes(new Vector3(0, minIntensity, 0), new Vector3(HeightmapData.GetLength(0), maxIntensity, HeightmapData.GetLength(1)));
-
 
         }
 

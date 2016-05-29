@@ -15,7 +15,7 @@ using TgcViewer.Utils.Modifiers;
 using TgcViewer.Utils._2D;
 using TgcViewer.Utils.TgcSceneLoader;
 using TgcViewer.Utils.TgcGeometry;
-using Microsoft.DirectX.DirectInput;
+
 using System.Globalization;
 
 namespace AlumnoEjemplos.SurvivalBars

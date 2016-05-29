@@ -14,6 +14,7 @@ namespace AlumnoEjemplos.RamboAxe.GameObjects
         int widthCuadrante, heightCuadrante;
         TgcSceneLoader loader = new TgcSceneLoader();
         static List<TgcMesh> gameMeshes=new List<TgcMesh>();
+        
         public MapaDelJuego(int _widthCuadrante,int _heightCuadrante){
              cuadrantes = new Dictionary<String,Dictionary<String,Cuadrante>>();
              
@@ -79,6 +80,13 @@ namespace AlumnoEjemplos.RamboAxe.GameObjects
                  gameMeshes.Add(mesh);
              }
             //Hasta ACA
+             
+        }
+       
+        public Vector2 getCuadranteCoordsFor(int x,int z)
+        {
+            Vector2 cuadrante = new Vector2((int)(Math.Floor((float)x / widthCuadrante) ),(int) (Math.Floor((float)z / heightCuadrante)));
+            return cuadrante;
 
         }
         public static TgcMesh getGameMesh(int number)

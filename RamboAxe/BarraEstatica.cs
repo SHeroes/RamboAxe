@@ -40,7 +40,7 @@ namespace AlumnoEjemplos.RamboAxe
             float barraAlto = (float)0.28;
             float barraPosX = barraVaciaPosX + (float)19;
             float barraPosY = barraVaciaPosY + (float)3.5;
-            float barrasWidth = 280;
+            
 
             switch (color)
             {

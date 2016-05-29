@@ -11,7 +11,7 @@ namespace AlumnoEjemplos.RamboAxe.Player
         int vida;
         int sed;
         int frio;
-        public float velocity = 1;
+        public float velocity = 3;
         public float terminalVelocity = 5;
         public float jumpHeight = 0;
         private float nextFall = 0;
