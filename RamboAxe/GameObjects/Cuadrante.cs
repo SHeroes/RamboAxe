@@ -88,13 +88,13 @@ namespace AlumnoEjemplos.RamboAxe.GameObjects
                         else if (rX.NextDouble() < 0.55)
                         {
                             mesh = MapaDelJuego.getGameMesh(7).clone("piedra_" + inCuadx.ToString() + inCuadz.ToString());
-                            go = new Piedra(mesh, 0, new Random().Next(-50, 0), inCuadz * 500);
+                            go = new Piedra(mesh, inCuadx * 500, 0, inCuadz * 500);
                             go.getMesh().rotateY((float)(FastMath.ToRad(new Random().Next(-20, 20))));
                         }
                         else if (rX.NextDouble() < 0.6)
                         {
                             mesh = MapaDelJuego.getGameMesh(3).clone("hacha_" + inCuadx.ToString() + inCuadz.ToString());
-                            go = new Hacha(mesh, 0, new Random().Next(-50, 0), inCuadz * 500);
+                            go = new Hacha(mesh, inCuadx * 500, 0, inCuadz * 500);
                             go.getMesh().rotateY((float)(Math.PI * (new Random().Next(2))));
                         }
                         else if (rX.NextDouble() < 0.61)
