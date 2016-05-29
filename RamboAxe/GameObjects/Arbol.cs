@@ -12,6 +12,10 @@ namespace AlumnoEjemplos.RamboAxe.GameObjects
     class Arbol:GameObjectAbstract
     {
         float uses = 2;
+        public Arbol():this(MeshManager.Arbol, 0, 0 ,0)
+        {
+
+        }
         public Arbol(TgcMesh mesh,int x, int y,int z):base(mesh,x,y,z)
         {
             delayUso = 7f;   
@@ -37,7 +41,11 @@ namespace AlumnoEjemplos.RamboAxe.GameObjects
             }
             return null;
         }
-
+         public override void place(int x, int y, int z)
+         {
+             base.place(x, y, z);
+             this.mesh = mesh.clone("arbolin_" + x.ToString() + z.ToString());
+         }
  
     }
 }

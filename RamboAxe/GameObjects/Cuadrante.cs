@@ -8,7 +8,7 @@ using TgcViewer.Utils.TgcSceneLoader;
 
 namespace AlumnoEjemplos.RamboAxe.GameObjects
 {
-    class Cuadrante
+    public class Cuadrante
     {
         List<GameObjectAbstract> cuadrantObjects;
         int x; 

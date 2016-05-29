@@ -124,7 +124,7 @@ namespace AlumnoEjemplos.RamboAxe.Inventario
             int indiceReceta = recetas.IndexOf(receta.resultado.nombre);
             if(indiceReceta != -1){
                 int cantidad = receta.fabricar(cantidadObjetos);
-                if(cantidad >= 0){
+                if(cantidad > 0){
                     seFabrico = true;
                     /* Calculo el peso de los ingredientes y se lo saco al peso actual */
                     int pesoIngredientes = 0;
@@ -143,6 +143,10 @@ namespace AlumnoEjemplos.RamboAxe.Inventario
                     ObjetoInventario objeto = receta.resultado;
                     if(!objeto.esConstruible){
                         agregar(objeto, cantidad);
+                    }
+                    else
+                    {
+                        CharacterSheet.getInstance().empezarConstruccion(objeto);
                     }
                     huboCambios();
                 }

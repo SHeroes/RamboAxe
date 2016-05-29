@@ -8,9 +8,9 @@ using Microsoft.DirectX;
 
 namespace AlumnoEjemplos.RamboAxe.GameObjects
 {
-    abstract class GameObjectAbstract
+    public abstract class GameObjectAbstract
     {
-        TgcMesh mesh;
+        protected TgcMesh mesh;
         int x;
         int y;
         int z;
@@ -47,8 +47,12 @@ namespace AlumnoEjemplos.RamboAxe.GameObjects
         {
            
             this.getMesh().Position = vector;
-            this.getMesh().Rotation = new Vector3(0.0f, 0.0f, 0.0f);
         }
-
+        public virtual void place(int x, int y, int z)
+        {
+            this.x = x;
+            this.y = y;
+            this.z = z;
+        }
     }
 }
