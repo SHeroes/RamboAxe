@@ -42,9 +42,9 @@ namespace AlumnoEjemplos.RamboAxe
         bool firstRun = true;
         bool hachaEquipada = false;
         bool gameOver = false;
-
+        float tiempoAcumulador = 0f;
         public bool forceUpdate = true;
-
+        int tiempoDelContinue = 9;
 
 
         public MapaDelJuego mapa;
@@ -81,6 +81,7 @@ namespace AlumnoEjemplos.RamboAxe
         TgcText2d text2;
         TgcText2d text3;
         TgcText2d textGameOver;
+        TgcText2d textGameContinue;
         SkyBox skyBox0, skyBox1, skyBox2;
         public GameCamera camera;
         TgcPlaneWall ground;
@@ -333,6 +334,24 @@ namespace AlumnoEjemplos.RamboAxe
             }            
         }
 
+        public void handleResetGame(float elapsedTime) {
+            TgcD3dInput input = GuiController.Instance.D3dInput;
+            textGameOver.render();
+            tiempoAcumulador = tiempoAcumulador + elapsedTime;
+            int COUNTDOWN = tiempoDelContinue - (int)tiempoAcumulador;
+            if (COUNTDOWN < 0) COUNTDOWN = 0;
+            textGameContinue.Text = "Espere y presione la tecla \" C \" si desea otra oportunidad  " + COUNTDOWN.ToString();
+
+            textGameContinue.render();
+
+            if (tiempoAcumulador > 9 && input.keyDown(Key.C))
+            {
+                pj.incrementContinueCounter();
+                pj.reloadContinueStats();
+                gameOver = false;
+            }
+
+        }
         public void agregarPiedraTallada()
         {
            //TODO
@@ -390,13 +409,19 @@ namespace AlumnoEjemplos.RamboAxe
 
         public override void render(float elapsedTime)
         {
-            handleInput();
+
 
             if (pj.vida == 0)
             {
                 gameOver = true;
-                textGameOver.render();
+                /*
+                GuiController.Instance.CurrentCamera.Enable = false;
+                GuiController.Instance.CurrentCamera.Enable = true;
+                 */
             }
+
+            if (gameOver) handleResetGame(elapsedTime);
+            else handleInput();
 
             if (hachaEquipada)
             {
@@ -405,7 +430,7 @@ namespace AlumnoEjemplos.RamboAxe
                 GuiController.Instance.Drawer2D.endDrawSprite();
             }
             
-            if (!vistaInventario.abierto)
+            if (!vistaInventario.abierto  && !gameOver )
             {
                 barraHambre.valorActual = pj.hambre;
                 barraVida.valorActual = pj.vida;
@@ -417,7 +442,7 @@ namespace AlumnoEjemplos.RamboAxe
             }
             
             Microsoft.DirectX.Direct3D.Device d3dDevice = GuiController.Instance.D3dDevice;
-            if (barraInteraccion != null) barraInteraccion.render(elapsedTime);
+            if (barraInteraccion != null && !gameOver) barraInteraccion.render(elapsedTime);
             vistaInventario.render();
 
             // TODO: descomentar para ver el construyendo actual
@@ -615,14 +640,22 @@ namespace AlumnoEjemplos.RamboAxe
 
 
             textGameOver = new TgcText2d();
-            textGameOver.Text = "textGameOver VITEH";
+            textGameOver.Text = "GAME OVER";
             textGameOver.Align = TgcText2d.TextAlign.CENTER;
-            textGameOver.Size = new Size(300, 100);
+            textGameOver.Size = new Size(400, 100);
             textGameOver.Color = Color.Red;
             //textGameOver.Position = new Point(115, 30);
-            System.Drawing.Font font1 = new System.Drawing.Font("Arial", 24);
-            textGameOver.Position = new Point( ScreenWidth / 2 - 300, ScreenHeight / 2 + 50);
-               
+            System.Drawing.Font font1 = new System.Drawing.Font("Arial", 44);
+            textGameOver.changeFont(font1);
+            textGameOver.Position = new Point( ScreenWidth /2 -200 , ScreenHeight / 2 - 100);
+
+            textGameContinue = new TgcText2d();
+            textGameContinue.Text = "Espere y presione la tecla \" C \" si desea otra oportunidad  ";
+            textGameContinue.Align = TgcText2d.TextAlign.CENTER;
+            textGameContinue.Size = new Size(400, 100);
+            textGameContinue.Color = Color.Red;
+            System.Drawing.Font font2 = new System.Drawing.Font("Arial", 44);
+            textGameContinue.Position = new Point(ScreenWidth / 2 - 200, ScreenHeight / 2 + 20);               
 
 
         }
@@ -630,46 +663,56 @@ namespace AlumnoEjemplos.RamboAxe
 
            public Vector3[] tryToMovePlayer(Vector3 from, Vector3 direction)
            {
-               Vector3 elipsoidCorrection = new Vector3(from.X - characterElipsoid.Position.X, 0, from.Z - characterElipsoid.Position.Z);
+               if (gameOver) direction = new Vector3 (0f,0f,0f); // si se acabo el juego la camara translade
 
-               Vector3 realMovement = collisionManager.moveCharacter(characterElipsoid, elipsoidCorrection, objetosColisionables);
+              
+                Vector3 elipsoidCorrection = new Vector3(from.X - characterElipsoid.Position.X, 0, from.Z - characterElipsoid.Position.Z);
 
-               Vector3 prevPos = new Vector3(characterElipsoid.Position.X, characterElipsoid.Position.Y, characterElipsoid.Position.Z);
+                Vector3 realMovement = collisionManager.moveCharacter(characterElipsoid, elipsoidCorrection, objetosColisionables);
 
-
-               realMovement = collisionManager.moveCharacter(characterElipsoid, direction, objetosColisionables);
-
-               Vector3[] returnValues = new Vector3[2];
+                Vector3 prevPos = new Vector3(characterElipsoid.Position.X, characterElipsoid.Position.Y, characterElipsoid.Position.Z);
 
 
-               returnValues[0] = prevPos;
-               returnValues[1] = realMovement;
-               return returnValues;
+                realMovement = collisionManager.moveCharacter(characterElipsoid, direction, objetosColisionables);
+
+                Vector3[] returnValues = new Vector3[2];
+                returnValues[0] = prevPos;
+                returnValues[1] = realMovement;
+
+
+                
+                return returnValues;
            }
 
            public void playerCrouchs()
            {
-               characterElipsoid.setValues(characterElipsoid.Center + new Vector3(0, 0, 0), new Vector3(12, 28, 12));
+
+               if (!gameOver) characterElipsoid.setValues(characterElipsoid.Center + new Vector3(0, 0, 0), new Vector3(12, 28, 12));
              //  camera.setPosition(characterElipsoid.Position);
            }
            public void playerStands()
            {
-               characterElipsoid.setValues(characterElipsoid.Center + new Vector3(0, +20, 0), new Vector3(12, 48, 12));
+               if (!gameOver) characterElipsoid.setValues(characterElipsoid.Center + new Vector3(0, +20, 0), new Vector3(12, 48, 12));
               // camera.setPosition(characterElipsoid.Position);
            }
            public void playerPrevJump()
            {
-               characterElipsoid.setValues(characterElipsoid.Center + new Vector3(0, 0, 0), new Vector3(12, 38, 12));
+               if (!gameOver) characterElipsoid.setValues(characterElipsoid.Center + new Vector3(0, 0, 0), new Vector3(12, 38, 12));
                
            }
            public void playerJumps()
            {
-               characterElipsoid.setValues(characterElipsoid.Center + new Vector3(0, +120, 0), new Vector3(12, 48, 12));
-               camera.setPosition(characterElipsoid.Position);
+               if (!gameOver) characterElipsoid.setValues(characterElipsoid.Center + new Vector3(0, +120, 0), new Vector3(12, 48, 12));
+               if (!gameOver) camera.setPosition(characterElipsoid.Position);
            }
 
         public override void close()
         {
+            text.dispose();
+            text2.dispose();
+            text3.dispose();
+            textGameContinue.dispose();
+            textGameOver.dispose();
             vistaConstruyendo.dispose();
             vistaInventario.dispose();
             InventarioManager.dispose();

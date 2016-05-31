@@ -8,6 +8,7 @@ namespace AlumnoEjemplos.RamboAxe.Player
 {
     class CharacterSheet: Observable
     {
+        public int continueCounter { get; private set; }
         public int vida { get; private set; }
         public int sed { get; private set; }
         public int hambre { get; private set; }
@@ -19,10 +20,13 @@ namespace AlumnoEjemplos.RamboAxe.Player
         public int maximaHambre  { get; private set; }
         public int maximaVida { get; private set; }
 
+
+        
         ModeloInventario inv;
         private static CharacterSheet singleton;
         private CharacterSheet()
         {
+            continueCounter = 0;
             maximaSed = 40;
             maximaHambre = 80;
             maximaVida = 100;
@@ -121,6 +125,18 @@ namespace AlumnoEjemplos.RamboAxe.Player
                 huboCambios();
             }
         }
+
+        public void reloadContinueStats(){
+            //TODO una linda logica que mientras mas continues haya hecho mas choto reinicia
+                this.addLevelHambre(-30);
+                this.addLevelSed(-50);
+                this.afectarNivelVida(50);
+        }
+        public void incrementContinueCounter(){
+            continueCounter++;
+        }
+
+
 
     }
 }
