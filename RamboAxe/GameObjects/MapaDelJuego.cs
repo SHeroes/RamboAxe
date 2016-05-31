@@ -70,11 +70,11 @@ namespace AlumnoEjemplos.RamboAxe.GameObjects
                  gameMeshes.Add(mesh);
              }
 
-             meshFile = TgcViewer.GuiController.Instance.AlumnoEjemplosDir + "RamboAxe\\Media\\bol-TgcScene.xml";
+             meshFile = TgcViewer.GuiController.Instance.AlumnoEjemplosDir + "RamboAxe\\Media\\ArbolBosque-TgcScene.xml";
              scene = loader.loadSceneFromFile(meshFile);
              foreach (TgcMesh mesh in scene.Meshes)
              {
-                 mesh.Scale = new Vector3(2.0f, 2.0f, 2.0f);
+                 mesh.Scale = new Vector3(0.4f, 0.4f, 0.4f);
                  mesh.updateBoundingBox();
                  gameMeshes.Add(mesh);
              }
@@ -94,6 +94,15 @@ namespace AlumnoEjemplos.RamboAxe.GameObjects
                  mesh.updateBoundingBox();
                  gameMeshes.Add(mesh);
              }
+             meshFile = TgcViewer.GuiController.Instance.AlumnoEjemplosDir + "RamboAxe\\Media\\lenias-TgcScene.xml";
+             scene = loader.loadSceneFromFile(meshFile);
+             foreach (TgcMesh mesh in scene.Meshes)
+             {
+                 mesh.Scale = new Vector3(1.0f, 1.0f, 1.0f);
+                 mesh.updateBoundingBox();
+                 gameMeshes.Add(mesh);
+             }
+
             //Hasta ACA
 
 

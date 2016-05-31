@@ -54,10 +54,10 @@ namespace AlumnoEjemplos.RamboAxe.GameObjects
                 {
                     /*TgcMesh arbolMesh;
                     GameObjectAbstract arbolObject;
-                    for (int i = 1; i < 2; i++)
+                    for (int i = 1; i < 5; i++)
                     {
-                        arbolMesh = MapaDelJuego.getGameMesh(5).clone("arbolin_" + inCuadx.ToString() + inCuadz.ToString());
-                        arbolObject = new Arbol(arbolMesh, inCuadx * 500, new Random().Next(-50, 0), inCuadz * 500);
+                        arbolMesh = MapaDelJuego.getGameMesh(5).clone("arbolin_" + inCuadx.ToString() + inCuadz.ToString() + i.ToString());
+                        arbolObject = new Arbol(arbolMesh, (inCuadx+i) * (350 -20*i), new Random().Next(-50, -25), (inCuadz +i) * (350 -20 *i));
                         arbolObject.getMesh().rotateY((float)(FastMath.ToRad(new Random().Next(-20, 20))));
                         this.cuadrantObjects.Add(arbolObject);
                     }*/
@@ -79,12 +79,19 @@ namespace AlumnoEjemplos.RamboAxe.GameObjects
                                 go = new Obstaculo(mesh, inCuadx * 500, new Random().Next(-50, 0), inCuadz * 500);
                                 go.getMesh().rotateY((float)(FastMath.ToRad(new Random().Next(-20, 20))));
                         }
-                        else if (rX.NextDouble() < 0.5)
-                        {
-                            mesh = MapaDelJuego.getGameMesh(5).clone("arbolin_" + inCuadx.ToString() + inCuadz.ToString());
-                            go = new Arbol(mesh, inCuadx * 500, new Random().Next(-50, 0), inCuadz * 500);
-                            go.getMesh().rotateY((float)(FastMath.ToRad(new Random().Next(-20, 20))));
-                        }
+                            else if (rX.NextDouble() < 0.5)
+                            {
+                                mesh = MapaDelJuego.getGameMesh(5).clone("arbolin_" + inCuadx.ToString() + inCuadz.ToString());
+                                go = new Arbol(mesh, inCuadx * 500, new Random().Next(-50, 0), inCuadz * 500);
+                                go.getMesh().rotateY((float)(FastMath.ToRad(new Random().Next(-20, 20))));
+                            }
+                            else if (rX.NextDouble() < 0.51)
+                            {
+                                mesh = MapaDelJuego.getGameMesh(8).clone("lenias_" + inCuadx.ToString() + inCuadz.ToString());
+                                go = new Lenia(mesh, inCuadx * 500, 0, inCuadz * 500);
+                                go.getMesh().rotateY((float)(Math.PI * (new Random().Next(2))));
+                            }       
+
                         else if (rX.NextDouble() < 0.55)
                         {
                             mesh = MapaDelJuego.getGameMesh(7).clone("piedra_" + inCuadx.ToString() + inCuadz.ToString());
