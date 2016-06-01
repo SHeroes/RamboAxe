@@ -136,6 +136,10 @@ namespace AlumnoEjemplos.RamboAxe.Player
             continueCounter++;
         }
 
+        public void sufrirDanioTermico(int cantidaDaño) {
+            vida = vida - cantidaDaño;
+            if (vida < 0) vida = 0;
+        }
 
 
     }

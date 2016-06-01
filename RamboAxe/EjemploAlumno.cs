@@ -27,6 +27,7 @@ namespace AlumnoEjemplos.RamboAxe
         BarraEstatica barraHambre; BarraEstatica barraVida;
         BarraEstatica barraSed;
         string[] vectorTemperaturas = new string[5] {"CONGELADOR","FRIO","TEMPLADO","CALUROSO","ARDIENTE"};
+        string[] vDanioTemp = new string[5] { "CONGELAMIENTO", "FRIO", "TEMPLADO", "CALOR EXTENUANTE", "INCINERACION" };
 
         int temperaturaCuadranteActual;
         float distanciaObjeto = 0;
@@ -46,6 +47,7 @@ namespace AlumnoEjemplos.RamboAxe
         public bool forceUpdate = true;
         int tiempoDelContinue = 9;
         int skyBoxActualmomentoDia = -10;
+        Random random = new Random();
 
         public MapaDelJuego mapa;
         TgcSprite spriteHacha;
@@ -412,7 +414,7 @@ namespace AlumnoEjemplos.RamboAxe
         {
 
 
-            if (pj.vida == 0)
+            if (pj.vida <= 0)
             {
                 gameOver = true;
                 /*
@@ -455,8 +457,18 @@ namespace AlumnoEjemplos.RamboAxe
             if (temperaturaCuadranteActual < 0 ) temperaturaCuadranteActual = 0; // o Game Over por congelamiento ?
             if (temperaturaCuadranteActual > 4) temperaturaCuadranteActual = 4; // Game Over por incineracion ?
 
-           text3.Text = "TEMPERATURA: " + vectorTemperaturas[temperaturaCuadranteActual] + "  indiceVector:" + temperaturaCuadranteActual + "  x:" + currentCuadrantX + "  z:" + currentCuadrantZ;
-            
+            text3.Text = "TEMPERATURA: " + vectorTemperaturas[temperaturaCuadranteActual]; // +"  indiceVector:" + temperaturaCuadranteActual + "  x:" + currentCuadrantX + "  z:" + currentCuadrantZ;
+  
+
+            if (random.NextDouble() < elapsedTime) // Chance que por estar en una zona peligrosa sufra de daño 
+            {
+                int danio = 2 * (temperaturaCuadranteActual - 2) * (temperaturaCuadranteActual - 2);// 0 TEMPLADO, 2 en FRIO Y CALOR, 8 en cogelador y ardiente
+                pj.sufrirDanioTermico(danio);
+
+                textGameOver.Text = "MUERTE POR:" + vDanioTemp[temperaturaCuadranteActual];
+                textGameOver.render();
+            }
+
             text3.render();
             text2.render();
             changeSkyBox(skyBox, HoraDelDia.getInstance().getHoraDia(), camera.Position);
