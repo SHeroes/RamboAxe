@@ -76,6 +76,17 @@ namespace AlumnoEjemplos.RamboAxe
             }
             return instancia;
         }
-
+        public string getHoraEnString() {
+            int horaDelDia = (int)this.getHoraDia()*24;
+            string horaDiaString = "";
+            if (horaDelDia < 5)         horaDiaString = "NOCHE";
+            else if (horaDelDia < 8)    horaDiaString = "AMANECER";
+            else if (horaDelDia < 11)   horaDiaString = "MAÑANA";
+            else if (horaDelDia < 14)   horaDiaString = "MEDIODÍA";
+            else if (horaDelDia < 17)   horaDiaString = "TARDE";
+            else if (horaDelDia < 19)   horaDiaString = "OCASO";
+            else                        horaDiaString = "NOCHE";
+            return horaDiaString;
+        }
     }
 }

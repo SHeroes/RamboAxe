@@ -8,6 +8,14 @@ namespace AlumnoEjemplos.RamboAxe.Player
 {
     class CharacterSheet: Observable
     {
+        public const string CABEZA = "Cabeza";
+        public const string TORSO = "Torso";
+        public const string MANO_IZQUIERDA = "Mano Izquierda";
+        public const string MANO_DERECHA = "Mano Derecha";
+        public const string CINTURA = "Cintura";
+        public const string PIERNAS = "Piernas";
+        public const string PIES = "Pies";
+
         public int continueCounter { get; private set; }
         public int vida { get; private set; }
         public int sed { get; private set; }
@@ -19,6 +27,9 @@ namespace AlumnoEjemplos.RamboAxe.Player
         public int maximaSed  { get; private set; }
         public int maximaHambre  { get; private set; }
         public int maximaVida { get; private set; }
+        private Dictionary<String,ObjetoInventario> equipoEnUso;
+
+        
 
 
         
@@ -26,6 +37,16 @@ namespace AlumnoEjemplos.RamboAxe.Player
         private static CharacterSheet singleton;
         private CharacterSheet()
         {
+            equipoEnUso = new Dictionary<string,ObjetoInventario>();
+            equipoEnUso.Add(CharacterSheet.CABEZA, null);
+            equipoEnUso.Add(CharacterSheet.TORSO, null);
+            equipoEnUso.Add(CharacterSheet.MANO_IZQUIERDA, null);
+            equipoEnUso.Add(CharacterSheet.MANO_DERECHA, null);
+            equipoEnUso.Add(CharacterSheet.CINTURA, null);
+            equipoEnUso.Add(CharacterSheet.PIERNAS, null);
+            equipoEnUso.Add(CharacterSheet.PIES, null);
+
+
             continueCounter = 0;
             maximaSed = 40;
             maximaHambre = 80;
@@ -36,6 +57,29 @@ namespace AlumnoEjemplos.RamboAxe.Player
 
             inv = new ModeloInventario();
         }
+
+
+
+        private ObjetoInventario desequiparObjetoDeParteDelCuerpo(String parteDelCuerpo)        //desequipar
+        {
+            ObjetoInventario objetoDesequipado = null;
+            equipoEnUso.TryGetValue(parteDelCuerpo, out objetoDesequipado);
+            if (objetoDesequipado != null)
+            {
+                equipoEnUso.Remove(parteDelCuerpo);
+                equipoEnUso.Add(parteDelCuerpo, null);
+            }
+            return objetoDesequipado;
+        }
+        private ObjetoInventario equiparObjetoEnParteDelCuerpo(String parteDelCuerpo, ObjetoInventario objetoAEquipar)        //equipar
+        {
+            ObjetoInventario objetoDesequipado = null;
+            objetoDesequipado = desequiparObjetoDeParteDelCuerpo(parteDelCuerpo);
+            equipoEnUso.Remove(parteDelCuerpo);
+            equipoEnUso.Add(parteDelCuerpo, objetoAEquipar);
+            return objetoDesequipado;
+        }          
+
 
         public static CharacterSheet getInstance(){
             if(singleton==null){
@@ -135,12 +179,20 @@ namespace AlumnoEjemplos.RamboAxe.Player
         public void incrementContinueCounter(){
             continueCounter++;
         }
-
+        /*
         public void sufrirDanioTermico(int cantidaDaño) {
             vida = vida - cantidaDaño;
             if (vida < 0) vida = 0;
         }
+         * */
+        public void danioPorCalor(int cantidadDanio) {
+            this.addLevelHambre(cantidadDanio);
 
+        }
+        public void danioPorFrio(int cantidadDanio)
+        {
+            this.addLevelSed(cantidadDanio);
 
+        }
     }
 }

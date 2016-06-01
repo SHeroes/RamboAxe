@@ -26,8 +26,8 @@ namespace AlumnoEjemplos.RamboAxe
         Barra barraInteraccion;
         BarraEstatica barraHambre; BarraEstatica barraVida;
         BarraEstatica barraSed;
-        string[] vectorTemperaturas = new string[5] {"CONGELADOR","FRIO","TEMPLADO","CALUROSO","ARDIENTE"};
-        string[] vDanioTemp = new string[5] { "CONGELAMIENTO", "FRIO", "TEMPLADO", "CALOR EXTENUANTE", "INCINERACION" };
+        string[] vectorTemperaturas = new string[7];
+       // string[] vDanioTemp = new string[5] { "CONGELAMIENTO", "FRIO", "TEMPLADO", "CALOR EXTENUANTE", "INCINERACION" };
 
         int temperaturaCuadranteActual;
         float distanciaObjeto = 0;
@@ -103,6 +103,7 @@ namespace AlumnoEjemplos.RamboAxe
         
         public override void init()
         {
+    
             MeshManager.init();
             EjemploAlumno.game = this;
             Microsoft.DirectX.Direct3D.Device d3dDevice = GuiController.Instance.D3dDevice;
@@ -453,25 +454,27 @@ namespace AlumnoEjemplos.RamboAxe
            // box.render();
 
 
-            temperaturaCuadranteActual = mapa.getCuadrante((int)currentCuadrantX, (int)currentCuadrantZ).getTempratura() + HoraDelDia.getInstance().getMomentoDelDia();
-            if (temperaturaCuadranteActual < 0 ) temperaturaCuadranteActual = 0; // o Game Over por congelamiento ?
-            if (temperaturaCuadranteActual > 4) temperaturaCuadranteActual = 4; // Game Over por incineracion ?
+            temperaturaCuadranteActual = mapa.getCuadrante((int)currentCuadrantX, (int)currentCuadrantZ).getTempratura() + HoraDelDia.getInstance().getMomentoDelDia()-2;
+            
+            //if (temperaturaCuadranteActual < 0 ) temperaturaCuadranteActual = 0; // o Game Over por congelamiento ?
+            //if (temperaturaCuadranteActual > 4) temperaturaCuadranteActual = 4; // Game Over por incineracion ?
 
-            text3.Text = "TEMPERATURA: " + vectorTemperaturas[temperaturaCuadranteActual]; // +"  indiceVector:" + temperaturaCuadranteActual + "  x:" + currentCuadrantX + "  z:" + currentCuadrantZ;
-  
+           
 
-            if (random.NextDouble() < elapsedTime) // Chance que por estar en una zona peligrosa sufra de daño 
-            {
-                int danio = 2 * (temperaturaCuadranteActual - 2) * (temperaturaCuadranteActual - 2);// 0 TEMPLADO, 2 en FRIO Y CALOR, 8 en cogelador y ardiente
-                pj.sufrirDanioTermico(danio);
+            
+                if (temperaturaCuadranteActual > 0) {
+                    pj.danioPorCalor(temperaturaCuadranteActual*2);
+                }else if (temperaturaCuadranteActual < 0){
+                    pj.danioPorFrio(temperaturaCuadranteActual*2);
+                }
 
-                textGameOver.Text = "MUERTE POR:" + vDanioTemp[temperaturaCuadranteActual];
-                textGameOver.render();
-            }
 
-            text3.render();
-            text2.render();
-            changeSkyBox(skyBox, HoraDelDia.getInstance().getHoraDia(), camera.Position);
+
+            changeSkyBox();
+            skyBox.Center = camera.Position;
+            skyBox.updateValues();
+            
+            
             skyBox.render();
 
            
@@ -543,6 +546,39 @@ namespace AlumnoEjemplos.RamboAxe
                    selectedGameObject.use();
                }
            }
+           string text = "";
+           switch (temperaturaCuadranteActual)
+           {
+               case -3:
+                   text = "Congelante";
+                   break;
+               case -2:
+                   text = "Muy Frio";
+                   break;
+               case -1:
+                   text = "Frio";
+                   break;
+               case 0:
+                   text = "Templado";
+                   break;
+               case 1:
+                   text = "Soleado";
+                   break;
+               case 2:
+                   text = "Caluroso";
+                   break;
+               case 3:
+                   text = "Ardiente";
+                   break;
+           }
+        string momentoDelDiaString = HoraDelDia.getInstance().getHoraEnString();
+           text3.Text = "Temperatura: " + text+ " es "+ momentoDelDiaString;
+           //   textGameOver.Text = "MUERTE POR:" + vDanioTemp[temperaturaCuadranteActual];
+           //    textGameOver.render();
+
+
+           text3.render();
+           text2.render();
            
         }
 
@@ -568,26 +604,17 @@ namespace AlumnoEjemplos.RamboAxe
         }
         public void skyboxInit(){
             skyBox = new SkyBox();
-            skyBox.Center = new Vector3(0, 500, 0);
+           // skyBox.Center = new Vector3(0, 500, 0);
             skyBox.Size = new Vector3(10000, 10000, 10000);
-            updateSkyBox(skyBox, "Day", skyBox.Center);
+            
         }
 
-        private void updateSkyBox(SkyBox skyBox, String carpetaSkyBox, Vector3 camPos) {
-            string texturesPath = GuiController.Instance.AlumnoEjemplosDir + "RamboAxe\\Media\\skyBox\\" + carpetaSkyBox + "\\";
-            skyBox.setFaceTexture(SkyBox.SkyFaces.Up, texturesPath + "up.jpg");
-            skyBox.setFaceTexture(SkyBox.SkyFaces.Down, texturesPath + "down.jpg");
-            skyBox.setFaceTexture(SkyBox.SkyFaces.Left, texturesPath + "left.jpg");
-            skyBox.setFaceTexture(SkyBox.SkyFaces.Right, texturesPath + "right.jpg");
-            skyBox.setFaceTexture(SkyBox.SkyFaces.Front, texturesPath + "back.jpg");
-            skyBox.setFaceTexture(SkyBox.SkyFaces.Back, texturesPath + "front.jpg");
-            skyBox.Center = camPos;
-            skyBox.updateValues();  
-        }
 
-        private void changeSkyBox(SkyBox skyBox, float horaDelDia, Vector3 camPos)
+        string momentoDiaAnterior = "";
+        private void changeSkyBox()
         {
-            horaDelDia = horaDelDia*24;
+
+            float horaDelDia = HoraDelDia.getInstance().getHoraDia() * 24;
             string momentoDiaString = "";
             
             if (horaDelDia < 4)  momentoDiaString = "Night";  // "Night es el nombre de la Carpeta dentro del skybox"
@@ -596,8 +623,11 @@ namespace AlumnoEjemplos.RamboAxe
             else if  (horaDelDia < 18)  momentoDiaString = "MidDay";     
             else  momentoDiaString = "Night";
 
-            updateSkyBox(skyBox, momentoDiaString, camPos);
-            
+            if (momentoDiaAnterior != momentoDiaString)
+            {
+                skyBox.updateSkyBoxTextures(momentoDiaString);
+                momentoDiaAnterior = momentoDiaString;
+            }           
         }
 
 
