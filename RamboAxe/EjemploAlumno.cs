@@ -45,7 +45,7 @@ namespace AlumnoEjemplos.RamboAxe
         float tiempoAcumulador = 0f;
         public bool forceUpdate = true;
         int tiempoDelContinue = 9;
-
+        int skyBoxActualmomentoDia = -10;
 
         public MapaDelJuego mapa;
         TgcSprite spriteHacha;
@@ -82,7 +82,7 @@ namespace AlumnoEjemplos.RamboAxe
         TgcText2d text3;
         TgcText2d textGameOver;
         TgcText2d textGameContinue;
-        SkyBox skyBox0, skyBox1, skyBox2;
+        SkyBox skyBox;
         public GameCamera camera;
         TgcPlaneWall ground;
         public bool falling = false;
@@ -349,6 +349,7 @@ namespace AlumnoEjemplos.RamboAxe
                 pj.incrementContinueCounter();
                 pj.reloadContinueStats();
                 gameOver = false;
+                tiempoAcumulador = 9;
             }
 
         }
@@ -458,26 +459,8 @@ namespace AlumnoEjemplos.RamboAxe
             
             text3.render();
             text2.render();
-            switch (HoraDelDia.getInstance().getMomentoDelDia()) { 
-                case 0 :  { //MAÑANA
-                            skyBox0.Center = camera.Position;
-                            skyBox0.updateValues();
-                            skyBox0.render();
-                            break;
-                            }
-                case 1:   { //MEDIO DIA
-                        skyBox1.Center = camera.Position;
-                        skyBox1.updateValues();
-                        skyBox1.render();
-                        break;
-                    }
-                case -1:  { //NOCHE
-                        skyBox2.Center = camera.Position;
-                        skyBox2.updateValues();
-                        skyBox2.render();
-                        break;
-                    }           
-            }
+            changeSkyBox(skyBox, HoraDelDia.getInstance().getHoraDia(), camera.Position);
+            skyBox.render();
 
            
 
@@ -571,48 +554,41 @@ namespace AlumnoEjemplos.RamboAxe
             GuiController.Instance.UserVars.setValue("Cam Look Y", camera.getLookAt().Y);
             GuiController.Instance.UserVars.setValue("Cam Look Z", camera.getLookAt().Z);*/
         }
-        public void skyboxInit()
-        {
-
-            skyBox0 = new SkyBox();
-            skyBox0.Center = new Vector3(0, 500, 0);
-            skyBox0.Size = new Vector3(10000, 10000, 10000);
-            skyBox1 = new SkyBox();
-            skyBox1.Center = new Vector3(0, 500, 0);
-            skyBox1.Size = new Vector3(10000, 10000, 10000);
-            skyBox2 = new SkyBox();
-            skyBox2.Center = new Vector3(0, 500, 0);
-            skyBox2.Size = new Vector3(10000, 10000, 10000);
-            string texturesPath0 = GuiController.Instance.ExamplesMediaDir + "Texturas\\Quake\\SkyBox LostAtSeaDay\\";
-            string texturesPath1 = GuiController.Instance.AlumnoEjemplosDir + "RamboAxe\\Media\\skyBoxMidDay\\";
-            string texturesPath2 = GuiController.Instance.AlumnoEjemplosDir + "RamboAxe\\Media\\skyBoxNight\\";
-
-            skyBox0.setFaceTexture(SkyBox.SkyFaces.Up, texturesPath0 + "lostatseaday_up.jpg");
-            skyBox0.setFaceTexture(SkyBox.SkyFaces.Down, texturesPath0 + "lostatseaday_dn.jpg");
-            skyBox0.setFaceTexture(SkyBox.SkyFaces.Left, texturesPath0 + "lostatseaday_lf.jpg");
-            skyBox0.setFaceTexture(SkyBox.SkyFaces.Right, texturesPath0 + "lostatseaday_rt.jpg");
-            skyBox0.setFaceTexture(SkyBox.SkyFaces.Front, texturesPath0 + "lostatseaday_bk.jpg");
-            skyBox0.setFaceTexture(SkyBox.SkyFaces.Back, texturesPath0 + "lostatseaday_ft.jpg");
-
-            skyBox1.setFaceTexture(SkyBox.SkyFaces.Up, texturesPath1 + "lostatseaday_up.jpg");
-            skyBox1.setFaceTexture(SkyBox.SkyFaces.Down, texturesPath1 + "lostatseaday_dn.jpg");
-            skyBox1.setFaceTexture(SkyBox.SkyFaces.Left, texturesPath1 + "lostatseaday_lf.jpg");
-            skyBox1.setFaceTexture(SkyBox.SkyFaces.Right, texturesPath1 + "lostatseaday_rt.jpg");
-            skyBox1.setFaceTexture(SkyBox.SkyFaces.Front, texturesPath1 + "lostatseaday_bk.jpg");
-            skyBox1.setFaceTexture(SkyBox.SkyFaces.Back, texturesPath1 + "lostatseaday_ft.jpg");
-
-            skyBox2.setFaceTexture(SkyBox.SkyFaces.Up, texturesPath2 + "lostatseaday_up.jpg");
-            skyBox2.setFaceTexture(SkyBox.SkyFaces.Down, texturesPath2 + "lostatseaday_dn.jpg");
-            skyBox2.setFaceTexture(SkyBox.SkyFaces.Left, texturesPath2 + "lostatseaday_lf.jpg");
-            skyBox2.setFaceTexture(SkyBox.SkyFaces.Right, texturesPath2 + "lostatseaday_rt.jpg");
-            skyBox2.setFaceTexture(SkyBox.SkyFaces.Front, texturesPath2 + "lostatseaday_bk.jpg");
-            skyBox2.setFaceTexture(SkyBox.SkyFaces.Back, texturesPath2 + "lostatseaday_ft.jpg");
-
-            skyBox0.updateValues();
-            skyBox1.updateValues();
-            skyBox2.updateValues();
+        public void skyboxInit(){
+            skyBox = new SkyBox();
+            skyBox.Center = new Vector3(0, 500, 0);
+            skyBox.Size = new Vector3(10000, 10000, 10000);
+            updateSkyBox(skyBox, "Day", skyBox.Center);
         }
-     
+
+        private void updateSkyBox(SkyBox skyBox, String carpetaSkyBox, Vector3 camPos) {
+            string texturesPath = GuiController.Instance.AlumnoEjemplosDir + "RamboAxe\\Media\\skyBox\\" + carpetaSkyBox + "\\";
+            skyBox.setFaceTexture(SkyBox.SkyFaces.Up, texturesPath + "up.jpg");
+            skyBox.setFaceTexture(SkyBox.SkyFaces.Down, texturesPath + "down.jpg");
+            skyBox.setFaceTexture(SkyBox.SkyFaces.Left, texturesPath + "left.jpg");
+            skyBox.setFaceTexture(SkyBox.SkyFaces.Right, texturesPath + "right.jpg");
+            skyBox.setFaceTexture(SkyBox.SkyFaces.Front, texturesPath + "back.jpg");
+            skyBox.setFaceTexture(SkyBox.SkyFaces.Back, texturesPath + "front.jpg");
+            skyBox.Center = camPos;
+            skyBox.updateValues();  
+        }
+
+        private void changeSkyBox(SkyBox skyBox, float horaDelDia, Vector3 camPos)
+        {
+            horaDelDia = horaDelDia*24;
+            string momentoDiaString = "";
+            
+            if (horaDelDia < 4)  momentoDiaString = "Night";  // "Night es el nombre de la Carpeta dentro del skybox"
+            else if (horaDelDia < 7) momentoDiaString = "Amanecer"; 
+            else if  (horaDelDia < 12)  momentoDiaString = "Day";
+            else if  (horaDelDia < 18)  momentoDiaString = "MidDay";     
+            else  momentoDiaString = "Night";
+
+            updateSkyBox(skyBox, momentoDiaString, camPos);
+            
+        }
+
+
            public void hud()
         {
             text = new TgcText2d();
