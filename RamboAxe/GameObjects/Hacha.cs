@@ -13,7 +13,7 @@ namespace AlumnoEjemplos.RamboAxe.GameObjects
     class Hacha : GameObjectAbstract
     {
         float uses = 1;
-        public Hacha(TgcMesh mesh, int x, int y, int z): base(mesh, x, y, z)
+        public Hacha(TgcMesh mesh, float x, float y, float z): base(mesh, x, y, z)
         {
 
         }

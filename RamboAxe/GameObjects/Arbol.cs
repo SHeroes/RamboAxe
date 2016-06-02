@@ -12,7 +12,7 @@ namespace AlumnoEjemplos.RamboAxe.GameObjects
     class Arbol:GameObjectAbstract
     {
         float uses = 2;
-        public Arbol(TgcMesh mesh,int x, int y,int z):base(mesh,x,y,z)
+        public Arbol(TgcMesh mesh,float x, float y,float z):base(mesh,x,y,z)
         {
             delayUso = 7f;   
         }

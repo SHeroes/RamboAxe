@@ -100,11 +100,11 @@ namespace AlumnoEjemplos.RamboAxe
         //TgcPlaneWall[][] floors = new TgcPlaneWall [3][];
         //TgcPlaneWall[][] floors = new TgcPlaneWall[3][];
         //Cuadrante[] fastAccesCuadrants = new Cuadrante[9];
-        
+        private TgcBox cuerpoPj;
         public override void init()
         {
             Microsoft.DirectX.Direct3D.Device d3dDevice = GuiController.Instance.D3dDevice;
-
+            
 
             
             GuiController.Instance.CustomRenderEnabled = true;
@@ -139,8 +139,9 @@ namespace AlumnoEjemplos.RamboAxe
             }
             */
             //pj.position = new Vector3(floors[1][1].BoundingBox.calculateBoxCenter().X, floors[1][1].BoundingBox.calculateBoxCenter().Y + 125, floors[1][1].BoundingBox.calculateBoxCenter().Z);
-            pj.position = new Vector3(1000, 125,1000);
+            pj.position = new Vector3(500, 125,500);
 
+            cuerpoPj = TgcBox.fromSize(pj.position, new Vector3(10 , pj.playerHeight, 10), Color.Aquamarine);
             d3dInput = GuiController.Instance.D3dInput;
 
             spriteHacha = new TgcSprite();
@@ -193,9 +194,11 @@ namespace AlumnoEjemplos.RamboAxe
             barraHambre.barTitleText          = "Hambre";
         }
         private bool rotateCameraWithMouse = false;
+        private float rads = 0;
+        private Vector3 direction = new Vector3(0.0f, 0.0f, 0.0f);
         public void handleInput() {
             TgcD3dInput input = GuiController.Instance.D3dInput;
-            Vector3 direction = new Vector3(0.0f, 0.0f, 0.0f);
+            direction = new Vector3(0.0f, 0.0f, 0.0f);
             //direction.Z += 5.0f;
             //Forward
 
@@ -288,7 +291,7 @@ namespace AlumnoEjemplos.RamboAxe
 
             //Comienza el movimiento  PJ.
             //calculo los radianes de direfencia entre el lookAt de la camara y la posicion del pj(que tambien es el eye de la camara).
-            float rads = FastMath.ToRad(90);
+            rads = FastMath.ToRad(90);
             if (vectorCentro0.X > 0 && vectorCentro0.Z > 0)
             {
                 float tangente = vectorCentro0.Z / vectorCentro0.X;
@@ -309,51 +312,8 @@ namespace AlumnoEjemplos.RamboAxe
                 float tangente = -vectorCentro0.Z / vectorCentro0.X;
                 rads = (FastMath.PI * (2)) - FastMath.Atan(tangente);
             }
-            //  Estos son los grados a los que apunta la camara con respecto al eje x,z del mundo.
-            //  FastMath.ToDeg(rads).ToString();
-
-
-           // direction.Z = 1;
-            //Calcula y mueve la posicion del pj de acuerdo a los radianes calculados en el paso anterior
-            if (direction.Z == 1)
-            {
-                Matrix rotMtx = Matrix.RotationY(-rads+(FastMath.PI/2));
-                Vector4 result = Vector3.Transform(new Vector3(0,0,pj.velocity), rotMtx);
-                Vector3 zAxis = new Vector3(result.X, result.Y, result.Z);
-                pj.position.Add(zAxis);
-            }
-            else if(direction.Z == -1)
-            {
-                Matrix rotMtx = Matrix.RotationY(-rads + (FastMath.PI / 2));
-                Vector4 result = Vector3.Transform(new Vector3(0, 0, -pj.velocity), rotMtx);
-                Vector3 zAxis = new Vector3(result.X, result.Y, result.Z);
-                pj.position.Add(zAxis);
-            }          
-            if (direction.X == 1)
-            {
-                Matrix rotMtx = Matrix.RotationY(-rads + (FastMath.PI / 2));
-                Vector4 result = Vector3.Transform(new Vector3(pj.velocity, 0, 0), rotMtx);
-                Vector3 zAxis = new Vector3(result.X, result.Y, result.Z);
-                pj.position.Add(zAxis);
-            }
-            else if (direction.X == -1)
-            {
-                Matrix rotMtx = Matrix.RotationY(-rads + (FastMath.PI / 2));
-                Vector4 result = Vector3.Transform(new Vector3(-pj.velocity, 0, 0), rotMtx);
-                Vector3 zAxis = new Vector3(result.X, result.Y, result.Z);
-                pj.position.Add(zAxis);
-            }
-              
-            //Buscando la altura del HeightMap del floor en la coordenada actual.
-            
-            mapa.getCuadrante(currentCuadrantX,currentCuadrantZ).getTerrain().interpoledHeight(pj.position.X, pj.position.Z ,out pj.position.Y);
-            pj.position.Y = pj.position.Y + pj.playerHeight;
-            if (pj.jumpHeight>0)
-            {
-                pj.fall();
-                pj.position.Y += pj.jumpHeight;
-            }
-            //Fin movimiento PJ.
+           
+           
 
 
             piso.setExtremes(new Vector3(pj.position.X - (2000), -10, pj.position.Z - 2000), new Vector3(pj.position.X + 2000, -10, pj.position.Z + 2000));
@@ -493,10 +453,8 @@ namespace AlumnoEjemplos.RamboAxe
                // collisionPointMesh.Position = collisionPoint;
                //  collisionPointMesh.render();
             }
-            camera.setPosition(pj.position);
             String hudInfo;
             hudInfo = " FPS "+HighResolutionTimer.Instance.FramesPerSecond.ToString()+" "+currentCuadrantX+" "+currentCuadrantZ;
-            hudInfo+=" X " + pj.position.X.ToString() + " Y " + pj.position.Y.ToString() + " Z " + pj.position.Z.ToString() + " ";
             text3.Text = hudInfo;
         }
 
@@ -528,17 +486,20 @@ namespace AlumnoEjemplos.RamboAxe
         public void initCollisions()
         {
             objetosColisionables.Clear();
-           /* for (int i = 0; i < 3; i++)
+            /*
+            
+            for (int i = 0; i < 3; i++)
             {
                 for (int x = 0; x < 3; x++)
                 {
                     objetosColisionables.Add(BoundingBoxCollider.fromBoundingBox(floors[i][x].BoundingBox));
                 }
-            }*/
+            }
 
-            collisionManager = new ElipsoidCollisionManager();
-            collisionManager.GravityEnabled = true;
-            collisionManager.GravityForce = new Vector3(0, -1.2f, 0);
+            cuerpoPj.Size = new Vector3(10, pj.playerHeight, 10);
+
+            cuerpoPj.Position = camera.Position;
+            cuerpoPj.updateValues();*/
         }
 
 
@@ -546,8 +507,9 @@ namespace AlumnoEjemplos.RamboAxe
         
         private void gameLoop(float elapsedTime)
         {
-            
 
+            
+         
             temperaturaCuadranteActual = mapa.getCuadrante((int)currentCuadrantX, (int)currentCuadrantZ).getTempratura();
 
              tiempoDiaActual = HoraDelDia.getInstance().getHoraDia();
@@ -582,24 +544,27 @@ namespace AlumnoEjemplos.RamboAxe
                         f.updateValues();
                         objetosColisionables.Add(BoundingBoxCollider.fromBoundingBox(floors[x][z].BoundingBox));
 
-                        foreach (GameObjectAbstract go in mapa.getCuadrante((int)(currentCuadrantX + (x - 1)), ((int)currentCuadrantZ + (z - 1))).getObjects())
-                        {
-                            TgcMesh mesh = go.getMesh();
-                            go.move(new Vector3(go.getX() + nx, go.getY() + f.Position.Y, go.getZ() + nz));
-                            if (x == 1 && z == 1)
-                            {
-                                objetosColisionables.Add(BoundingBoxCollider.fromBoundingBox(mesh.BoundingBox));
-                            }
-                        }
+                      
                     }
                 }
                 */
-                collisionManager.GravityEnabled = true;
+              /*  foreach (GameObjectAbstract go in mapa.getCuadrante((int)(currentCuadrantX + (x - 1)), ((int)currentCuadrantZ + (z - 1))).getObjects())
+                {
+                    TgcMesh mesh = go.getMesh();
+                    go.move(new Vector3(go.getX() + nx, go.getY() + f.Position.Y, go.getZ() + nz));
+                    if (x == 1 && z == 1)
+                    {
+                        objetosColisionables.Add(BoundingBoxCollider.fromBoundingBox(mesh.BoundingBox));
+                    }
+                }*/
+               // collisionManager.GravityEnabled = true;
                 prevCuadrantX = currentCuadrantX;
                 prevCuadrantZ = currentCuadrantZ;
 
             }
 
+
+            
             if (selectedGameObject != null)
             {
                 if (barraInteraccion != null && !barraInteraccion.isActive())
@@ -610,7 +575,142 @@ namespace AlumnoEjemplos.RamboAxe
                 }
             }
 
+
+
+            //  Estos son los grados a los que apunta la camara con respecto al eje x,z del mundo.
+
+
+            //  FastMath.ToDeg(rads).ToString();
+
+
+           
+           
+            //Buscando la altura del HeightMap del floor en la coordenada actual.
+           
+            mapa.getCuadrante(currentCuadrantX, currentCuadrantZ).getTerrain().interpoledHeight(pj.position.X, pj.position.Z, out pj.position.Y);
+            pj.position.Y = pj.position.Y + pj.playerHeight;
+            if (pj.jumpHeight > 0)
+            {
+                pj.fall();
+                pj.position.Y += pj.jumpHeight;
+            }
+
+
+            cuerpoPj.Size = new Vector3(10, pj.playerHeight, 10);
             
+            cuerpoPj.updateValues();
+            Vector3 pjPrevPos = new Vector3(pj.position.X, pj.position.Y, pj.position.Z);
+            
+            //Calcula y mueve la posicion del pj de acuerdo a los radianes calculados en el paso anterior
+            if (direction.Z == 1)
+            {
+                Matrix rotMtx = Matrix.RotationY(-rads + (FastMath.PI / 2));
+                Vector4 result = Vector3.Transform(new Vector3(0, 0, pj.velocity), rotMtx);
+                Vector3 zAxis = new Vector3(result.X, result.Y, result.Z);
+                pj.position.Add(zAxis);
+            }
+            else if (direction.Z == -1)
+            {
+                Matrix rotMtx = Matrix.RotationY(-rads + (FastMath.PI / 2));
+                Vector4 result = Vector3.Transform(new Vector3(0, 0, -pj.velocity), rotMtx);
+                Vector3 zAxis = new Vector3(result.X, result.Y, result.Z);
+                pj.position.Add(zAxis);
+            }
+            if (direction.X == 1)
+            {
+                Matrix rotMtx = Matrix.RotationY(-rads + (FastMath.PI / 2));
+                Vector4 result = Vector3.Transform(new Vector3(pj.velocity, 0, 0), rotMtx);
+                Vector3 zAxis = new Vector3(result.X, result.Y, result.Z);
+                pj.position.Add(zAxis);
+            }
+            else if (direction.X == -1)
+            {
+                Matrix rotMtx = Matrix.RotationY(-rads + (FastMath.PI / 2));
+                Vector4 result = Vector3.Transform(new Vector3(-pj.velocity, 0, 0), rotMtx);
+                Vector3 zAxis = new Vector3(result.X, result.Y, result.Z);
+                pj.position.Add(zAxis);
+            }
+           
+           
+            //Fin movimiento PJ.
+            cuerpoPj.Position = pj.position;
+            cuerpoPj.updateValues();
+            //Colision del jugador con objetos del cuadrante.
+            Cuadrante unCuadrante = mapa.getCuadrante(currentCuadrantX,currentCuadrantZ);
+            foreach (GameObjectAbstract go in unCuadrante.getObjects())
+            {
+                TgcBoundingBox cuerpoBounds=  cuerpoPj.BoundingBox;
+                float y = 0;
+                unCuadrante.getTerrain().interpoledHeight(go.getX(), go.getZ(), out y);
+                go.getMesh().Position = new Vector3(go.getX() + (currentCuadrantX * widthCuadrante), y, go.getZ() + (heightCuadrante * currentCuadrantZ));
+                TgcBoundingBox goBounds =  go.getMesh().BoundingBox;
+                TgcCollisionUtils.BoxBoxResult collisionPjObjetosCuadrantes = TgcCollisionUtils.classifyBoxBox(cuerpoBounds,goBounds);
+
+                if ((collisionPjObjetosCuadrantes != TgcCollisionUtils.BoxBoxResult.Afuera))
+                {
+
+
+                    /*(box1.PMin.X > box2.PMin.X) &&
+                         (box1.PMin.Y > box2.PMin.Y) &&
+                         (box1.PMin.Z > box2.PMin.Z) &&
+                         (box1.PMax.X < box2.PMax.X) &&
+                         (box1.PMax.Y < box2.PMax.Y) &&
+                         (box1.PMax.Z < box2.PMax.Z))*/
+                   /* if (cuerpoBounds.PMin.X < goBounds.PMin.X && cuerpoBounds.PMax.X > goBounds.PMin.X && cuerpoBounds.PMax.X > goBounds.PMax.X && cuerpoBounds.PMin.Z < goBounds.PMax.Z && cuerpoBounds.PMax.Z > goBounds.PMax.Z)
+                    {
+                        pj.position.Z = goBounds.PMax.Z + fixDistance;
+                    }*/
+                    //colision norte
+                    int fixDistance = 6;
+                    int fixDistanceCorner = 5;
+                    if (cuerpoBounds.PMin.X > goBounds.PMin.X && cuerpoBounds.PMax.X < goBounds.PMax.X && cuerpoBounds.PMin.Z < goBounds.PMax.Z && cuerpoBounds.PMax.Z > goBounds.PMax.Z)
+                    {
+                        pj.position.Z = goBounds.PMax.Z + fixDistance;
+                    }//colision sur
+                    else if (cuerpoBounds.PMax.X > goBounds.PMin.Z && cuerpoBounds.PMin.Z < goBounds.PMin.Z && cuerpoBounds.PMin.X > goBounds.PMin.X && cuerpoBounds.PMax.X < goBounds.PMax.X)
+                    {
+                        pj.position.Z = goBounds.PMin.Z - fixDistance;
+                    }//colision oeste
+                    else if (cuerpoBounds.PMin.X < goBounds.PMin.X && cuerpoBounds.PMax.X > goBounds.PMin.X && cuerpoBounds.PMax.Z < goBounds.PMax.Z && cuerpoBounds.PMin.Z > goBounds.PMin.Z)
+                    {
+                        pj.position.X = goBounds.PMin.X - fixDistance;
+                    }//colision este
+                    else if (cuerpoBounds.PMin.X < goBounds.PMax.X && cuerpoBounds.PMax.X > goBounds.PMax.X && cuerpoBounds.PMax.Z < goBounds.PMax.Z && cuerpoBounds.PMin.Z > goBounds.PMin.Z)
+                    {
+                        pj.position.X = goBounds.PMax.X + fixDistance;
+                    }//colision noroeste
+                    else if (cuerpoBounds.PMin.X > goBounds.PMin.X && cuerpoBounds.PMax.X < goBounds.PMax.X && cuerpoBounds.PMin.Z < goBounds.PMax.Z && cuerpoBounds.PMax.Z < goBounds.PMax.Z)
+                    {
+                        pj.position.Z = goBounds.PMax.Z + fixDistanceCorner;
+                        pj.position.X = goBounds.PMin.X - fixDistanceCorner;
+                    }//colision noreste
+                    else if (cuerpoBounds.PMin.X < goBounds.PMax.X && cuerpoBounds.PMax.X > goBounds.PMax.X && cuerpoBounds.PMin.Z > goBounds.PMax.Z && cuerpoBounds.PMax.Z > goBounds.PMax.Z)
+                    {
+                        pj.position.Z = goBounds.PMax.Z + fixDistanceCorner;
+                        pj.position.X = goBounds.PMax.X + fixDistanceCorner;
+                    }//colision suroeste
+                    else if (cuerpoBounds.PMin.X < goBounds.PMin.X && cuerpoBounds.PMax.X > goBounds.PMin.X && cuerpoBounds.PMax.Z > goBounds.PMin.Z && cuerpoBounds.PMax.Z < goBounds.PMax.Z)
+                    {
+                        pj.position.Z = goBounds.PMin.Z - fixDistanceCorner;
+                        pj.position.X = goBounds.PMin.X - fixDistanceCorner;
+                        
+                    }//colision sureste
+                    else if (cuerpoBounds.PMin.X < goBounds.PMax.X && cuerpoBounds.PMax.X > goBounds.PMax.X && cuerpoBounds.PMax.Z > goBounds.PMin.Z && cuerpoBounds.PMax.Z < goBounds.PMax.Z)
+                    {
+                        pj.position.Z = goBounds.PMin.Z - fixDistanceCorner ;
+                        pj.position.X = goBounds.PMax.X + fixDistanceCorner;
+                        
+                        
+                        
+                        
+                    }
+                    break;
+                }
+            }
+            cuerpoPj.Position = pj.position;
+            cuerpoPj.updateValues();
+            camera.setPosition(pj.position);
+            //fin colision jugador con objetos
             
         }
 
@@ -618,6 +718,7 @@ namespace AlumnoEjemplos.RamboAxe
         public override void render(float elapsedTime)
         {
             handleInput();
+            cuerpoPj.BoundingBox.render();
             Microsoft.DirectX.Direct3D.Device d3dDevice = GuiController.Instance.D3dDevice;
             
             d3dDevice.BeginScene();
@@ -660,9 +761,7 @@ namespace AlumnoEjemplos.RamboAxe
                 }
             }
               
-            text3.Text = text3.Text + " " + mapa.getCuadrante(currentCuadrantX, currentCuadrantZ).getTerrain().getAABB().PMin.ToString();
             
-            text3.render();
           
             /*String floorCords ="";
             for (int i = 0; i < 3; i++)
@@ -679,15 +778,26 @@ namespace AlumnoEjemplos.RamboAxe
             {
                 for (int z = 0; z < 3; z++)
                 {
-                    foreach (GameObjectAbstract go in mapa.getCuadrante((int)(currentCuadrantX+(x-1)), ((int)currentCuadrantZ+z-1)).getObjects())
+                    Cuadrante unCuadrante = mapa.getCuadrante((int)(currentCuadrantX+(x-1)), ((int)currentCuadrantZ+z-1));
+                    foreach (GameObjectAbstract go in unCuadrante.getObjects())
                     {
+                        int foreachCuadranteX = currentCuadrantX + x -1;
+                        int foreachCuadranteZ = currentCuadrantZ + z -1;
                         TgcMesh mesh = go.getMesh();
+                        float y = 0;
+                        unCuadrante.getTerrain().interpoledHeight(go.getX(), go.getZ(),out y);
+                        mesh.Position = new Vector3(go.getX() + (foreachCuadranteX * widthCuadrante), y, go.getZ() + (heightCuadrante * foreachCuadranteZ));
+                        mesh.updateBoundingBox();
+                        
+                        mesh.BoundingBox.render();
                         mesh.render();
                     }
                 }
             }
+             
         //   text.Text = floorCords + "\nCharacter: "+ characterElipsoid.Position.Z.ToString()+  " "  + characterElipsoid.Position.X.ToString() + "\n" + currentCuadrantZ.ToString() + " " + currentCuadrantX.ToString()+"\n"+characterElipsoid.Center.Y+" \n"+distanciaObjeto;
             piso.render();
+            text3.render();
             
            GuiController.Instance.D3dDevice.EndScene();
         }

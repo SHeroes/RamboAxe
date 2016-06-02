@@ -11,15 +11,15 @@ namespace AlumnoEjemplos.RamboAxe.GameObjects
     abstract class GameObjectAbstract
     {
         TgcMesh mesh;
-        int x;
-        int y;
-        int z;
+        float x;
+        float y;
+        float z;
         public float delayUso
         {
             get;
             set;
         }
-        public GameObjectAbstract(TgcMesh mesh,int x, int y,int z)
+        public GameObjectAbstract(TgcMesh mesh,float x, float y,float z)
         {
             this.mesh = mesh;
             this.x = x;
@@ -27,18 +27,18 @@ namespace AlumnoEjemplos.RamboAxe.GameObjects
             this.z = z;
             this.delayUso = 0;
         }
-        public int getX()
+        public float getX()
         {
             return this.x;
         }
-        public int getY(){
+        public float getY(){
             return this.y;
         }
         public TgcMesh getMesh()
         {
             return this.mesh;
         }
-        public int getZ()
+        public float getZ()
         {
             return this.z;
         }
@@ -47,7 +47,6 @@ namespace AlumnoEjemplos.RamboAxe.GameObjects
         {
            
             this.getMesh().Position = vector;
-            this.getMesh().Rotation = new Vector3(0.0f, 0.0f, 0.0f);
         }
 
     }

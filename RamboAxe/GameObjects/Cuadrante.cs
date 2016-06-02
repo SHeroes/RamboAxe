@@ -15,24 +15,71 @@ namespace AlumnoEjemplos.RamboAxe.GameObjects
         List<GameObjectAbstract> cuadrantObjects;
         int latitud; 
         int longitud;
-        Vector3[][] puntas;
         private int temperatura;
         private HeightMapTerrain terrain;
         public Cuadrante(bool randomizedCuadrante, int width, int height, int latitud, int longitud)
         {
             terrain = new HeightMapTerrain();
-            string terrainHm = GuiController.Instance.AlumnoEjemplosDir+ "Ramboaxe\\Media\\" + "hm_plain_border.jpg";
+            Random rX = new Random();
+            string terrainHm = GuiController.Instance.AlumnoEjemplosDir + "Ramboaxe\\Media\\";
+            if (rX.NextDouble() < 0.2)
+            {
+                terrainHm = terrainHm + "hm1.jpg";
+            }else if (rX.NextDouble() < 0.4)
+            {
+                terrainHm = terrainHm + "hm2.jpg";
+            }else if (rX.NextDouble() < 0.56)
+            {
+                terrainHm = terrainHm + "hm3.jpg";
+            }
+            else if (rX.NextDouble() < 0.61)
+            {
+                terrainHm = terrainHm + "hm4.jpg";
+            }
+            else if (rX.NextDouble() < 0.76)
+            {
+                terrainHm = terrainHm + "hm5.jpg";
+            }
+            else 
+            {
+                terrainHm = terrainHm + "hm6.jpg";
+            }
+
+            
+            
             terrain.loadTexture(terrainHm);
             terrain.loadHeightmap(terrainHm, 10f, 0.7f, new Vector3(((float)(latitud + 0.5f) * (width/10)), 0, (longitud + 0.5f) * (height/10)));
             //terrain.loadPlainHeightmap(100, 100, 50, 100, 1, new Vector3(500, 0, 500));
-
             setTempratura((latitud + longitud) % 10); //el resto de la division por 10
 
             this.latitud = latitud;
             this.longitud = longitud;
             this.cuadrantObjects = new List<GameObjectAbstract>();
-            Random rX = new Random();
+            
+            TgcMesh mesh;
+            GameObjectAbstract go;
+             mesh = MapaDelJuego.getGameMesh(2).clone("comida_1");
+             go = new Obstaculo(mesh, (float)(300), 0, (float)(200));
+             go.getMesh().rotateY((float)(FastMath.ToRad(new Random().Next(-20, 20))));
+             this.cuadrantObjects.Add(go);
+            /* mesh = MapaDelJuego.getGameMesh(2).clone("comida_2");
+             go = new Obstaculo(mesh, (float)(100), 0, (float)(100));
+             go.getMesh().rotateY((float)(FastMath.ToRad(new Random().Next(-20, 20))));
+             this.cuadrantObjects.Add(go);
+             mesh = MapaDelJuego.getGameMesh(2).clone("comida_3");
+             go = new Obstaculo(mesh, (float)(900), 0, (float)(900));
+             go.getMesh().rotateY((float)(FastMath.ToRad(new Random().Next(-20, 20))));
+             this.cuadrantObjects.Add(go);
+             mesh = MapaDelJuego.getGameMesh(2).clone("comida_4");
+             go = new Obstaculo(mesh, (float)(100), 0, (float)(900));
+             go.getMesh().rotateY((float)(FastMath.ToRad(new Random().Next(-20, 20))));
+             this.cuadrantObjects.Add(go);
+             mesh = MapaDelJuego.getGameMesh(2).clone("comida_");
+             go = new Obstaculo(mesh, (float)(900), 0, (float)(100));
+             go.getMesh().rotateY((float)(FastMath.ToRad(new Random().Next(-20, 20))));
+             this.cuadrantObjects.Add(go);*/
 
+            /*
             for (int inCuadx = 1; inCuadx < 4; inCuadx++)
             {
                 for (int inCuadz = 1; inCuadz < 4; inCuadz++)
@@ -40,46 +87,46 @@ namespace AlumnoEjemplos.RamboAxe.GameObjects
                     if (rX.NextDouble() > 0.5)
                     {
 
-                        TgcMesh mesh;
-                        GameObjectAbstract go;
+                        
                         if (rX.NextDouble() < 0.3)
                         {
                             mesh = MapaDelJuego.getGameMesh(1).clone("comida_" + inCuadx.ToString() + inCuadz.ToString());
-                            go = new Racion(mesh, inCuadx * 500, 0, inCuadz * 500);
-                            go.getMesh().rotateY((float)(Math.PI * (new Random().Next(2))));
+                            go = new Racion(mesh, (float)(inCuadx * 100), 0, (float)(inCuadz * 100));
+                            
                         }
                         else if (rX.NextDouble() < 0.4)
                         {
                             mesh = MapaDelJuego.getGameMesh(2).clone("metal_" + inCuadx.ToString() + inCuadz.ToString());
-                            go = new Obstaculo(mesh, inCuadx * 500, new Random().Next(-50, 0), inCuadz * 500);
-                            go.getMesh().rotateY((float)(FastMath.ToRad(new Random().Next(-20, 20))));
+                            go = new Obstaculo(mesh, (float)(inCuadx * 100), new Random().Next(-50, 0), (float)(inCuadz * 100));
+                            
 
 
                         }
                         else if (rX.NextDouble() < 0.5)
                         {
                             mesh = MapaDelJuego.getGameMesh(5).clone("arbolin_" + inCuadx.ToString() + inCuadz.ToString());
-                            go = new Arbol(mesh, inCuadx * 500, new Random().Next(-50, 0), inCuadz * 500);
-                            go.getMesh().rotateY((float)(FastMath.ToRad(new Random().Next(-20, 20))));
+                            go = new Arbol(mesh, (float)(inCuadx * 100), new Random().Next(-50, 0), (float)(inCuadz * 100));
+                            
                         }
                         else if (rX.NextDouble() < 0.6)
                         {
                             mesh = MapaDelJuego.getGameMesh(3).clone("hacha_" + inCuadx.ToString() + inCuadz.ToString());
-                            go = new Hacha(mesh, inCuadx * 500, new Random().Next(-50, 0), inCuadz * 500);
-                            go.getMesh().rotateY((float)(Math.PI * (new Random().Next(2))));
+                            go = new Hacha(mesh, (float)(inCuadx * 100), new Random().Next(-50, 0), (float)(inCuadz * 100));
+                            
                         }
 
                         else
                         {
                             mesh = MapaDelJuego.getGameMesh(0).clone("agua_" + inCuadx.ToString() + inCuadz.ToString());
-                            go = new Dispencer(mesh, inCuadx * 500, 0, inCuadz * 500);
-                            go.getMesh().rotateY((float)(Math.PI * (new Random().Next(2))));
+                            go = new Dispencer(mesh, (float)(inCuadx * 100), 0, (float)(inCuadz * 100));
+                            
                         }
                         this.cuadrantObjects.Add(go);
+               
                     }
                 }
-            }
-          
+            }*/
+
         }
 
 

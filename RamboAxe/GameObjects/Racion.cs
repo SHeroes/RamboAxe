@@ -12,7 +12,7 @@ namespace AlumnoEjemplos.RamboAxe.GameObjects
     class Racion:GameObjectAbstract
     {
         float uses = 1;
-        public Racion(TgcMesh mesh,int x, int y,int z):base(mesh,x,y,z)
+        public Racion(TgcMesh mesh,float x, float y,float z):base(mesh,x,y,z)
         {
             
         }

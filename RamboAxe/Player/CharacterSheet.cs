@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using AlumnoEjemplos.RamboAxe.Inventario;
 using Microsoft.DirectX;
+using TgcViewer.Utils.TgcGeometry;
 namespace AlumnoEjemplos.RamboAxe.Player
 {
     class CharacterSheet
@@ -11,6 +12,8 @@ namespace AlumnoEjemplos.RamboAxe.Player
         int vida;
         int sed;
         int frio;
+
+        public bool crouching = false;
         public float velocity = 3;
         public float terminalVelocity = 5;
         public float jumpHeight = 0;
@@ -28,12 +31,14 @@ namespace AlumnoEjemplos.RamboAxe.Player
         {
             if (jumpHeight == 0)
             {
-                playerHeight = 5;
+                crouching = true;
+                playerHeight = 10;
             }
         }
         public void stand()
         {
             playerHeight = 20;
+            crouching = false;
         }
         public void fall()
         {

@@ -11,7 +11,7 @@ namespace AlumnoEjemplos.RamboAxe.GameObjects
     class Dispencer:GameObjectAbstract
     {
         float uses = 2;
-        public Dispencer(TgcMesh mesh,int x, int y,int z):base(mesh,x,y,z)
+        public Dispencer(TgcMesh mesh,float x, float y,float z):base(mesh,x,y,z)
         {
             delayUso = 3f;   
         }

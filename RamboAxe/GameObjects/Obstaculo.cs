@@ -8,7 +8,7 @@ namespace AlumnoEjemplos.RamboAxe.GameObjects
 {
     class Obstaculo:GameObjectAbstract
     {
-        public Obstaculo(TgcMesh mesh, int x, int y, int z): base(mesh, x, y, z)
+        public Obstaculo(TgcMesh mesh, float x, float y, float z): base(mesh, x, y, z)
         {
             this.delayUso = 0;
         }
