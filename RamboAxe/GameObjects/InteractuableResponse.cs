@@ -5,7 +5,7 @@ using System.Text;
 
 namespace AlumnoEjemplos.RamboAxe.GameObjects
 {
-    class InteractuableResponse
+    public class InteractuableResponse
     {
     }
 }

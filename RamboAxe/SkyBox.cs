@@ -581,6 +581,16 @@ namespace AlumnoEjemplos.RamboAxe
             ibArray[i++] = 2;
             ibArray[i++] = 3;
         }
-
+        public void updateSkyBoxTextures(String carpetaSkyBox)
+        {
+            string texturesPath = GuiController.Instance.AlumnoEjemplosDir + "RamboAxe\\Media\\skyBox\\" + carpetaSkyBox + "\\";
+            this.setFaceTexture(SkyBox.SkyFaces.Up, texturesPath + "up.jpg");
+            this.setFaceTexture(SkyBox.SkyFaces.Down, texturesPath + "down.jpg");
+            this.setFaceTexture(SkyBox.SkyFaces.Left, texturesPath + "left.jpg");
+            this.setFaceTexture(SkyBox.SkyFaces.Right, texturesPath + "right.jpg");
+            this.setFaceTexture(SkyBox.SkyFaces.Front, texturesPath + "back.jpg");
+            this.setFaceTexture(SkyBox.SkyFaces.Back, texturesPath + "front.jpg");
+            this.updateValues();
+        }
     }
 }

@@ -10,6 +10,7 @@ namespace AlumnoEjemplos.RamboAxe.GameObjects
 {
     class Dispencer:GameObjectAbstract
     {
+        CharacterSheet pj = CharacterSheet.getInstance();
         float uses = 2;
         public Dispencer(TgcMesh mesh,float x, float y,float z):base(mesh,x,y,z)
         {
@@ -29,6 +30,7 @@ namespace AlumnoEjemplos.RamboAxe.GameObjects
 
 
              //   EjemploAlumno.getInstance().getBarraHidratacion().agregarPorcentajeABarra(0.2f);
+                pj.addLevelSed(-20);
                 if (uses == 0)
                 {
                     getMesh().Scale = new Vector3(0f, 0f, 0f);

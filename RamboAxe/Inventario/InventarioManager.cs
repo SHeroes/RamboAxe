@@ -19,10 +19,12 @@ namespace AlumnoEjemplos.RamboAxe.Inventario
         public static ObjetoInventario Ramita { get { return objetos["Ramita"]; } }
         public static ObjetoInventario Racion { get { return objetos["Racion"]; } }
         public static ObjetoInventario Hacha { get { return objetos["Hacha"]; } }
+        public static ObjetoInventario Arbol { get { return objetos["Arbol"]; } }
         # endregion
 
         # region Recetas
         public static Receta RecetaCasa { get { return recetas["Casa"]; } }
+        public static Receta RecetaArbol { get { return recetas["Arbol"]; } }
         # endregion
 
         public static void init()
@@ -37,6 +39,7 @@ namespace AlumnoEjemplos.RamboAxe.Inventario
             agregarObjeto("Ramita", TipoObjetoInventario.Ninguno, 1);
             agregarObjeto("Racion", TipoObjetoInventario.Consumible);
             agregarObjeto("Hacha", TipoObjetoInventario.Equipable);
+            agregarObjeto("Arbol",TipoObjetoInventario.Construible);
             /* Listado de Recetas */
             agregarReceta(
                 Casa, 
@@ -44,6 +47,13 @@ namespace AlumnoEjemplos.RamboAxe.Inventario
                 new Dictionary<ObjetoInventario, int>{
                     { Leña, 10 },
                     { Palos, 50 }
+                }
+            );
+            agregarReceta(
+                Arbol,
+                1,
+                new Dictionary<ObjetoInventario, int>{
+                    { Leña, 1 }
                 }
             );
         }

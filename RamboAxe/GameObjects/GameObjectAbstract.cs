@@ -8,9 +8,9 @@ using TgcViewer.Utils.TgcSceneLoader;
 
 namespace AlumnoEjemplos.RamboAxe.GameObjects
 {
-    abstract class GameObjectAbstract
+    public abstract class GameObjectAbstract
     {
-        TgcMesh mesh;
+        protected TgcMesh mesh;
         float x;
         float y;
         float z;
@@ -48,6 +48,11 @@ namespace AlumnoEjemplos.RamboAxe.GameObjects
            
             this.getMesh().Position = vector;
         }
-
+        public virtual void place(int x, int y, int z)
+        {
+            this.x = x;
+            this.y = y;
+            this.z = z;
+        }
     }
 }

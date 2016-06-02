@@ -34,9 +34,7 @@ namespace AlumnoEjemplos.RamboAxe
         Barra barraInteraccion;
         BarraEstatica barraHambre; BarraEstatica barraVida;
         BarraEstatica barraSed;
-        string[] vectorTemperaturas = new string[5] {"CONGELADOR","FRIO","TEMPLADO","CALUROSO","ARDIENTE"};
-        bool cambioCiclo = false;
-        
+        string[] vectorTemperaturas = new string[7];
         int temperaturaCuadranteActual;
         float distanciaObjeto = 0;
         TgcPickingRay pickingRay;
@@ -47,11 +45,13 @@ namespace AlumnoEjemplos.RamboAxe
         CharacterSheet pj = CharacterSheet.getInstance();
         VistaInventario vistaInventario;
         VistaConstruyendo vistaConstruyendo;
-      
-        List<GameObjectAbstract> nearbyObjects;
-        MapaDelJuego mapa;
-        
+          
         TgcPlaneWall piso;
+        bool gameOver = false;
+        public bool forceUpdate = true;
+        int tiempoDelContinue = 9;
+        public MapaDelJuego mapa;
+      
         public static EjemploAlumno getInstance()
         {
             return game;
@@ -83,23 +83,27 @@ namespace AlumnoEjemplos.RamboAxe
         TgcText2d text;
         TgcText2d text2;
         TgcText2d text3;
+        TgcText2d textGameOver;
+        TgcText2d textGameContinue;
         SkyBox skyBox;
         public GameCamera camera;
         
         public bool falling = false;
         List<Collider> objetosColisionables = new List<Collider>();
 
+
         int widthCuadrante = 1000;
         int heightCuadrante = 1000;
         private TgcBox cuerpoPj;
 
+        
         public override void init()
         {
+    
             Microsoft.DirectX.Direct3D.Device d3dDevice = GuiController.Instance.D3dDevice;
             GuiController.Instance.CustomRenderEnabled = true;
            
             EjemploAlumno.game = this;
-            nearbyObjects = new List<GameObjectAbstract>();
             
             //Iniciarlizar PickingRay
             pickingRay = new TgcPickingRay();
@@ -116,6 +120,7 @@ namespace AlumnoEjemplos.RamboAxe
             this.initCollisions();
 
             this.initCamera();
+
             this.vistaConstruyendo = new VistaConstruyendo();
             this.hud();
             this.skyboxInit();
@@ -124,8 +129,6 @@ namespace AlumnoEjemplos.RamboAxe
         }
         public void initMapa(){
             mapa = new MapaDelJuego((int)widthCuadrante,(int)heightCuadrante);
-            
-            
         }
     
         public void initbarraInteraccion(float time,int color)
@@ -139,12 +142,14 @@ namespace AlumnoEjemplos.RamboAxe
             barraHambre = new BarraEstatica();
             barraSed = new BarraEstatica();
             barraVida = new BarraEstatica();
-            barraHambre.init(BarraEstatica.RED, 80, 460, 0, 100);
-            barraSed.init(BarraEstatica.VIOLET, (barrasWidth) + 80, 460, 0, 100);
-            barraVida.init(BarraEstatica.YELLOW, (barrasWidth * 2) + 80, 460, 0, 100);
+            barraHambre.init(BarraEstatica.RED, 80, 460, 0, pj.maximaHambre);
+            barraSed.init(BarraEstatica.VIOLET, (barrasWidth) + 80, 460, 0, pj.maximaSed);
+            barraVida.init(BarraEstatica.YELLOW, (barrasWidth * 2) + 80, 460, 0, pj.maximaVida);
 
+            barraHambre.valorActual = pj.hambre;
+            barraVida.valorActual = pj.vida;
+            barraSed.valorActual = pj.sed;
 
-            barraVida.valorActual = 0.5f;
             barraVida.barTitleText       = "Vida";
             barraSed.barTitleText = "Nivel de Sed";
             barraHambre.barTitleText          = "Hambre";
@@ -274,6 +279,10 @@ namespace AlumnoEjemplos.RamboAxe
 
             bool abierto = vistaInventario.abierto;
             bool selected = false;
+            if(abierto && CharacterSheet.getInstance().estaConstruyendo){
+                abierto = false;
+                vistaInventario.cerrar();
+            }
             if (!abierto) {
                 //if (GuiController.Instance.D3dInput.buttonUp(TgcViewer.Utils.Input.TgcD3dInput.MouseButtons.BUTTON_LEFT))
                 if (GuiController.Instance.D3dInput.buttonDown(TgcViewer.Utils.Input.TgcD3dInput.MouseButtons.BUTTON_LEFT))
@@ -343,7 +352,13 @@ namespace AlumnoEjemplos.RamboAxe
                     }
                 }
 
-                
+                // Handle input de vista construyendo
+                if (input.keyPressed(Key.Return))
+                {
+                    CharacterSheet.getInstance().construir();
+                } else if(input.keyPressed(Key.C)){
+                    CharacterSheet.getInstance().cancelarConstruccion();
+                }
             }
 
             if (input.keyPressed(Key.I))
@@ -376,7 +391,7 @@ namespace AlumnoEjemplos.RamboAxe
                     {
                         string consumido = vistaInventario.consumirActual();
                         if(consumido == "Racion"){
-                           //barraHambre.agregarPorcentajeABarra(0.1f);
+                            pj.addLevelHambre(-20);
                         }
                         else
                         {
@@ -409,20 +424,49 @@ namespace AlumnoEjemplos.RamboAxe
             String hudInfo;
             hudInfo = " FPS "+HighResolutionTimer.Instance.FramesPerSecond.ToString()+" "+currentCuadrantX+" "+currentCuadrantZ;
             text3.Text = hudInfo;
+                      
         }
+        float tiempoAcumuladoParaContinue =0;
+        public void handleResetGame(float elapsedTime) {
+            TgcD3dInput input = GuiController.Instance.D3dInput;
+            textGameOver.render();
+            tiempoAcumuladoParaContinue = tiempoAcumuladoParaContinue + elapsedTime;
+            int COUNTDOWN = tiempoDelContinue - (int)tiempoAcumuladoParaContinue;
+            if (COUNTDOWN < 0) COUNTDOWN = 0;
+            textGameContinue.Text = "Espere y presione la tecla \" C \" si desea otra oportunidad  " + COUNTDOWN.ToString();
 
-       
+            textGameContinue.render();
 
+            if (tiempoAcumuladoParaContinue > 9 && input.keyDown(Key.C))
+            {
+                pj.incrementContinueCounter();
+                pj.reloadContinueStats();
+                gameOver = false;
+                tiempoAcumuladoParaContinue = 9;
+            }
 
+        }
+        
 
         public void initInventario() {
             InventarioManager.init();
             vistaInventario = new VistaInventario();
             pj.getInventario().agregar(InventarioManager.Palos);
             pj.getInventario().agregar(InventarioManager.Leña);
+            pj.getInventario().agregar(InventarioManager.Leña);
+            pj.getInventario().agregar(InventarioManager.Leña);
+            pj.getInventario().agregar(InventarioManager.Leña);
+            pj.getInventario().agregar(InventarioManager.Leña);
+            pj.getInventario().agregar(InventarioManager.Leña);
+            pj.getInventario().agregar(InventarioManager.Leña);
+            pj.getInventario().agregar(InventarioManager.Leña);
+            pj.getInventario().agregar(InventarioManager.Leña);
+            pj.getInventario().agregar(InventarioManager.Leña);
+            pj.getInventario().agregar(InventarioManager.Leña);
             pj.getInventario().agregar(InventarioManager.Piedra);
             pj.getInventario().agregar(InventarioManager.Piedra);
             pj.getInventario().agregar(InventarioManager.RecetaCasa);
+            pj.getInventario().agregar(InventarioManager.RecetaArbol);
         }
 
         public void initCamera()
@@ -439,22 +483,7 @@ namespace AlumnoEjemplos.RamboAxe
         public void initCollisions()
         {
             objetosColisionables.Clear();
-            /*
-            
-            for (int i = 0; i < 3; i++)
-            {
-                for (int x = 0; x < 3; x++)
-                {
-                    objetosColisionables.Add(BoundingBoxCollider.fromBoundingBox(floors[i][x].BoundingBox));
-                }
-            }
-
-            cuerpoPj.Size = new Vector3(10, pj.playerHeight, 10);
-
-            cuerpoPj.Position = camera.Position;
-            cuerpoPj.updateValues();*/
         }
-
 
         float tiempoDiaActual;
         
@@ -462,20 +491,9 @@ namespace AlumnoEjemplos.RamboAxe
         {
 
             
-         
-            temperaturaCuadranteActual = mapa.getCuadrante((int)currentCuadrantX, (int)currentCuadrantZ).getTempratura();
 
-            tiempoDiaActual = HoraDelDia.getInstance().getHoraDia();
-            if (tiempoDiaActual > 0.66 && temperaturaCuadranteActual > 0 && cambioCiclo)
-            {
-                temperaturaCuadranteActual--; //noche
-                cambioCiclo = false;
-            }
-            else if (tiempoDiaActual > 0.33 && temperaturaCuadranteActual < vectorTemperaturas.Length - 1 && !cambioCiclo)
-            {
-                temperaturaCuadranteActual++; //mediodía
-                cambioCiclo = true;
-            }
+         
+          
 
             Vector2 currentCuadrante  = mapa.getCuadranteCoordsFor((int)pj.position.X,(int)pj.position.Z);
             currentCuadrantX = (int)currentCuadrante.X;
@@ -615,12 +633,41 @@ namespace AlumnoEjemplos.RamboAxe
             camera.setPosition(pj.position);
             //fin colision jugador con objetos
             
+
+            if (pj.vida <= 0)
+            {
+                gameOver = true;
+                /*
+                GuiController.Instance.CurrentCamera.Enable = false;
+                GuiController.Instance.CurrentCamera.Enable = true;
+                 */
+            }
+
+            if (temperaturaCuadranteActual > 0) {
+                pj.danioPorCalor(temperaturaCuadranteActual*2);
+            }else if (temperaturaCuadranteActual < 0){
+                pj.danioPorFrio(temperaturaCuadranteActual*2);
+            }
+            
+            
         }
 
 
         public override void render(float elapsedTime)
         {
-            handleInput();
+            if (gameOver){
+                if (barraInteraccion != null)
+                {
+                    barraInteraccion.dispose();
+                    barraInteraccion = null;
+                    selectedGameObject.use();
+                }
+                direction = new Vector3(0, 0, 0);
+                this.handleResetGame(elapsedTime);
+            }else{
+                this.handleInput();
+            }
+            
             cuerpoPj.BoundingBox.render();
             Microsoft.DirectX.Direct3D.Device d3dDevice = GuiController.Instance.D3dDevice;
             
@@ -650,38 +697,44 @@ namespace AlumnoEjemplos.RamboAxe
            // text3.Text = "TEMPERATURA: " + vectorTemperaturas[temperaturaCuadranteActual] + "  indiceVector:" + temperaturaCuadranteActual + "tiempoDiaActual:" + tiempoDiaActual + "  x:" + currentCuadrantX + "  z:" + currentCuadrantZ;
             
             
-            text2.render();
+            //text2.render();
+            
+            if (!vistaInventario.abierto  && !gameOver )
+            {
+                barraHambre.valorActual = pj.hambre;
+                barraVida.valorActual = pj.vida;
+                barraSed.valorActual = pj.sed;
+
+                barraSed.render(elapsedTime);
+                barraVida.render(elapsedTime);
+                barraHambre.render(elapsedTime);
+            }
+            
+            if (barraInteraccion != null && !gameOver) {
+                barraInteraccion.render(elapsedTime);
+            }else{
+                vistaInventario.render();
+            }
+
+            // TODO: descomentar para ver el construyendo actual
+            //vistaConstruyendo.render();
+           // box.render();
+
+
+
+
+
+            changeSkyBox();
             skyBox.Center = camera.Position;
             skyBox.updateValues();
             skyBox.render();
             Vector2 result = new Vector2(0, 0);
-            mapa.getCuadrante(currentCuadrantX, currentCuadrantZ).getTerrain().xzToHeightmapCoords(pj.position.X,pj.position.Z,out result);
-            for (int i = 0; i < 3; i++)
-            {
-                for (int x = 0; x < 3; x++)
-                {
-                    mapa.getCuadrante(currentCuadrantX + (i - 1), currentCuadrantZ + (x - 1)).getTerrain().render();
-                }
-            }
-              
-            
-          
-            /*String floorCords ="";
-            for (int i = 0; i < 3; i++)
-            {
-                for (int x = 0; x < 3; x++)
-                {
-                    //floors[i][x].render();
-                    floorCords+= "\n["+i.ToString()+"/"+x.ToString()+"]"+floors[i][x].Position.X+floors[i][x].Position.Z;
-                }
-            }
-            */
-            
             for (int x = 0; x < 3; x++)
             {
                 for (int z = 0; z < 3; z++)
                 {
                     Cuadrante unCuadrante = mapa.getCuadrante((int)(currentCuadrantX+(x-1)), ((int)currentCuadrantZ+z-1));
+                    unCuadrante.getTerrain().render();
                     foreach (GameObjectAbstract go in unCuadrante.getObjects())
                     {
                         int foreachCuadranteX = currentCuadrantX + x -1;
@@ -698,13 +751,53 @@ namespace AlumnoEjemplos.RamboAxe
                 }
             }
              
-        //   text.Text = floorCords + "\nCharacter: "+ characterElipsoid.Position.Z.ToString()+  " "  + characterElipsoid.Position.X.ToString() + "\n" + currentCuadrantZ.ToString() + " " + currentCuadrantX.ToString()+"\n"+characterElipsoid.Center.Y+" \n"+distanciaObjeto;
             piso.render();
             text3.render();
             
-           GuiController.Instance.D3dDevice.EndScene();
-        }
+           if (selectedGameObject != null)
+           {
+               if (barraInteraccion != null && !barraInteraccion.isActive())
+               {
+                   barraInteraccion.dispose();
+                   barraInteraccion = null;
+                   selectedGameObject.use();
+               }
+           }
+           string text = "";
+           switch (temperaturaCuadranteActual)
+           {
+               case -3:
+                   text = "Congelante";
+                   break;
+               case -2:
+                   text = "Muy Frio";
+                   break;
+               case -1:
+                   text = "Frio";
+                   break;
+               case 0:
+                   text = "Templado";
+                   break;
+               case 1:
+                   text = "Soleado";
+                   break;
+               case 2:
+                   text = "Caluroso";
+                   break;
+               case 3:
+                   text = "Ardiente";
+                   break;
+           }
+        string momentoDelDiaString = HoraDelDia.getInstance().getHoraEnString();
+           //text3.Text = "Temperatura: " + text+ " es "+ momentoDelDiaString;
+           //   textGameOver.Text = "MUERTE POR:" + vDanioTemp[temperaturaCuadranteActual];
+           //    textGameOver.render();
 
+
+           text3.render();
+           GuiController.Instance.D3dDevice.EndScene();
+           
+        }
 
         public void userVars()
         {
@@ -725,22 +818,35 @@ namespace AlumnoEjemplos.RamboAxe
             GuiController.Instance.UserVars.setValue("Cam Look Y", camera.getLookAt().Y);
             GuiController.Instance.UserVars.setValue("Cam Look Z", camera.getLookAt().Z);*/
         }
-        public void skyboxInit()
+        public void skyboxInit(){
+            skyBox = new SkyBox();
+           // skyBox.Center = new Vector3(0, 500, 0);
+            skyBox.Size = new Vector3(10000, 10000, 10000);
+            
+        }
+
+
+        string momentoDiaAnterior = "";
+        private void changeSkyBox()
         {
 
-            skyBox = new SkyBox();
-            skyBox.Center = new Vector3(0, 500, 0);
-            skyBox.Size = new Vector3(10000, 10000, 10000);
-            string texturesPath = GuiController.Instance.ExamplesMediaDir + "Texturas\\Quake\\SkyBox LostAtSeaDay\\";
-            skyBox.setFaceTexture(SkyBox.SkyFaces.Up, texturesPath + "lostatseaday_up.jpg");
-            skyBox.setFaceTexture(SkyBox.SkyFaces.Down, texturesPath + "lostatseaday_dn.jpg");
-            skyBox.setFaceTexture(SkyBox.SkyFaces.Left, texturesPath + "lostatseaday_lf.jpg");
-            skyBox.setFaceTexture(SkyBox.SkyFaces.Right, texturesPath + "lostatseaday_rt.jpg");
-            skyBox.setFaceTexture(SkyBox.SkyFaces.Front, texturesPath + "lostatseaday_bk.jpg");
-            skyBox.setFaceTexture(SkyBox.SkyFaces.Back, texturesPath + "lostatseaday_ft.jpg");
-            skyBox.updateValues();
+            float horaDelDia = HoraDelDia.getInstance().getHoraDia() * 24;
+            string momentoDiaString = "";
+            
+            if (horaDelDia < 4)  momentoDiaString = "Night";  // "Night es el nombre de la Carpeta dentro del skybox"
+            else if (horaDelDia < 7) momentoDiaString = "Amanecer"; 
+            else if  (horaDelDia < 12)  momentoDiaString = "Day";
+            else if  (horaDelDia < 18)  momentoDiaString = "MidDay";     
+            else  momentoDiaString = "Night";
+
+            if (momentoDiaAnterior != momentoDiaString)
+            {
+                skyBox.updateSkyBoxTextures(momentoDiaString);
+                momentoDiaAnterior = momentoDiaString;
+            }           
         }
-     
+
+
            public void hud()
         {
             text = new TgcText2d();
@@ -766,13 +872,41 @@ namespace AlumnoEjemplos.RamboAxe
             text3.Color = Color.Black;
             text3.Position = new Point(115, 30);
 
+
+            textGameOver = new TgcText2d();
+            textGameOver.Text = "GAME OVER";
+            textGameOver.Align = TgcText2d.TextAlign.CENTER;
+            textGameOver.Size = new Size(400, 100);
+            textGameOver.Color = Color.Red;
+            //textGameOver.Position = new Point(115, 30);
+            System.Drawing.Font font1 = new System.Drawing.Font("Arial", 44);
+            textGameOver.changeFont(font1);
+            int ScreenWidth = GuiController.Instance.D3dDevice.Viewport.Width;
+            int ScreenHeight = GuiController.Instance.D3dDevice.Viewport.Width;
+            textGameOver.Position = new Point( ScreenWidth /2 -200 , ScreenHeight / 2 - 100);
+
+            textGameContinue = new TgcText2d();
+            textGameContinue.Text = "Espere y presione la tecla \" C \" si desea otra oportunidad  ";
+            textGameContinue.Align = TgcText2d.TextAlign.CENTER;
+            textGameContinue.Size = new Size(400, 100);
+            textGameContinue.Color = Color.Red;
+            System.Drawing.Font font2 = new System.Drawing.Font("Arial", 44);
+            textGameContinue.Position = new Point(ScreenWidth / 2 - 200, ScreenHeight / 2 + 20);               
+
+
         }
 
         public override void close()
         {
+            text.dispose();
+            text2.dispose();
+            text3.dispose();
+            textGameContinue.dispose();
+            textGameOver.dispose();
             vistaConstruyendo.dispose();
             vistaInventario.dispose();
             InventarioManager.dispose();
+            MeshManager.dispose();
         }
     }
 }

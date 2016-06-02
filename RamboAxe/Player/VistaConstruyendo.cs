@@ -7,38 +7,44 @@ using AlumnoEjemplos.RamboAxe.GameObjects;
 using Microsoft.DirectX;
 using TgcViewer.Utils.TgcGeometry;
 using System.Drawing;
+using TgcViewer;
 
 namespace AlumnoEjemplos.RamboAxe.Player
 {
-    public class VistaConstruyendo
+    public class VistaConstruyendo: Observador
     {
         private const float DISTANCIA_CONSTRUIBLE = 50.0f;
-        private EjemploAlumno juego;
-        //private TgcElli
         private TgcMesh construyendo;
         private TgcMesh meshVerde;
         private TgcMesh meshRojo;
         private Vector3 ultimoLookAt;
         private Vector3 ultimoEye;
+        private bool estaConstruyendo;
 
         public VistaConstruyendo()
         {
-            this.juego = EjemploAlumno.getInstance();
+
             init();
+            estaConstruyendo = false;
+            CharacterSheet.getInstance().agregarObservador(this);
         }
 
         private void init()
         {
-            meshVerde = MapaDelJuego.getGameMesh(4).clone("ConstruyendoCorrecto");
+            /*meshVerde = CharacterSheet.getInstance().construyendo.getMesh().clone("ConstruyendoCorrecto");
             meshRojo = meshVerde.clone("ConstruyendoIncorrecto");
             meshVerde.setColor(Color.LightGreen);
             meshRojo.setColor(Color.Salmon);
             construyendo = meshVerde;
+            estaConstruyendo = true;*/
         }
 
         public void render()
         {
-            if (ultimoLookAt != juego.camera.lookAt || ultimoEye != juego.camera.eye)
+            if(!estaConstruyendo){
+                return;
+            }
+            if (ultimoLookAt != EjemploAlumno.getInstance().camera.lookAt || ultimoEye != EjemploAlumno.getInstance().camera.eye)
             {
                 moverConstruible();
             }
@@ -47,9 +53,9 @@ namespace AlumnoEjemplos.RamboAxe.Player
 
         public void dispose()
         {
+            estaConstruyendo = false;
             meshVerde.dispose();
             meshRojo.dispose();
-            juego = null;
         }
 
         /// <summary>
@@ -57,9 +63,10 @@ namespace AlumnoEjemplos.RamboAxe.Player
         /// </summary>
         private void moverConstruible()
         {
+            // TODO: ver de mover a CharacterSheet
             /* Variables de control */
-            ultimoEye = juego.camera.eye;
-            ultimoLookAt = juego.camera.lookAt;
+            ultimoEye = EjemploAlumno.getInstance().camera.eye;
+            ultimoLookAt = EjemploAlumno.getInstance().camera.lookAt;
             /* Obtengo el angulo en el que esta mirando */
             float radians = FastMath.Atan2(
                 ultimoLookAt.Z - ultimoEye.Z, 
@@ -80,6 +87,26 @@ namespace AlumnoEjemplos.RamboAxe.Player
             );
             meshRojo.Position = meshVerde.Position;
             meshRojo.Rotation = meshVerde.Rotation;
+            if(CharacterSheet.getInstance().estaConstruyendo){
+                CharacterSheet.getInstance().construyendo.getMesh().Position = meshVerde.Position;
+                CharacterSheet.getInstance().construyendo.getMesh().Rotation = meshVerde.Rotation;
+            }
+        }
+
+        public void cambioObservable()
+        {
+            if(estaConstruyendo){
+                if (!CharacterSheet.getInstance().estaConstruyendo)
+                {
+                    dispose();
+                }
+            }
+            else
+            {
+                if(CharacterSheet.getInstance().estaConstruyendo){
+                    init();
+                }
+            }
         }
     }
 }

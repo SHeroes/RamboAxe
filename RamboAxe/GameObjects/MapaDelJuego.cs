@@ -4,10 +4,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using TgcViewer.Utils.TgcSceneLoader;
+using System.Drawing;
+using TgcViewer.Utils.TgcGeometry;
 
 namespace AlumnoEjemplos.RamboAxe.GameObjects
 {
-    class MapaDelJuego
+    public class MapaDelJuego
     {
         
         Dictionary<String,Dictionary<String,Cuadrante>> cuadrantes;
@@ -20,13 +22,16 @@ namespace AlumnoEjemplos.RamboAxe.GameObjects
              
              this.widthCuadrante = _widthCuadrante;
              this.heightCuadrante = _heightCuadrante;//Group_237
-             string meshFile = TgcViewer.GuiController.Instance.AlumnoEjemplosDir + "RamboAxe\\Media\\Group_237-TgcScene.xml";
+             string meshFile = TgcViewer.GuiController.Instance.AlumnoEjemplosDir + "RamboAxe\\Media\\dispenser\\DispenserAgua-TgcScene.xml";
+
+            // TODO: pasar todos a mesh manager
+
              //Dispose de escena anterior
              //Cargar escena con herramienta TgcSceneLoader
              TgcScene scene = loader.loadSceneFromFile(meshFile);
              foreach (TgcMesh mesh in scene.Meshes)
              {
-                 mesh.Scale = new Vector3(0.3f, 0.3f, 0.3f);
+                 mesh.Scale = new Vector3(0.66f, 0.66f, 0.66f);
                  mesh.updateBoundingBox();
                  gameMeshes.Add(mesh);
              }
@@ -79,8 +84,23 @@ namespace AlumnoEjemplos.RamboAxe.GameObjects
                  mesh.updateBoundingBox();
                  gameMeshes.Add(mesh);
              }
-            //Hasta ACA
-             
+             meshFile = TgcViewer.GuiController.Instance.AlumnoEjemplosDir + "RamboAxe\\Media\\ruins_portal\\ruins_portal-TgcScene.xml";
+             scene = loader.loadSceneFromFile(meshFile);
+             foreach (TgcMesh mesh in scene.Meshes)
+             {
+                 mesh.Scale = new Vector3(3f,3f, 3f);
+                 mesh.updateBoundingBox();
+                 gameMeshes.Add(mesh);
+             }
+             meshFile = TgcViewer.GuiController.Instance.ExamplesMediaDir + "MeshCreator\\Meshes\\Vegetacion\\Roca\\Roca-TgcScene.xml";
+             scene = loader.loadSceneFromFile(meshFile);
+             foreach (TgcMesh mesh in scene.Meshes)
+             {
+                 mesh.Scale = new Vector3(1.0f, 1.0f, 1.0f);
+                 mesh.updateBoundingBox();
+                 gameMeshes.Add(mesh);
+             }
+            //Hasta ACA             
         }
        
         public Vector2 getCuadranteCoordsFor(int x,int z)
@@ -115,5 +135,37 @@ namespace AlumnoEjemplos.RamboAxe.GameObjects
             }
             return cuadrantes[x.ToString()][z.ToString()];
        }
+        public void placeObject(GameObjectAbstract go)
+        {
+            if(go != null){
+                Vector3 worldPosition = go.getMesh().Position;
+                Cuadrante cuadrante = getCuadranteForPosition(worldPosition);
+                Vector3 relativePosition = getCuadranteRelativePosition(worldPosition);
+                go.place(
+                    (int)Math.Ceiling(relativePosition.X),
+                    (int)Math.Ceiling(relativePosition.Y),
+                    (int)Math.Ceiling(relativePosition.Z)
+                );
+                cuadrante.getObjects().Add(go);
+                EjemploAlumno.getInstance().forceUpdate = true;
+            }
+        }
+
+        private Cuadrante getCuadranteForPosition(Vector3 position)
+        {
+            int x = (int)(Math.Floor(position.X / widthCuadrante) - 1);
+            int z = (int)(Math.Floor(position.Z / widthCuadrante) - 1);
+            return getCuadrante(x, z);
+        }
+        private Vector3 getCuadranteRelativePosition(Vector3 position)
+        {
+            Vector3 posiciones = new Vector3(0.0f, 0.0f, 0.0f);
+            int cuadranteX = (int)(Math.Floor(position.X / widthCuadrante) - 1);
+            int cuadranteZ = (int)(Math.Floor(position.Z / widthCuadrante) - 1);
+            posiciones.X = Math.Abs(position.X) - Math.Abs((cuadranteX + 1) * widthCuadrante);
+            posiciones.Y = position.Y;
+            posiciones.Z = Math.Abs(position.Z) - Math.Abs((cuadranteZ + 1) * widthCuadrante);
+            return posiciones;
+        }
     }
 }

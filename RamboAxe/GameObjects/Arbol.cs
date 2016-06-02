@@ -12,11 +12,12 @@ namespace AlumnoEjemplos.RamboAxe.GameObjects
     class Arbol:GameObjectAbstract
     {
         float uses = 2;
-        public Arbol(TgcMesh mesh,float x, float y,float z):base(mesh,x,y,z)
+        
+        public Arbol(TgcMesh mesh,float x,float y, float z): base(mesh, x, y, z)
         {
             delayUso = 7f;   
         }
-         public  override InteractuableResponse use()
+        public  override InteractuableResponse use()
         {
             uses--;
             if (uses >= 0)
@@ -37,7 +38,11 @@ namespace AlumnoEjemplos.RamboAxe.GameObjects
             }
             return null;
         }
-
+         public override void place(int x, int y, int z)
+         {
+             base.place(x, y, z);
+             this.mesh = mesh.clone("arbolin_" + x.ToString() + z.ToString());
+         }
  
     }
 }

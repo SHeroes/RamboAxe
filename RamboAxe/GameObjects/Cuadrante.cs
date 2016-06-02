@@ -10,7 +10,7 @@ using TgcViewer.Utils.TgcSceneLoader;
 
 namespace AlumnoEjemplos.RamboAxe.GameObjects
 {
-    class Cuadrante
+    public class Cuadrante
     {
         List<GameObjectAbstract> cuadrantObjects;
         int latitud; 
@@ -84,46 +84,43 @@ namespace AlumnoEjemplos.RamboAxe.GameObjects
             {
                 for (int inCuadz = 1; inCuadz < 4; inCuadz++)
                 {
-                    if (rX.NextDouble() > 0.5)
-                    {
-
-                        
-                        if (rX.NextDouble() < 0.3)
+                       if (rX.NextDouble() < 0.3)
                         {
                             mesh = MapaDelJuego.getGameMesh(1).clone("comida_" + inCuadx.ToString() + inCuadz.ToString());
-                            go = new Racion(mesh, (float)(inCuadx * 100), 0, (float)(inCuadz * 100));
-                            
+                            go = new Racion(mesh, inCuadx * 50, 0, inCuadz * 50);
+                            go.getMesh().rotateY((float)(Math.PI * (new Random().Next(2))));
                         }
                         else if (rX.NextDouble() < 0.4)
                         {
                             mesh = MapaDelJuego.getGameMesh(2).clone("metal_" + inCuadx.ToString() + inCuadz.ToString());
-                            go = new Obstaculo(mesh, (float)(inCuadx * 100), new Random().Next(-50, 0), (float)(inCuadz * 100));
-                            
-
-
+                            go = new Obstaculo(mesh, inCuadx * 50, new Random().Next(-50, 0), inCuadz * 50);
+                            go.getMesh().rotateY((float)(FastMath.ToRad(new Random().Next(-20, 20))));
                         }
                         else if (rX.NextDouble() < 0.5)
                         {
                             mesh = MapaDelJuego.getGameMesh(5).clone("arbolin_" + inCuadx.ToString() + inCuadz.ToString());
-                            go = new Arbol(mesh, (float)(inCuadx * 100), new Random().Next(-50, 0), (float)(inCuadz * 100));
+                            go = new Arbol(mesh, (float)(inCuadx * 50), new Random().Next(-50, 0), (float)(inCuadz * 50));
                             
                         }
-                        else if (rX.NextDouble() < 0.6)
+                        else if (rX.NextDouble() < 0.55)
                         {
-                            mesh = MapaDelJuego.getGameMesh(3).clone("hacha_" + inCuadx.ToString() + inCuadz.ToString());
-                            go = new Hacha(mesh, (float)(inCuadx * 100), new Random().Next(-50, 0), (float)(inCuadz * 100));
-                            
+                            mesh = MapaDelJuego.getGameMesh(7).clone("piedra_" + inCuadx.ToString() + inCuadz.ToString());
+                            go = new Piedra(mesh, 0, new Random().Next(-50, 0), inCuadz * 50);
+                            go.getMesh().rotateY((float)(FastMath.ToRad(new Random().Next(-20, 20))));
                         }
-
+                        else if (rX.NextDouble() < 0.61)
+                        {
+                            mesh = MapaDelJuego.getGameMesh(6).clone("ruina_portal" + inCuadx.ToString() + inCuadz.ToString());
+                            go = new RuinaPortal(mesh, 0, new Random().Next(-50, 0), inCuadz * 50);
+                            go.getMesh().rotateY((float)(FastMath.ToRad(new Random().Next(-20, 20))));
+                        }
                         else
                         {
                             mesh = MapaDelJuego.getGameMesh(0).clone("agua_" + inCuadx.ToString() + inCuadz.ToString());
-                            go = new Dispencer(mesh, (float)(inCuadx * 100), 0, (float)(inCuadz * 100));
+                            go = new Dispencer(mesh, (float)(inCuadx * 50), 0, (float)(inCuadz * 50));
                             
                         }
-                        this.cuadrantObjects.Add(go);
-               
-                    }
+                       this.cuadrantObjects.Add(go);
                 }
             }
 
@@ -135,7 +132,7 @@ namespace AlumnoEjemplos.RamboAxe.GameObjects
             return terrain;
         }
 
-        public int getTempratura()
+        public int getTemperatura()
         {
             return temperatura;
         }

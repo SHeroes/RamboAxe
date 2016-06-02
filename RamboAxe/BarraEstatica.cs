@@ -20,17 +20,16 @@ namespace AlumnoEjemplos.RamboAxe
         public static int RED = 1;
         public static int YELLOW = 2;
         public static int VIOLET = 3;
-        public float valorActual; // { get; public set; }
-        private float amplitudTerminaBarra;
+        public int valorActual; // { get; public set; }
+        private int amplitudTerminaBarra;
         private float barraAnchoCompleto;
-        private float kte;
+        private float max;
 
         //Color, Posicion X, Posicion Y, ValorMinimo ºC, ValorMaximo ºC
-        public void init(int color, float barraVaciaPosX = (float)60.0, float barraVaciaPosY = (float)460.0, int min = 0, int max = 100){
-           amplitudTerminaBarra = max - min;
+        public void init(int color, float barraVaciaPosX = (float)60.0, float barraVaciaPosY = (float)460.0, int min = 0, int _max = 100){         
             barraAnchoCompleto = (float)0.23;
-            kte = amplitudTerminaBarra / 100;
-            valorActual = 0.01f;
+            max = _max;
+            valorActual = 1;
             barEmpty = new TgcSprite();
             barColor = new TgcSprite();
             string colorPath = "";
@@ -69,8 +68,9 @@ namespace AlumnoEjemplos.RamboAxe
         {
             GuiController.Instance.Drawer2D.beginDrawSprite();
 
-            float vidaActual = barraAnchoCompleto * valorActual * kte;
-            barColor.Scaling = new Vector2(vidaActual, (float)0.28);
+            float porcentajeVisible = barraAnchoCompleto * valorActual / max;
+
+           barColor.Scaling = new Vector2(porcentajeVisible, (float)0.28);
 
             barColor.render();
             barEmpty.render();
