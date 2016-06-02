@@ -82,6 +82,7 @@ namespace AlumnoEjemplos.RamboAxe
         TgcText2d text;
         TgcText2d text2;
         TgcText2d text3;
+        TgcText2d text4;
         TgcText2d textGameOver;
         TgcText2d textGameContinue;
         SkyBox skyBox;
@@ -298,13 +299,14 @@ namespace AlumnoEjemplos.RamboAxe
                 {
                     if (!vistaInventario.esReceta)
                     {
-                        string consumido = vistaInventario.consumirActual();
-                        if(consumido == "Racion"){
-                            pj.addLevelHambre(-20);
-                        }
-                        else
+                        if (vistaInventario.esInventario)
                         {
-                            if (consumido == "Hacha")
+                            string consumido = vistaInventario.consumirActual();
+                            if (consumido == "Racion")
+                            {
+                                pj.addLevelHambre(-20);
+                            }
+                            else if (consumido == "Hacha")
                             {
                                 if (!hachaEquipada)
                                 {
@@ -313,9 +315,38 @@ namespace AlumnoEjemplos.RamboAxe
                                     spriteHacha.render();
                                     GuiController.Instance.Drawer2D.endDrawSprite();
                                 }
+                            }
+                            else if (consumido == "Pantalon") {
+                                CharacterSheet.getInstance().getInventario().agregar(InventarioManager.Pantalon);
+                                ObjetoInventario objAEquipar = new ObjetoInventario();
+                                objAEquipar.nombre = consumido;
+                                if (objAEquipar != null)
+                                {
+                                    text4.Text = "OBJETO EQUIPADO: " + objAEquipar.nombre;
+                                }
+                                else
+                                {
+                                    text4.Text = "ERROR EQUIPANDO OBJETO";
+                                }
+                                ObjetoInventario obj;
+                                pj.equipoEnUso.TryGetValue(CharacterSheet.PIERNAS,out obj);
+                                if (obj != null)
+                                {
+                                    pj.desequiparObjetoDeParteDelCuerpo(CharacterSheet.PIERNAS);
+                                }
+                                else {
+                                    pj.equiparObjetoEnParteDelCuerpo(CharacterSheet.PIERNAS, objAEquipar);
+                                }
                                 
+                                vistaInventario.cambioObservable();
                             }
                         }
+ 
+                        else if (vistaInventario.esEquipable) {
+                             //TAB EQUIPO
+
+                        }
+                        
                         // TODO: hacer algo al consumir
                        // Console.WriteLine("Item consumido: {0}", consumido);
                        // GuiController.Instance.Logger.log
@@ -383,6 +414,9 @@ namespace AlumnoEjemplos.RamboAxe
             pj.getInventario().agregar(InventarioManager.Piedra);
             pj.getInventario().agregar(InventarioManager.RecetaCasa);
             pj.getInventario().agregar(InventarioManager.RecetaArbol);
+            pj.getInventario().agregar(InventarioManager.Hacha);
+            pj.getInventario().agregar(InventarioManager.Pantalon);
+
         }
 
         public void initCamera()
@@ -455,18 +489,13 @@ namespace AlumnoEjemplos.RamboAxe
 
 
             temperaturaCuadranteActual = mapa.getCuadrante((int)currentCuadrantX, (int)currentCuadrantZ).getTempratura() + HoraDelDia.getInstance().getMomentoDelDia()-2;
-            
-            //if (temperaturaCuadranteActual < 0 ) temperaturaCuadranteActual = 0; // o Game Over por congelamiento ?
-            //if (temperaturaCuadranteActual > 4) temperaturaCuadranteActual = 4; // Game Over por incineracion ?
-
-           
 
             
-                if (temperaturaCuadranteActual > 0) {
-                    pj.danioPorCalor(temperaturaCuadranteActual*2);
-                }else if (temperaturaCuadranteActual < 0){
-                    pj.danioPorFrio(temperaturaCuadranteActual*2);
-                }
+            if (temperaturaCuadranteActual > 0) {
+                pj.danioPorCalor(temperaturaCuadranteActual*2);
+            }else if (temperaturaCuadranteActual < 0){
+                pj.danioPorFrio(temperaturaCuadranteActual*2);
+            }
 
 
 
@@ -573,13 +602,11 @@ namespace AlumnoEjemplos.RamboAxe
            }
         string momentoDelDiaString = HoraDelDia.getInstance().getHoraEnString();
            text3.Text = "Temperatura: " + text+ " es "+ momentoDelDiaString;
-           //   textGameOver.Text = "MUERTE POR:" + vDanioTemp[temperaturaCuadranteActual];
-           //    textGameOver.render();
 
 
            text3.render();
            text2.render();
-           
+           text4.render();
         }
 
 
@@ -656,6 +683,12 @@ namespace AlumnoEjemplos.RamboAxe
             text3.Color = Color.Red;
             text3.Position = new Point(115, 30);
 
+            text4 = new TgcText2d();
+            text4.Text = "EQUIPANDO...";
+            text4.Align = TgcText2d.TextAlign.RIGHT;
+            text4.Size = new Size(300, 100);
+            text4.Color = Color.Green;
+            text4.Position = new Point(145, 100);
 
             textGameOver = new TgcText2d();
             textGameOver.Text = "GAME OVER";

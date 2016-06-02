@@ -27,7 +27,7 @@ namespace AlumnoEjemplos.RamboAxe.Player
         public int maximaSed  { get; private set; }
         public int maximaHambre  { get; private set; }
         public int maximaVida { get; private set; }
-        private Dictionary<String,ObjetoInventario> equipoEnUso;
+        public Dictionary<String,ObjetoInventario> equipoEnUso;
 
         
 
@@ -56,11 +56,12 @@ namespace AlumnoEjemplos.RamboAxe.Player
             hambre = 0; sed = 0;
 
             inv = new ModeloInventario();
+            inv.equipoEnUso = equipoEnUso;
         }
 
 
 
-        private ObjetoInventario desequiparObjetoDeParteDelCuerpo(String parteDelCuerpo)        //desequipar
+        public ObjetoInventario desequiparObjetoDeParteDelCuerpo(String parteDelCuerpo)        //desequipar
         {
             ObjetoInventario objetoDesequipado = null;
             equipoEnUso.TryGetValue(parteDelCuerpo, out objetoDesequipado);
@@ -71,7 +72,7 @@ namespace AlumnoEjemplos.RamboAxe.Player
             }
             return objetoDesequipado;
         }
-        private ObjetoInventario equiparObjetoEnParteDelCuerpo(String parteDelCuerpo, ObjetoInventario objetoAEquipar)        //equipar
+        public ObjetoInventario equiparObjetoEnParteDelCuerpo(String parteDelCuerpo, ObjetoInventario objetoAEquipar)        //equipar
         {
             ObjetoInventario objetoDesequipado = null;
             objetoDesequipado = desequiparObjetoDeParteDelCuerpo(parteDelCuerpo);

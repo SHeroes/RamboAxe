@@ -9,6 +9,8 @@ namespace AlumnoEjemplos.RamboAxe.Inventario
     public class ModeloInventario: Observable
     {
         private List<string> ordenObjetos;
+        public Dictionary<string, ObjetoInventario> equipoEnUso;
+        //private Dictionary<string, int> cantidadObjetosequipoEnUso;
         private Dictionary<string, int> cantidadObjetos;
         private List<string> recetas;
         private int pesoMaximo { get { return CharacterSheet.getInstance().pesoMaximo; } }
@@ -18,6 +20,7 @@ namespace AlumnoEjemplos.RamboAxe.Inventario
         {
             ordenObjetos = new List<string>();
             cantidadObjetos = new Dictionary<string, int>();
+            //cantidadObjetosequipoEnUso = new Dictionary<string, int>();
             recetas = new List<string>();
             pesoActual = 0;
         }
@@ -111,6 +114,25 @@ namespace AlumnoEjemplos.RamboAxe.Inventario
                 return false;
             }
             return consumir(objeto, cantidad);
+        }
+
+        /// <summary>
+        /// Saca una cantidad de items del inventario
+        /// </summary>
+        /// <param name="posicion">Posicion del objeto en el inventario</param>
+        /// <param name="cantidad">Cantidad a sacar</param>
+        /// <returns>Si se saco o no el objeto</returns>
+        public bool equipar(int posicion, int cantidad = 1)
+        {
+            ObjetoInventario objeto = obtenerObjetoEnPosicion(posicion);
+            if (objeto == null)
+            {
+                return false;
+            }
+            else {
+                return true;
+            }
+           // return equipar(objeto, cantidad);
         }
 
         /// <summary>

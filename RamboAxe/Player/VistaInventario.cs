@@ -17,6 +17,7 @@ namespace AlumnoEjemplos.RamboAxe.Player
 
         TgcText2d itemsTitle;
         TgcText2d items;
+        TgcText2d itemsEquipados;
         TgcText2d recetasTitle;
         TgcText2d recetasText;
         TgcText2d ingredientesTitle;
@@ -90,6 +91,13 @@ namespace AlumnoEjemplos.RamboAxe.Player
             items.Size = itemsTitle.Size;
             items.Text = "";
             items.Color = Color.White;
+            /* Inicializacion del texto para los items */
+            itemsEquipados = new TgcText2d();
+            itemsEquipados.Position = new Point(((int)upperLeftCorner.X) + 40, ((int)upperLeftCorner.Y) + 47);
+            itemsEquipados.Align = TgcText2d.TextAlign.LEFT;
+            itemsEquipados.Size = itemsTitle.Size;
+            itemsEquipados.Text = "";
+            itemsEquipados.Color = Color.White;
             /* Inicializacion del selector */
             auxPoint = new Vector2(0, 0);
             selector = new TgcSprite();
@@ -159,6 +167,9 @@ namespace AlumnoEjemplos.RamboAxe.Player
                     recetasText.render();
                     ingredientesText.render();
                     ingredientesTitle.render();
+                } else if (esEquipable){
+                    //itemsTitle.render();
+                    itemsEquipados.render();
                 }
                 pesoText.render();
             }
@@ -238,6 +249,7 @@ namespace AlumnoEjemplos.RamboAxe.Player
             back.Texture.dispose();
             back.dispose();
             items.dispose();
+            itemsEquipados.dispose();
             itemsTitle.dispose();
             recetasTitle.dispose();
             recetasText.dispose();
@@ -269,6 +281,89 @@ namespace AlumnoEjemplos.RamboAxe.Player
                 int cantidad = inv.cantidadPorObjeto(objeto);
                 itemList += objeto.nombre + " x" + cantidad + "\n\n";
             }
+            return itemList;
+        }
+
+        /// <summary>
+        /// Genera una representacion textual del inventario
+        /// </summary>
+        /// <returns></returns>
+        private string generateItemEquipadoText()
+        {
+            CharacterSheet pj = CharacterSheet.getInstance();
+            
+            string itemList = "";
+
+            
+         ObjetoInventario objeto;
+         pj.equipoEnUso.TryGetValue(CharacterSheet.CABEZA, out objeto);
+         if (objeto != null)
+         {
+             itemList += objeto.nombre + "\n\n";
+         }
+         string itemEn = "";
+                    pj.equipoEnUso.TryGetValue(CharacterSheet.TORSO, out objeto);
+                    if (objeto != null)
+                    {
+                        itemEn = "Torso: " + objeto.nombre;
+                    }
+                    else
+                    {
+                        itemEn = "Torso: Ninguno";
+                    }
+                    itemList += itemEn + "\n\n";
+                    pj.equipoEnUso.TryGetValue(CharacterSheet.MANO_IZQUIERDA, out objeto);
+                    if (objeto != null)
+                    {
+                        itemEn = "Mano Izquierda: " + objeto.nombre;
+                    }
+                    else
+                    {
+                        itemEn = "Mano Izquierda: Ninguno";
+                    }
+                    itemList += itemEn + "\n\n";
+                    pj.equipoEnUso.TryGetValue(CharacterSheet.MANO_DERECHA, out objeto);
+                    if (objeto != null)
+                    {
+                        itemEn = "Mano Derecha: " + objeto.nombre;
+                    }
+                    else
+                    {
+                        itemEn = "Mano Derecha: Ninguno";
+                    }
+                    itemList += itemEn + "\n\n";
+                    pj.equipoEnUso.TryGetValue(CharacterSheet.CINTURA, out objeto);
+                    if (objeto != null)
+                    {
+                        itemEn = "Cintura: " + objeto.nombre;
+                    }
+                    else
+                    {
+                        itemEn = "Cintura: Ninguno";
+                    }
+                    itemList += itemEn + "\n\n";
+                    pj.equipoEnUso.TryGetValue(CharacterSheet.PIERNAS, out objeto);
+                    if (objeto != null)
+                    {
+                        itemEn = "Piernas: " + objeto.nombre;
+                    }
+                    else
+                    {
+                        itemEn = "Piernas: Ninguno";
+                    }
+                    itemList += itemEn + "\n\n";
+                    pj.equipoEnUso.TryGetValue(CharacterSheet.PIES, out objeto);
+                    if (objeto != null)
+                    {
+                        itemEn = "Pies: " + objeto.nombre;
+                    }
+                    else
+                    {
+                        itemEn = "Pies: Ninguno";
+                    }
+                    itemList += itemEn + "\n\n";
+
+             
             return itemList;
         }
 
@@ -403,7 +498,21 @@ namespace AlumnoEjemplos.RamboAxe.Player
             }
             return null;
         }
-
+        /*
+        public ObjetoInventario equiparActual()
+        {
+            if (esInventario)
+            {
+                ObjetoInventario objeto = inv.obtenerObjetoEnPosicion(currentRow);
+                if (inv.equipar(currentRow))
+                {
+                    items.Text = generateItemText();
+                    return objeto;
+                }
+            }
+            return null;
+        }
+        */
         public void fabricarActual()
         {
             if (esReceta)
@@ -415,6 +524,7 @@ namespace AlumnoEjemplos.RamboAxe.Player
         public void cambioObservable()
         {
             items.Text = generateItemText();
+            itemsEquipados.Text = generateItemEquipadoText();
             recetasText.Text = generateRecetasText();
             ingredientesText.Text = generateIngredientesText();
             pesoText.Text = "Peso: " + inv.pesoActual + "/" + CharacterSheet.getInstance().pesoMaximo;
