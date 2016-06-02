@@ -58,8 +58,8 @@ namespace AlumnoEjemplos.RamboAxe.GameObjects
             
             TgcMesh mesh;
             GameObjectAbstract go;
-             mesh = MapaDelJuego.getGameMesh(2).clone("comida_1");
-             go = new Obstaculo(mesh, (float)(300), 0, (float)(200));
+           /*  mesh = MapaDelJuego.getGameMesh(1).clone("comida_1");
+             go = new Racion(mesh, (float)(300), 0, (float)(200));
              go.getMesh().rotateY((float)(FastMath.ToRad(new Random().Next(-20, 20))));
              this.cuadrantObjects.Add(go);
             /* mesh = MapaDelJuego.getGameMesh(2).clone("comida_2");
@@ -79,7 +79,7 @@ namespace AlumnoEjemplos.RamboAxe.GameObjects
              go.getMesh().rotateY((float)(FastMath.ToRad(new Random().Next(-20, 20))));
              this.cuadrantObjects.Add(go);*/
 
-            /*
+            
             for (int inCuadx = 1; inCuadx < 4; inCuadx++)
             {
                 for (int inCuadz = 1; inCuadz < 4; inCuadz++)
@@ -125,7 +125,7 @@ namespace AlumnoEjemplos.RamboAxe.GameObjects
                
                     }
                 }
-            }*/
+            }
 
         }
 

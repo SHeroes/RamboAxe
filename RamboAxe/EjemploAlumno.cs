@@ -29,7 +29,7 @@ namespace AlumnoEjemplos.RamboAxe
         
         //Banderas de Input
         const float DEFAULT_ROTATION_SPEED = 2f;
-   
+        float _lastTime = 0;   
         float rotationSpeed = DEFAULT_ROTATION_SPEED;
         Barra barraInteraccion;
         BarraEstatica barraHambre; BarraEstatica barraVida;
@@ -47,10 +47,10 @@ namespace AlumnoEjemplos.RamboAxe
         CharacterSheet pj = CharacterSheet.getInstance();
         VistaInventario vistaInventario;
         VistaConstruyendo vistaConstruyendo;
-        bool forceReload = true;
+      
         List<GameObjectAbstract> nearbyObjects;
         MapaDelJuego mapa;
-        TgcSprite spriteHacha;
+        
         TgcPlaneWall piso;
         public static EjemploAlumno getInstance()
         {
@@ -77,7 +77,7 @@ namespace AlumnoEjemplos.RamboAxe
 
         public override string getDescription()
         {
-            return "Entendiendo como crear el mundo 3d.";
+            return "Survival craft 3d.";
         }
         TgcD3dInput d3dInput;
         TgcText2d text;
@@ -88,27 +88,15 @@ namespace AlumnoEjemplos.RamboAxe
         
         public bool falling = false;
         List<Collider> objetosColisionables = new List<Collider>();
-        ElipsoidCollisionManager collisionManager;
 
-        
-        double prevCuadrantX = 1;
-        double prevCuadrantZ = 1;
         int widthCuadrante = 1000;
         int heightCuadrante = 1000;
-
-
-        //TgcPlaneWall[][] floors = new TgcPlaneWall [3][];
-        //TgcPlaneWall[][] floors = new TgcPlaneWall[3][];
-        //Cuadrante[] fastAccesCuadrants = new Cuadrante[9];
         private TgcBox cuerpoPj;
+
         public override void init()
         {
             Microsoft.DirectX.Direct3D.Device d3dDevice = GuiController.Instance.D3dDevice;
-            
-
-            
             GuiController.Instance.CustomRenderEnabled = true;
-           
            
             EjemploAlumno.game = this;
             nearbyObjects = new List<GameObjectAbstract>();
@@ -118,49 +106,17 @@ namespace AlumnoEjemplos.RamboAxe
             TgcTexture texture = TgcTexture.createTexture(d3dDevice, GuiController.Instance.AlumnoEjemplosDir + "Ramboaxe\\Media\\" + "tile_black.png");
             piso = new TgcPlaneWall(new Vector3(0, 0, 0), new Vector3(heightCuadrante, 0, widthCuadrante), TgcPlaneWall.Orientations.XZplane, texture);
 
-            // string terrainHm = GuiController.Instance.AlumnoEjemplosMediaDir + "RamboAxe\\" + "fps2\\" + "hm.jpg";
-           
-            
-           // ground = new TgcPlaneWall(new Vector3(0,0,0),new Vector3(width,0,height),TgcPlaneWall.Orientations.XZplane,texture);
-            /*
-            for(int i = 0;i<3;i++){
-                floors[i] = new TgcPlaneWall[3];
-                for(int x = 0;x<3;x++){
-                    floors[i][x]= ground.clone();
-                }
-            }*/
-            
-            /*
-            for(int i = 0;i<3;i++){
-                for(int x = 0;x<3;x++){
-                    floors[i][x].setExtremes(new Vector3((1 + i) * width, 0, (1 + x) * height), new Vector3((1 + i) * width + width, 0, (1 + x) * height+height));
-                    floors[i][x].updateValues();
-                }
-            }
-            */
-            //pj.position = new Vector3(floors[1][1].BoundingBox.calculateBoxCenter().X, floors[1][1].BoundingBox.calculateBoxCenter().Y + 125, floors[1][1].BoundingBox.calculateBoxCenter().Z);
             pj.position = new Vector3(500, 125,500);
 
             cuerpoPj = TgcBox.fromSize(pj.position, new Vector3(10 , pj.playerHeight, 10), Color.Aquamarine);
             d3dInput = GuiController.Instance.D3dInput;
 
-            spriteHacha = new TgcSprite();
-            spriteHacha.Texture = TgcTexture.createTexture(GuiController.Instance.AlumnoEjemplosDir + "RamboAxe\\Media\\hacha.png");
-            spriteHacha.Scaling = new Vector2(1.5f, 1.5f);
-
-            //Ubicado centrado en la pantalla
-            Size screenSize = GuiController.Instance.Panel3d.Size;
-            Size textureSize = spriteHacha.Texture.Size;
-            spriteHacha.Position = new Vector2(220,380);
-            GuiController.Instance.Logger.log(String.Format("Posicion sprite: X:{0} , Y:{1}",spriteHacha.Position.X,spriteHacha.Position.Y));
-
-         //   characterElipsoid = new TgcElipsoid(pj.position, new Vector3(12, 48, 12));
             this.initMapa();
             this.initInventario();
             this.initCollisions();
 
             this.initCamera();
-            vistaConstruyendo = new VistaConstruyendo(this);
+            this.vistaConstruyendo = new VistaConstruyendo();
             this.hud();
             this.skyboxInit();
             this.initBarrasVida();
@@ -313,9 +269,6 @@ namespace AlumnoEjemplos.RamboAxe
                 rads = (FastMath.PI * (2)) - FastMath.Atan(tangente);
             }
            
-           
-
-
             piso.setExtremes(new Vector3(pj.position.X - (2000), -10, pj.position.Z - 2000), new Vector3(pj.position.X + 2000, -10, pj.position.Z + 2000));
             piso.updateValues();
 
@@ -331,7 +284,7 @@ namespace AlumnoEjemplos.RamboAxe
                         pickingRay.updateRay();
 
                         //Testear Ray contra el AABB de todos los meshes
-                       /* foreach (GameObjectAbstract go in mapa.getCuadrante((int)currentCuadrantX,(int)currentCuadrantZ).getObjects())
+                        foreach (GameObjectAbstract go in mapa.getCuadrante((int)currentCuadrantX,(int)currentCuadrantZ).getObjects())
                         {
                             TgcBoundingBox aabb = go.getMesh().BoundingBox;
 
@@ -358,9 +311,9 @@ namespace AlumnoEjemplos.RamboAxe
                                     }
                                 }
                             }
-                        }*/
+                        }
                     }else{
-                       /* if (selectedGameObject!= null)
+                        if (selectedGameObject!= null)
                         {
                             TgcBoundingBox aabb = selectedGameObject.getMesh().BoundingBox;
                             //Ejecutar test, si devuelve true se carga el punto de colision collisionPoint
@@ -377,7 +330,7 @@ namespace AlumnoEjemplos.RamboAxe
                                     selectedGameObject = null;
                                 }
                             }
-                        }*/
+                        }
                     }
                 }
                 if (GuiController.Instance.D3dInput.buttonUp(TgcViewer.Utils.Input.TgcD3dInput.MouseButtons.BUTTON_LEFT))
@@ -512,7 +465,7 @@ namespace AlumnoEjemplos.RamboAxe
          
             temperaturaCuadranteActual = mapa.getCuadrante((int)currentCuadrantX, (int)currentCuadrantZ).getTempratura();
 
-             tiempoDiaActual = HoraDelDia.getInstance().getHoraDia();
+            tiempoDiaActual = HoraDelDia.getInstance().getHoraDia();
             if (tiempoDiaActual > 0.66 && temperaturaCuadranteActual > 0 && cambioCiclo)
             {
                 temperaturaCuadranteActual--; //noche
@@ -527,42 +480,7 @@ namespace AlumnoEjemplos.RamboAxe
             Vector2 currentCuadrante  = mapa.getCuadranteCoordsFor((int)pj.position.X,(int)pj.position.Z);
             currentCuadrantX = (int)currentCuadrante.X;
             currentCuadrantZ = (int)currentCuadrante.Y;
-            if (currentCuadrantX != prevCuadrantX || currentCuadrantZ != prevCuadrantZ || forceReload)
-            {
-                forceReload = false;
-
-              /*  collisionManager.GravityEnabled = false;
-                objetosColisionables.Clear();
-                for (int x = 0; x < 3; x++)
-                {
-                    for (int z = 0; z < 3; z++)
-                    {
-                        TgcPlaneWall f = floors[x][z];
-                        float nx = ((float)(width * (currentCuadrantX - prevCuadrantX))) + f.Position.X;
-                        float nz = ((float)(width * (currentCuadrantZ - prevCuadrantZ))) + f.Position.Z;
-                        f.setExtremes(new Vector3(nx, 0, nz), new Vector3(nx + width, 0, nz + width));
-                        f.updateValues();
-                        objetosColisionables.Add(BoundingBoxCollider.fromBoundingBox(floors[x][z].BoundingBox));
-
-                      
-                    }
-                }
-                */
-              /*  foreach (GameObjectAbstract go in mapa.getCuadrante((int)(currentCuadrantX + (x - 1)), ((int)currentCuadrantZ + (z - 1))).getObjects())
-                {
-                    TgcMesh mesh = go.getMesh();
-                    go.move(new Vector3(go.getX() + nx, go.getY() + f.Position.Y, go.getZ() + nz));
-                    if (x == 1 && z == 1)
-                    {
-                        objetosColisionables.Add(BoundingBoxCollider.fromBoundingBox(mesh.BoundingBox));
-                    }
-                }*/
-               // collisionManager.GravityEnabled = true;
-                prevCuadrantX = currentCuadrantX;
-                prevCuadrantZ = currentCuadrantZ;
-
-            }
-
+            
 
             
             if (selectedGameObject != null)
@@ -649,17 +567,6 @@ namespace AlumnoEjemplos.RamboAxe
                 if ((collisionPjObjetosCuadrantes != TgcCollisionUtils.BoxBoxResult.Afuera))
                 {
 
-
-                    /*(box1.PMin.X > box2.PMin.X) &&
-                         (box1.PMin.Y > box2.PMin.Y) &&
-                         (box1.PMin.Z > box2.PMin.Z) &&
-                         (box1.PMax.X < box2.PMax.X) &&
-                         (box1.PMax.Y < box2.PMax.Y) &&
-                         (box1.PMax.Z < box2.PMax.Z))*/
-                   /* if (cuerpoBounds.PMin.X < goBounds.PMin.X && cuerpoBounds.PMax.X > goBounds.PMin.X && cuerpoBounds.PMax.X > goBounds.PMax.X && cuerpoBounds.PMin.Z < goBounds.PMax.Z && cuerpoBounds.PMax.Z > goBounds.PMax.Z)
-                    {
-                        pj.position.Z = goBounds.PMax.Z + fixDistance;
-                    }*/
                     //colision norte
                     int fixDistance = 6;
                     int fixDistanceCorner = 5;
@@ -699,10 +606,6 @@ namespace AlumnoEjemplos.RamboAxe
                     {
                         pj.position.Z = goBounds.PMin.Z - fixDistanceCorner ;
                         pj.position.X = goBounds.PMax.X + fixDistanceCorner;
-                        
-                        
-                        
-                        
                     }
                     break;
                 }
@@ -714,7 +617,7 @@ namespace AlumnoEjemplos.RamboAxe
             
         }
 
-        float _lastTime = 0;
+
         public override void render(float elapsedTime)
         {
             handleInput();
@@ -864,11 +767,6 @@ namespace AlumnoEjemplos.RamboAxe
             text3.Position = new Point(115, 30);
 
         }
-
-
-
-           
-       
 
         public override void close()
         {

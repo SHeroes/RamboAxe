@@ -21,9 +21,9 @@ namespace AlumnoEjemplos.RamboAxe.Player
         private Vector3 ultimoLookAt;
         private Vector3 ultimoEye;
 
-        public VistaConstruyendo(EjemploAlumno juego)
+        public VistaConstruyendo()
         {
-            this.juego = juego;
+            this.juego = EjemploAlumno.getInstance();
             init();
         }
 
