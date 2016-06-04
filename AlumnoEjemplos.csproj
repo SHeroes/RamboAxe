@@ -112,6 +112,7 @@
     <Compile Include="RamboAxe\GameObjects\Arbol.cs" />
     <Compile Include="RamboAxe\GameObjects\Cuadrante.cs" />
     <Compile Include="RamboAxe\GameObjects\Hacha.cs" />
+    <Compile Include="RamboAxe\GameObjects\KitSalud.cs" />
     <Compile Include="RamboAxe\GameObjects\Lenia.cs" />
     <Compile Include="RamboAxe\GameObjects\Obstaculo.cs" />
     <Compile Include="RamboAxe\GameObjects\RuinaPortal.cs" />

@@ -52,15 +52,22 @@ namespace AlumnoEjemplos.RamboAxe.GameObjects
             {
                 for (int inCuadz = 1; inCuadz < 4; inCuadz++)
                 {
-                    /*TgcMesh arbolMesh;
-                    GameObjectAbstract arbolObject;
-                    for (int i = 1; i < 5; i++)
+                    //TgcMesh arbolMesh;
+                    //GameObjectAbstract arbolObject;
+                    //int offset = 350;
+                    /*for (int i = 1; i < 2; i++)
                     {
                         arbolMesh = MapaDelJuego.getGameMesh(5).clone("arbolin_" + inCuadx.ToString() + inCuadz.ToString() + i.ToString());
-                        arbolObject = new Arbol(arbolMesh, (inCuadx+i) * (350 -20*i), new Random().Next(-50, -25), (inCuadz +i) * (350 -20 *i));
+                        //arbolObject = new Arbol(arbolMesh, (inCuadx+(i-1)) * (300), new Random().Next(-50, 0), (inCuadz +(i-1)) * (300));
+                        //arbolObject = new Arbol(arbolMesh, (inCuadx * (450) +(200 *i) ), new Random().Next(-50, 0), (inCuadz *(450) + (200*i)));
+                        arbolObject = new Arbol(arbolMesh, inCuadx * offset, new Random().Next(-50, 0), inCuadz * offset);
                         arbolObject.getMesh().rotateY((float)(FastMath.ToRad(new Random().Next(-20, 20))));
-                        this.cuadrantObjects.Add(arbolObject);
-                    }*/
+                        /*if (!this.colisionaConOtroObjeto(arbolObject))
+                        {
+                            this.cuadrantObjects.Add(arbolObject);
+                        }*/
+                    //    this.cuadrantObjects.Add(arbolObject);*/
+                    //}
                         //Crear cierta cantidad de arboles en cada zona. Y en lo posible, dar la sensación de pegados, como si fuese zona de arboles.
                         if (rX.NextDouble() > 0.5)
                         {
@@ -98,6 +105,13 @@ namespace AlumnoEjemplos.RamboAxe.GameObjects
                             go = new Piedra(mesh, inCuadx * 500, 0, inCuadz * 500);
                             go.getMesh().rotateY((float)(FastMath.ToRad(new Random().Next(-20, 20))));
                         }
+
+                        else if (rX.NextDouble() < 0.56)
+                            {
+                                mesh = MapaDelJuego.getGameMesh(9).clone("kitsalud_" + inCuadx.ToString() + inCuadz.ToString());
+                                go = new KitSalud(mesh, inCuadx * 500, 0, inCuadz * 500);
+                                go.getMesh().rotateY((float)(FastMath.ToRad(new Random().Next(-20, 20))));
+                            }
                         else if (rX.NextDouble() < 0.6)
                         {
                             mesh = MapaDelJuego.getGameMesh(3).clone("hacha_" + inCuadx.ToString() + inCuadz.ToString());
@@ -116,6 +130,10 @@ namespace AlumnoEjemplos.RamboAxe.GameObjects
                             go = new Dispencer(mesh, inCuadx * 500, 0, inCuadz * 500);
                             go.getMesh().rotateY((float)(Math.PI * (new Random().Next(2))));
                         }
+                            /*if (!this.colisionaConOtroObjeto(go))
+                            {
+                                this.cuadrantObjects.Add(go);
+                            }*/
                             this.cuadrantObjects.Add(go);
                         }
                 }
@@ -131,6 +149,32 @@ namespace AlumnoEjemplos.RamboAxe.GameObjects
             this.cuadrantObjects.Add(ago);*/
  
  
+        }
+
+        private bool colisionaConOtroObjeto(GameObjectAbstract go)
+        {
+            bool colisiona;
+            colisiona = false;
+            if (this.cuadrantObjects.Count > 0){
+                foreach(GameObjectAbstract objetoCuadrante in this.cuadrantObjects){
+                    TgcCollisionUtils.BoxBoxResult result = TgcCollisionUtils.classifyBoxBox(go.getMesh().BoundingBox, objetoCuadrante.getMesh().BoundingBox);
+                    if (result == TgcCollisionUtils.BoxBoxResult.Atravesando || result == TgcCollisionUtils.BoxBoxResult.Adentro)
+                    //if (result != TgcCollisionUtils.BoxBoxResult.Afuera)
+                    {
+                        colisiona = true;
+                        go.getMesh().Scale = new Vector3(0.0f, 0.0f, 0.0f);
+                        break;
+                    }
+                    /*if (TgcCollisionUtils.testAABBAABB(go.getMesh().BoundingBox,objetoCuadrante.getMesh().BoundingBox) && (go.getMesh().Name != objetoCuadrante.getMesh().Name)){
+                        colisiona = true;
+                    }*/
+                    else{
+                        colisiona = false;
+                    }
+                }
+            }
+            return colisiona;
+            
         }
         public void removeMesh(GameObjectAbstract anObject){
             this.cuadrantObjects.Remove(anObject);

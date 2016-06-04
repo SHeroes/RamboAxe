@@ -102,10 +102,16 @@ namespace AlumnoEjemplos.RamboAxe.GameObjects
                  mesh.updateBoundingBox();
                  gameMeshes.Add(mesh);
              }
+             meshFile = TgcViewer.GuiController.Instance.AlumnoEjemplosDir + "RamboAxe\\Media\\HealthKit-TgcScene.xml";
+             scene = loader.loadSceneFromFile(meshFile);
+             foreach (TgcMesh mesh in scene.Meshes)
+             {
+                mesh.Scale = new Vector3(0.6f, 0.6f, 0.6f);
+                mesh.updateBoundingBox();
+                gameMeshes.Add(mesh);
+             }
 
             //Hasta ACA
-
-
 
         }
         public static TgcMesh getGameMesh(int number)
