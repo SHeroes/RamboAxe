@@ -670,9 +670,9 @@ namespace AlumnoEjemplos.RamboAxe
             temperaturaCuadranteActual = mapa.getCuadrante((int)currentCuadrantX, (int)currentCuadrantZ).getTemperatura() + HoraDelDia.getInstance().getMomentoDelDia() - 2;
 
             if (temperaturaCuadranteActual > 0) {
-                pj.danioPorCalor(temperaturaCuadranteActual*2);
+                pj.cantDanioPorCalor = temperaturaCuadranteActual * 2;
             }else if (temperaturaCuadranteActual < 0){
-                pj.danioPorFrio(temperaturaCuadranteActual*2);
+                pj.cantDanioPorFrio = temperaturaCuadranteActual * -2;
             }
 
             string text = "";

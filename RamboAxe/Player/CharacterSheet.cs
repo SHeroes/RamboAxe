@@ -11,6 +11,7 @@ namespace AlumnoEjemplos.RamboAxe.Player
 {
     class CharacterSheet: Observable
     {
+        private static System.Timers.Timer aTimer;
         public const string CABEZA = "Cabeza";
         public const string TORSO = "Torso";
         public const string MANO_IZQUIERDA = "Mano Izquierda";
@@ -78,7 +79,8 @@ namespace AlumnoEjemplos.RamboAxe.Player
         public int maximaVida { get; private set; }
         public Dictionary<String,ObjetoInventario> equipoEnUso;
 
-        
+        public int cantDanioPorCalor = 0;
+        public int cantDanioPorFrio = 0;
 
 
         
@@ -107,9 +109,16 @@ namespace AlumnoEjemplos.RamboAxe.Player
             inv = new ModeloInventario();
 
             inv.equipoEnUso = equipoEnUso;
+            // Create a timer para el daño por Frio y Calor que sea cada segundo
+            aTimer = new System.Timers.Timer(1000);
+            aTimer.Enabled = true; 
+            aTimer.Elapsed += OnTimedEvent; 
         }
-
-
+        private void OnTimedEvent(Object source, System.Timers.ElapsedEventArgs e)
+        {
+            danioPorCalor(cantDanioPorCalor);
+            danioPorFrio(cantDanioPorFrio);
+        }
 
         public ObjetoInventario desequiparObjetoDeParteDelCuerpo(String parteDelCuerpo)        //desequipar
         {
@@ -237,14 +246,12 @@ namespace AlumnoEjemplos.RamboAxe.Player
             if (vida < 0) vida = 0;
         }
          * */
-        public void danioPorCalor(int cantidadDanio) {
-            this.addLevelHambre(cantidadDanio);
-
+        public void danioPorCalor(int cantidadDanio) {           
+            this.addLevelSed(cantidadDanio);
         }
         public void danioPorFrio(int cantidadDanio)
         {
-            this.addLevelSed(cantidadDanio);
-
+            this.addLevelHambre(cantidadDanio);
         }
     }
 }
