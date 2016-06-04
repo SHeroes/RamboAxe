@@ -18,6 +18,7 @@ namespace AlumnoEjemplos.RamboAxe.Player
         TgcText2d itemsTitle;
         TgcText2d items;
         TgcText2d recetasTitle;
+        TgcText2d itemsEquipados;
         TgcText2d recetasText;
         TgcText2d ingredientesTitle;
         TgcText2d ingredientesText;
@@ -83,6 +84,13 @@ namespace AlumnoEjemplos.RamboAxe.Player
             itemsTitle.Size = new Size(back.SrcRect.Width * 3 / 2, back.SrcRect.Height * 3 / 2);
             itemsTitle.Text = "Inventario:";
             itemsTitle.Color = Color.White;
+            /* Inicializacion del texto para los items */
+            itemsEquipados = new TgcText2d();
+            itemsEquipados.Position = new Point(((int)upperLeftCorner.X) + 40, ((int)upperLeftCorner.Y) + 47);
+            itemsEquipados.Align = TgcText2d.TextAlign.LEFT;
+            itemsEquipados.Size = itemsTitle.Size;
+            itemsEquipados.Text = "";
+            itemsEquipados.Color = Color.White;
             /* Inicializacion del texto para los items */
             items = new TgcText2d();
             items.Position = new Point(((int)upperLeftCorner.X) + 40, ((int)upperLeftCorner.Y) + 47);
@@ -159,6 +167,11 @@ namespace AlumnoEjemplos.RamboAxe.Player
                     recetasText.render();
                     ingredientesText.render();
                     ingredientesTitle.render();
+                }
+                else if (esEquipable)
+                {
+                    //itemsTitle.render();
+                    itemsEquipados.render();
                 }
                 pesoText.render();
             }
@@ -271,7 +284,33 @@ namespace AlumnoEjemplos.RamboAxe.Player
             }
             return itemList;
         }
+        /// <summary>
+        /// Genera una representacion textual del inventario
+        /// </summary>
+        /// <returns></returns>
+        private string generateItemEquipadoText()
+        {
+            CharacterSheet pj = CharacterSheet.getInstance();
 
+            string itemList = "";
+
+
+           // ObjetoInventario objeto;
+
+            foreach (var partBody in pj.equipoEnUso){
+                string itemEn = "";
+                if (partBody.Value != null)
+                {
+                    itemEn += partBody.Key + ": " + partBody.Value.nombre;
+                }
+                else
+                {
+                    itemEn += partBody.Key + ": Ninguno";
+                }                
+                itemList += itemEn + "\n\n";
+            }
+            return itemList;
+        }
         /// <summary>
         /// Genera una representacion textual de las recetas
         /// </summary>
@@ -415,6 +454,7 @@ namespace AlumnoEjemplos.RamboAxe.Player
         public void cambioObservable()
         {
             items.Text = generateItemText();
+            itemsEquipados.Text = generateItemEquipadoText();
             recetasText.Text = generateRecetasText();
             ingredientesText.Text = generateIngredientesText();
             pesoText.Text = "Peso: " + inv.pesoActual + "/" + CharacterSheet.getInstance().pesoMaximo;

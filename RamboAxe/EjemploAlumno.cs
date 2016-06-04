@@ -84,6 +84,7 @@ namespace AlumnoEjemplos.RamboAxe
         TgcText2d textHud;
         TgcText2d textHudExplicacionJuego;
         TgcText2d text3;
+        TgcText2d text4;
         TgcText2d textGameOver;
         TgcText2d textGameContinue;
         SkyBox skyBox;
@@ -373,7 +374,8 @@ namespace AlumnoEjemplos.RamboAxe
                     vistaInventario.abrir();
                 }
             }
-            if(abierto){
+            if (abierto)
+            {
                 if (input.keyPressed(Key.RightArrow))
                 {
                     vistaInventario.cambiarTab();
@@ -390,22 +392,60 @@ namespace AlumnoEjemplos.RamboAxe
                 {
                     if (!vistaInventario.esReceta)
                     {
-                        string consumido = vistaInventario.consumirActual();
-                        if(consumido == "Racion"){
-                            pj.addLevelHambre(-20);
-                        }
-                        else
+                        if (vistaInventario.esInventario)
                         {
-                          
-                                   /* GuiController.Instance.Drawer2D.beginDrawSprite();
-                                    
+                            string consumido = vistaInventario.consumirActual();
+                            if (consumido == "Racion")
+                            {
+                                pj.addLevelHambre(-20);
+                            }
+                            else if (consumido == "Hacha")
+                            {   /*
+                                if (!hachaEquipada)
+                                {
+                                    hachaEquipada = true;
+                                    GuiController.Instance.Drawer2D.beginDrawSprite();
                                     spriteHacha.render();
-                                    GuiController.Instance.Drawer2D.endDrawSprite();*/
-                             
+                                    GuiController.Instance.Drawer2D.endDrawSprite();
+                                }*/
+                            }
+                            else if (consumido == "Pantalon")
+                            {
+                                CharacterSheet.getInstance().getInventario().agregar(InventarioManager.Pantalon);
+                                ObjetoInventario objAEquipar = new ObjetoInventario();
+                                objAEquipar.nombre = consumido;
+                                if (objAEquipar != null)
+                                {
+                                    text4.Text = "OBJETO EQUIPADO: " + objAEquipar.nombre;
+                                }
+                                else
+                                {
+                                    text4.Text = "ERROR EQUIPANDO OBJETO";
+                                }
+                                ObjetoInventario obj;
+                                pj.equipoEnUso.TryGetValue(CharacterSheet.PIERNAS, out obj);
+                                if (obj != null)
+                                {
+                                    pj.desequiparObjetoDeParteDelCuerpo(CharacterSheet.PIERNAS);
+                                }
+                                else
+                                {
+                                    pj.equiparObjetoEnParteDelCuerpo(CharacterSheet.PIERNAS, objAEquipar);
+                                }
+
+                                vistaInventario.cambioObservable();
+                            }
                         }
+
+                        else if (vistaInventario.esEquipable)
+                        {
+                            //TAB EQUIPO
+
+                        }
+
                         // TODO: hacer algo al consumir
-                       // Console.WriteLine("Item consumido: {0}", consumido);
-                       // GuiController.Instance.Logger.log
+                        // Console.WriteLine("Item consumido: {0}", consumido);
+                        // GuiController.Instance.Logger.log
                     }
                     else
                     {
@@ -466,6 +506,10 @@ namespace AlumnoEjemplos.RamboAxe
             pj.getInventario().agregar(InventarioManager.Piedra);
             pj.getInventario().agregar(InventarioManager.RecetaCasa);
             pj.getInventario().agregar(InventarioManager.RecetaArbol);
+            pj.getInventario().agregar(InventarioManager.Hacha);
+            pj.getInventario().agregar(InventarioManager.Pantalon);
+
+
         }
 
         public void initCamera()
@@ -484,7 +528,6 @@ namespace AlumnoEjemplos.RamboAxe
             objetosColisionables.Clear();
         }
 
-        float tiempoDiaActual;
         
         private void gameLoop(float elapsedTime)
         {
@@ -775,6 +818,7 @@ namespace AlumnoEjemplos.RamboAxe
 
 
            text3.render();
+       //    text4.render();
            GuiController.Instance.D3dDevice.EndScene();
            
         }
@@ -854,6 +898,12 @@ namespace AlumnoEjemplos.RamboAxe
             text3.Color = Color.Black;
             text3.Position = new Point(115, 30);
 
+            text4 = new TgcText2d();
+
+            text4.Align = TgcText2d.TextAlign.CENTER;
+            text4.Size = new Size(800, 100);
+            text4.Color = Color.Gold;
+            text4.Position = new Point(155, 30);
 
             textGameOver = new TgcText2d();
             textGameOver.Text = "GAME OVER";
@@ -871,7 +921,7 @@ namespace AlumnoEjemplos.RamboAxe
             textGameContinue.Size = new Size(400, 100);
             textGameContinue.Color = Color.Red;
             System.Drawing.Font font2 = new System.Drawing.Font("Arial", 44);
-            textGameContinue.Position = new Point(ScreenWidth / 2 - 200, ScreenHeight / 2 + 20);               
+            textGameContinue.Position = new Point(ScreenWidth / 2 - 200, ScreenHeight / 2 );               
 
 
         }

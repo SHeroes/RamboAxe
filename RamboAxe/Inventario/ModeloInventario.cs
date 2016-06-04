@@ -9,6 +9,7 @@ namespace AlumnoEjemplos.RamboAxe.Inventario
     public class ModeloInventario: Observable
     {
         private List<string> ordenObjetos;
+        public Dictionary<string, ObjetoInventario> equipoEnUso;
         private Dictionary<string, int> cantidadObjetos;
         private List<string> recetas;
         private int pesoMaximo { get { return CharacterSheet.getInstance().pesoMaximo; } }
