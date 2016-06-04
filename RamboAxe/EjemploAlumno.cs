@@ -200,49 +200,53 @@ namespace AlumnoEjemplos.RamboAxe
                 camera.rotate(heading, pitch, 0.0f);
             }
 
+            if (!vistaInventario.abierto)
+            {
 
-            if (d3dInput.keyDown(Key.W) || d3dInput.keyDown(Key.UpArrow))
-            {
-                direction.Z = 1;
-            }
 
-            //Backward
-            if (d3dInput.keyDown(Key.S) || d3dInput.keyDown(Key.DownArrow))
-            {
-                direction.Z =-1;
-            }
-           
-
-            //Strafe right
-            if (d3dInput.keyDown(Key.D) || d3dInput.keyDown(Key.RightArrow))
-            {
-                direction.X = 1;
-            }
-      
-            //Strafe left
-            if (d3dInput.keyDown(Key.A) || d3dInput.keyDown(Key.LeftArrow))
-            {
-                direction.X = -1;
-            }
-         
-            //Jump
-            if (d3dInput.keyDown(Key.Space))
-            {
-                pj.jump();
-            }
-            //Crouch
-            if (d3dInput.keyDown(Key.LeftControl) || d3dInput.keyDown(Key.RightControl))
-            {
-                pj.crouch();
-            }
-            else
-            {
-                if (d3dInput.keyUp(Key.LeftControl) || d3dInput.keyUp(Key.RightControl))
+                if (d3dInput.keyDown(Key.W) || d3dInput.keyDown(Key.UpArrow))
                 {
-                    pj.stand();
+                    direction.Z = 1;
                 }
-            }
 
+                //Backward
+                if (d3dInput.keyDown(Key.S) || d3dInput.keyDown(Key.DownArrow))
+                {
+                    direction.Z = -1;
+                }
+
+
+                //Strafe right
+                if (d3dInput.keyDown(Key.D) || d3dInput.keyDown(Key.RightArrow))
+                {
+                    direction.X = 1;
+                }
+
+                //Strafe left
+                if (d3dInput.keyDown(Key.A) || d3dInput.keyDown(Key.LeftArrow))
+                {
+                    direction.X = -1;
+                }
+
+                //Jump
+                if (d3dInput.keyDown(Key.Space))
+                {
+                    pj.jump();
+                }
+                //Crouch
+                if (d3dInput.keyDown(Key.LeftControl) || d3dInput.keyDown(Key.RightControl))
+                {
+                    pj.crouch();
+                }
+                else
+                {
+                    if (d3dInput.keyUp(Key.LeftControl) || d3dInput.keyUp(Key.RightControl))
+                    {
+                        pj.stand();
+                    }
+                }
+                direction = new Vector3(0, 0, 0);
+            }
            // Vector3 realMovement = collisionManager.moveCharacter(characterElipsoid, direction, objetosColisionables);
 
 
@@ -375,16 +379,22 @@ namespace AlumnoEjemplos.RamboAxe
                 }
             }
             if (abierto)
+
             {
-                if (input.keyPressed(Key.RightArrow))
+                if (input.keyPressed(Key.LeftArrow) || input.keyPressed(Key.A))
+                {
+                    vistaInventario.cambiarTab();
+                    vistaInventario.cambiarTab();
+                } else
+                if (input.keyPressed(Key.RightArrow) || input.keyPressed(Key.D))
                 {
                     vistaInventario.cambiarTab();
                 }
-                else if (input.keyPressed(Key.DownArrow))
+                else if (input.keyPressed(Key.DownArrow) || input.keyPressed(Key.S))
                 {
                     vistaInventario.siguienteItem();
                 }
-                else if (input.keyPressed(Key.UpArrow))
+                else if (input.keyPressed(Key.UpArrow) || input.keyPressed(Key.W))
                 {
                     vistaInventario.anteriorItem();
                 }
@@ -703,7 +713,12 @@ namespace AlumnoEjemplos.RamboAxe
             text3.Text = "Temperatura: " + text + " es " + HoraDelDia.getInstance().getHoraEnString();
             String hudInfo;
             hudInfo = " FPS " + HighResolutionTimer.Instance.FramesPerSecond.ToString() + " " + currentCuadrantX + " " + currentCuadrantZ;
-            text3.Text += hudInfo;            
+            text3.Text += hudInfo;
+            barraHambre.valorActual = pj.hambre;
+            barraVida.valorActual = pj.vida;
+            barraSed.valorActual = pj.sed;
+
+
         }
 
 
@@ -750,16 +765,13 @@ namespace AlumnoEjemplos.RamboAxe
  
            //text3.Text = "TEMPERATURA: " + vectorTemperaturas[temperaturaCuadranteActual] + "  indiceVector:" + temperaturaCuadranteActual + "tiempoDiaActual:" + tiempoDiaActual + "  x:" + currentCuadrantX + "  z:" + currentCuadrantZ;       
             //text2.render();
+            barraSed.render(elapsedTime);
+            barraVida.render(elapsedTime);
+            barraHambre.render(elapsedTime);
             
-            if (!vistaInventario.abierto  && !gameOver )
+            if (gameOver )
             {
-                barraHambre.valorActual = pj.hambre;
-                barraVida.valorActual = pj.vida;
-                barraSed.valorActual = pj.sed;
-
-                barraSed.render(elapsedTime);
-                barraVida.render(elapsedTime);
-                barraHambre.render(elapsedTime);
+                vistaInventario.cerrar();
             }
             
             if (barraInteraccion != null && !gameOver) {
