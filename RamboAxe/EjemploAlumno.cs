@@ -46,8 +46,9 @@ namespace AlumnoEjemplos.RamboAxe
         VistaInventario vistaInventario;
         VistaConstruyendo vistaConstruyendo;
         float tiempoAcumuladoParaContinue = 0;
-          
+
         TgcPlaneWall piso;
+        TgcPlaneWall piso2;
         bool gameOver = false;
         public bool forceUpdate = true;
         int tiempoDelContinue = 9;
@@ -109,8 +110,9 @@ namespace AlumnoEjemplos.RamboAxe
             
             //Iniciarlizar PickingRay
             pickingRay = new TgcPickingRay();
-            TgcTexture texture = TgcTexture.createTexture(d3dDevice, GuiController.Instance.AlumnoEjemplosDir + "Ramboaxe\\Media\\" + "tile_black.png");
+            TgcTexture texture = TgcTexture.createTexture(d3dDevice, GuiController.Instance.AlumnoEjemplosDir + "Ramboaxe\\Media\\" + "agua.jpg");
             piso = new TgcPlaneWall(new Vector3(0, 0, 0), new Vector3(heightCuadrante, 0, widthCuadrante), TgcPlaneWall.Orientations.XZplane, texture);
+            piso2 = new TgcPlaneWall(new Vector3(0, 0, 0), new Vector3(heightCuadrante, 0, widthCuadrante), TgcPlaneWall.Orientations.XZplane, texture);
 
             pj.position = new Vector3(500, 125,500);
 
@@ -127,7 +129,7 @@ namespace AlumnoEjemplos.RamboAxe
             this.hud();
             this.skyboxInit();
             this.initBarrasVida();
-           
+            
         }
         public void initMapa(){
             mapa = new MapaDelJuego((int)widthCuadrante,(int)heightCuadrante);
@@ -135,7 +137,7 @@ namespace AlumnoEjemplos.RamboAxe
     
         public void initbarraInteraccion(float time,int color)
         {
-            barraInteraccion        = new Barra();
+            barraInteraccion = new Barra();
             barraInteraccion.init(color, true, 360, 160, time);
         }
         public void initBarrasVida()
@@ -156,6 +158,7 @@ namespace AlumnoEjemplos.RamboAxe
             barraSed.barTitleText = "Nivel de Sed";
             barraHambre.barTitleText          = "Hambre";
         }
+
         private bool rotateCameraWithMouse = false;
         private float rads = 0;
         private Vector3 direction = new Vector3(0.0f, 0.0f, 0.0f);
@@ -276,8 +279,7 @@ namespace AlumnoEjemplos.RamboAxe
                 rads = (FastMath.PI * (2)) - FastMath.Atan(tangente);
             }
            
-            piso.setExtremes(new Vector3(pj.position.X - (2000), -10, pj.position.Z - 2000), new Vector3(pj.position.X + 2000, -10, pj.position.Z + 2000));
-            piso.updateValues();
+            
 
             bool abierto = vistaInventario.abierto;
             bool selected = false;
@@ -414,14 +416,7 @@ namespace AlumnoEjemplos.RamboAxe
                                 CharacterSheet.getInstance().getInventario().agregar(InventarioManager.Pantalon);
                                 ObjetoInventario objAEquipar = new ObjetoInventario();
                                 objAEquipar.nombre = consumido;
-                                if (objAEquipar != null)
-                                {
-                                    text4.Text = "OBJETO EQUIPADO: " + objAEquipar.nombre;
-                                }
-                                else
-                                {
-                                    text4.Text = "ERROR EQUIPANDO OBJETO";
-                                }
+                                
                                 ObjetoInventario obj;
                                 pj.equipoEnUso.TryGetValue(CharacterSheet.PIERNAS, out obj);
                                 if (obj != null)
@@ -528,7 +523,6 @@ namespace AlumnoEjemplos.RamboAxe
             objetosColisionables.Clear();
         }
 
-        
         private void gameLoop(float elapsedTime)
         {
 
@@ -601,14 +595,16 @@ namespace AlumnoEjemplos.RamboAxe
             //Fin movimiento PJ.
             cuerpoPj.Position = pj.position;
             cuerpoPj.updateValues();
+            camera.setPosition(pj.position);
+            camera.updateCamera();
+            camera.updateViewMatrix(GuiController.Instance.D3dDevice);
+
             //Colision del jugador con objetos del cuadrante.
             Cuadrante unCuadrante = mapa.getCuadrante(currentCuadrantX,currentCuadrantZ);
             foreach (GameObjectAbstract go in unCuadrante.getObjects())
             {
                 TgcBoundingBox cuerpoBounds=  cuerpoPj.BoundingBox;
                 float y = 0;
-                unCuadrante.getTerrain().interpoledHeight(go.getX(), go.getZ(), out y);
-                go.getMesh().Position = new Vector3(go.getX() + (currentCuadrantX * widthCuadrante), y, go.getZ() + (heightCuadrante * currentCuadrantZ));
                 TgcBoundingBox goBounds =  go.getMesh().BoundingBox;
                 TgcCollisionUtils.BoxBoxResult collisionPjObjetosCuadrantes = TgcCollisionUtils.classifyBoxBox(cuerpoBounds,goBounds);
 
@@ -660,7 +656,9 @@ namespace AlumnoEjemplos.RamboAxe
             }
             cuerpoPj.Position = pj.position;
             cuerpoPj.updateValues();
-            camera.setPosition(pj.position);
+            
+            piso.setExtremes(new Vector3(pj.position.X - (3000), 8, pj.position.Z - 3000), new Vector3(pj.position.X + 3000, 8, pj.position.Z + 3000));
+            piso.updateValues();
             //fin colision jugador con objetos
             
             if (pj.vida <= 0)
@@ -670,9 +668,9 @@ namespace AlumnoEjemplos.RamboAxe
             temperaturaCuadranteActual = mapa.getCuadrante((int)currentCuadrantX, (int)currentCuadrantZ).getTemperatura() + HoraDelDia.getInstance().getMomentoDelDia() - 2;
 
             if (temperaturaCuadranteActual > 0) {
-                pj.danioPorCalor(temperaturaCuadranteActual*2);
+             //   pj.danioPorCalor(temperaturaCuadranteActual*2);
             }else if (temperaturaCuadranteActual < 0){
-                pj.danioPorFrio(temperaturaCuadranteActual*2);
+              //  pj.danioPorFrio(temperaturaCuadranteActual*2);
             }
 
             string text = "";
@@ -703,13 +701,13 @@ namespace AlumnoEjemplos.RamboAxe
             text3.Text = "Temperatura: " + text + " es " + HoraDelDia.getInstance().getHoraEnString();
             String hudInfo;
             hudInfo = " FPS " + HighResolutionTimer.Instance.FramesPerSecond.ToString() + " " + currentCuadrantX + " " + currentCuadrantZ;
-            text3.Text += hudInfo;            
-        }
+            text3.Text += hudInfo;
 
-
-        public override void render(float elapsedTime)
-        {
-            if (gameOver){
+            barraHambre.valorActual = pj.hambre;
+            barraVida.valorActual = pj.vida;
+            barraSed.valorActual = pj.sed;
+            if (gameOver)
+            {
                 if (barraInteraccion != null)
                 {
                     barraInteraccion.dispose();
@@ -718,55 +716,52 @@ namespace AlumnoEjemplos.RamboAxe
                 }
                 direction = new Vector3(0, 0, 0);
                 this.handleResetGame(elapsedTime);
-            }else{
-                this.handleInput();
             }
             
-            cuerpoPj.BoundingBox.render();
-            Microsoft.DirectX.Direct3D.Device d3dDevice = GuiController.Instance.D3dDevice;
+          
+          
             
-            d3dDevice.BeginScene();
+        }
 
+
+        public override void render(float elapsedTime)
+        {
             if (_lastTime > 0.03)
             {
                 gameLoop(elapsedTime);
                 _lastTime = 0;
             }
             _lastTime += elapsedTime;
-                
+
+            if(!gameOver){
+                this.handleInput();
+                vistaInventario.render();
+                if (barraInteraccion != null)
+                {
+                    barraInteraccion.render(elapsedTime);
+                }
+            }
+            //RENDER BEGINS
+
+            Microsoft.DirectX.Direct3D.Device d3dDevice = GuiController.Instance.D3dDevice;
+           
+            d3dDevice.BeginScene();
+
 
             barraSed.render(elapsedTime);
             barraVida.render(elapsedTime);
             barraHambre.render(elapsedTime);
 
-
             if (barraInteraccion != null)
             {
                 barraInteraccion.render(elapsedTime);
             }
-
-            vistaInventario.render();
-           
- 
-           //text3.Text = "TEMPERATURA: " + vectorTemperaturas[temperaturaCuadranteActual] + "  indiceVector:" + temperaturaCuadranteActual + "tiempoDiaActual:" + tiempoDiaActual + "  x:" + currentCuadrantX + "  z:" + currentCuadrantZ;       
-            //text2.render();
+         
             
-            if (!vistaInventario.abierto  && !gameOver )
-            {
-                barraHambre.valorActual = pj.hambre;
-                barraVida.valorActual = pj.vida;
-                barraSed.valorActual = pj.sed;
 
-                barraSed.render(elapsedTime);
-                barraVida.render(elapsedTime);
-                barraHambre.render(elapsedTime);
-            }
+            //  cuerpoPj.BoundingBox.render();
             
-            if (barraInteraccion != null && !gameOver) {
-                barraInteraccion.render(elapsedTime);
-            }else{
-                vistaInventario.render();
-            }
+         
 
             // TODO: descomentar para ver el construyendo actual
             //vistaConstruyendo.render();
@@ -775,31 +770,46 @@ namespace AlumnoEjemplos.RamboAxe
 
 
 
-
             changeSkyBox();
             skyBox.Center = camera.Position;
             skyBox.updateValues();
             skyBox.render();
-            Vector2 result = new Vector2(0, 0);
-            for (int x = 0; x < 3; x++)
+
+            int boxesToCheck = 9;
+            text4.Text = "";
+            
+            for (int x = 0; x < boxesToCheck; x++)
             {
-                for (int z = 0; z < 3; z++)
+                for (int z = 0; z < boxesToCheck; z++)
                 {
-                    Cuadrante unCuadrante = mapa.getCuadrante((int)(currentCuadrantX+(x-1)), ((int)currentCuadrantZ+z-1));
-                    unCuadrante.getTerrain().render();
-                    foreach (GameObjectAbstract go in unCuadrante.getObjects())
-                    {
-                        int foreachCuadranteX = currentCuadrantX + x -1;
-                        int foreachCuadranteZ = currentCuadrantZ + z -1;
-                        TgcMesh mesh = go.getMesh();
-                        float y = 0;
-                        unCuadrante.getTerrain().interpoledHeight(go.getX(), go.getZ(),out y);
-                        mesh.Position = new Vector3(go.getX() + (foreachCuadranteX * widthCuadrante), y, go.getZ() + (heightCuadrante * foreachCuadranteZ));
-                        mesh.updateBoundingBox();
-                        
-                        mesh.BoundingBox.render();
-                        mesh.render();
-                    }
+
+                    Cuadrante unCuadrante = mapa.getCuadrante((int)(currentCuadrantX+(x-((int)boxesToCheck/2))), ((int)currentCuadrantZ+z-(int)boxesToCheck/2));
+                     TgcCollisionUtils.FrustumResult r = TgcCollisionUtils.classifyFrustumAABB(GuiController.Instance.Frustum, unCuadrante.getBoundingBox());
+                    
+                     if (r == TgcCollisionUtils.FrustumResult.INTERSECT|| r == TgcCollisionUtils.FrustumResult.INSIDE)
+                     {
+
+                         unCuadrante.getTerrain().render();
+                        // text4.Text += ">> " +unCuadrante.getLatitud().ToString() + " " + unCuadrante.getLongitud().ToString()+"\n";
+                         foreach (GameObjectAbstract go in unCuadrante.getObjects())
+                         {
+
+                             int foreachCuadranteX = currentCuadrantX + x - 1;
+                             int foreachCuadranteZ = currentCuadrantZ + z - 1;
+                             TgcMesh mesh = go.getMesh();
+                             float y = 0;
+                             
+                             mesh.updateBoundingBox();
+                             r = TgcCollisionUtils.classifyFrustumAABB(GuiController.Instance.Frustum, mesh.BoundingBox);
+
+                             if (r == TgcCollisionUtils.FrustumResult.INSIDE|| r == TgcCollisionUtils.FrustumResult.INTERSECT)
+                             {
+                                mesh.BoundingBox.render();
+                                mesh.render();
+                             }
+
+                         }
+                     }
                 }
             }
              
@@ -818,7 +828,7 @@ namespace AlumnoEjemplos.RamboAxe
 
 
            text3.render();
-       //    text4.render();
+           text4.render();
            GuiController.Instance.D3dDevice.EndScene();
            
         }
@@ -866,6 +876,11 @@ namespace AlumnoEjemplos.RamboAxe
             if (momentoDiaAnterior != momentoDiaString)
             {
                 skyBox.updateSkyBoxTextures(momentoDiaString);
+                string pisoTexture = GuiController.Instance.AlumnoEjemplosDir + "RamboAxe\\Media\\skyBox\\" + momentoDiaString + "\\down.jpg";
+                piso.dispose();
+                TgcTexture texture = TgcTexture.createTexture(GuiController.Instance.D3dDevice,pisoTexture);
+                piso = new TgcPlaneWall(new Vector3(0, 0, 0), new Vector3(heightCuadrante, 0, widthCuadrante), TgcPlaneWall.Orientations.XZplane, texture);
+                piso.setExtremes(new Vector3(pj.position.X - (3000), 8, pj.position.Z - 3000), new Vector3(pj.position.X + 3000, 8, pj.position.Z + 3000));
                 momentoDiaAnterior = momentoDiaString;
             }           
         }

@@ -17,8 +17,22 @@ namespace AlumnoEjemplos.RamboAxe.GameObjects
         int longitud;
         private int temperatura;
         private HeightMapTerrain terrain;
+        private TgcBoundingBox boundingBox;
+        public TgcBoundingBox getBoundingBox()
+        {
+            return this.boundingBox;
+        }
+        public int getLatitud()
+        {
+            return latitud;
+        }
+        public int getLongitud()
+        {
+            return longitud;
+        }
         public Cuadrante(bool randomizedCuadrante, int width, int height, int latitud, int longitud)
         {
+            boundingBox = new TgcBoundingBox(new Vector3(latitud*width,0,longitud*height),new Vector3(latitud*width+width,1000,longitud*height+height));
             terrain = new HeightMapTerrain();
             Random rX = new Random();
             string terrainHm = GuiController.Instance.AlumnoEjemplosDir + "Ramboaxe\\Media\\";
@@ -84,43 +98,50 @@ namespace AlumnoEjemplos.RamboAxe.GameObjects
             {
                 for (int inCuadz = 1; inCuadz < 4; inCuadz++)
                 {
+                        go = null;
                        if (rX.NextDouble() < 0.3)
                         {
                             mesh = MapaDelJuego.getGameMesh(1).clone("comida_" + inCuadx.ToString() + inCuadz.ToString());
-                            go = new Racion(mesh, inCuadx * 50, 0, inCuadz * 50);
+                            go = new Racion(mesh, inCuadx , 0, inCuadz);
                             go.getMesh().rotateY((float)(Math.PI * (new Random().Next(2))));
                         }
-                        else if (rX.NextDouble() < 0.4)
+                        else if (rX.NextDouble() < 0.32)
                         {
                             mesh = MapaDelJuego.getGameMesh(2).clone("metal_" + inCuadx.ToString() + inCuadz.ToString());
-                            go = new Obstaculo(mesh, inCuadx * 50, new Random().Next(-50, 0), inCuadz * 50);
+                            go = new Obstaculo(mesh, inCuadx , new Random().Next(-50, 0), inCuadz);
                             go.getMesh().rotateY((float)(FastMath.ToRad(new Random().Next(-20, 20))));
                         }
-                        else if (rX.NextDouble() < 0.5)
+                        else if (rX.NextDouble() < 0.45)
                         {
                             mesh = MapaDelJuego.getGameMesh(5).clone("arbolin_" + inCuadx.ToString() + inCuadz.ToString());
-                            go = new Arbol(mesh, (float)(inCuadx * 50), new Random().Next(-50, 0), (float)(inCuadz * 50));
+                            go = new Arbol(mesh, (float)(inCuadx ), new Random().Next(-50, 0), (float)(inCuadz ));
                             
                         }
-                        else if (rX.NextDouble() < 0.55)
+                        else if (rX.NextDouble() < 0.48)
                         {
                             mesh = MapaDelJuego.getGameMesh(7).clone("piedra_" + inCuadx.ToString() + inCuadz.ToString());
-                            go = new Piedra(mesh, 0, new Random().Next(-50, 0), inCuadz * 50);
+                            go = new Piedra(mesh, inCuadx, new Random().Next(-50, 0), inCuadz);
                             go.getMesh().rotateY((float)(FastMath.ToRad(new Random().Next(-20, 20))));
                         }
-                        else if (rX.NextDouble() < 0.61)
+                       else if (rX.NextDouble() < 0.49)
                         {
                             mesh = MapaDelJuego.getGameMesh(6).clone("ruina_portal" + inCuadx.ToString() + inCuadz.ToString());
-                            go = new RuinaPortal(mesh, 0, new Random().Next(-50, 0), inCuadz * 50);
+                            go = new RuinaPortal(mesh, inCuadx, new Random().Next(-50, 0), inCuadz );
                             go.getMesh().rotateY((float)(FastMath.ToRad(new Random().Next(-20, 20))));
                         }
-                        else
+                        else  if (rX.NextDouble() < 0.65)
                         {
                             mesh = MapaDelJuego.getGameMesh(0).clone("agua_" + inCuadx.ToString() + inCuadz.ToString());
-                            go = new Dispencer(mesh, (float)(inCuadx * 50), 0, (float)(inCuadz * 50));
+                            go = new Dispencer(mesh, (float)(inCuadx ), 0, (float)(inCuadz ));
                             
                         }
-                       this.cuadrantObjects.Add(go);
+                       if (go!= null)
+                       {
+                           float y = 0;
+                           this.getTerrain().interpoledHeight(go.getX(), go.getZ(), out y);
+                           go.getMesh().Position = new Vector3((go.getX() * width / 6) + (latitud * width), y, (go.getZ() * height / 6) + (longitud * height));
+                           this.cuadrantObjects.Add(go);
+                       }
                 }
             }
 
