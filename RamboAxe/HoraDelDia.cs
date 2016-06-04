@@ -13,7 +13,8 @@ namespace AlumnoEjemplos.RamboAxe
         private static HoraDelDia instancia;
         private float tiempoTranscurridoDelCiclo;
         private float horaDelDia;
-        private int momentoDia;
+        private int momentoDelDia;
+
         CharacterSheet pj = CharacterSheet.getInstance();
         private HoraDelDia() {
             tiempoTranscurridoDelCiclo = 0;
@@ -33,7 +34,7 @@ namespace AlumnoEjemplos.RamboAxe
                 tiempoTranscurridoDelCiclo = 0;
             }
             setHoraDia();
-            momentoDia = momentoDelDia();
+            this.momentoDelDia = setMomentoDelDia();
 
             // test de que aumente la sed.... /// recordar que se esta ejecutando cada 1 segundo  aTimer = new System.Timers.Timer(1000);
             pj.addLevelSed(1); 
@@ -45,17 +46,14 @@ namespace AlumnoEjemplos.RamboAxe
         }
         private float setHoraDia()
         { // mayor a 0.5 es que paso la mitad del dia
-
             horaDelDia =  (float)tiempoTranscurridoDelCiclo / tiempoDelCiclo;
             return horaDelDia;
         }      
-        public float getHoraDia(){ // mayor a 0.5 es que paso la mitad del dia
+        public float getHoraDelDia(){ // mayor a 0.5 es que paso la mitad del dia
             return horaDelDia;
         }
-        public int getMomentoDelDia() {
-            return momentoDia;
-        }
-        public bool esDeDia() {
+
+        public bool isAM() {
             if (tiempoTranscurridoDelCiclo > tiempoDelCiclo / 2)
             {
                 return false;
@@ -63,13 +61,8 @@ namespace AlumnoEjemplos.RamboAxe
             else {
                 return true;
             }
+        }
 
-        }
-        private int momentoDelDia (){
-            if (horaDelDia > 0.66) return -1; //noche 
-            else if (horaDelDia > 0.33) return 1; //mediodia
-            else return 0;
-        }
         public static HoraDelDia getInstance() {
             if (instancia == null) { 
                 instancia = new HoraDelDia();
@@ -77,16 +70,28 @@ namespace AlumnoEjemplos.RamboAxe
             return instancia;
         }
         public string getHoraEnString() {
-            int horaDelDia = (int)this.getHoraDia()*24;
+            float cantHorasTranscurridas = this.horaDelDia*24;
             string horaDiaString = "";
-            if (horaDelDia < 5)         horaDiaString = "NOCHE";
-            else if (horaDelDia < 8)    horaDiaString = "AMANECER";
-            else if (horaDelDia < 11)   horaDiaString = "MAÑANA";
-            else if (horaDelDia < 14)   horaDiaString = "MEDIODÍA";
-            else if (horaDelDia < 17)   horaDiaString = "TARDE";
-            else if (horaDelDia < 19)   horaDiaString = "OCASO";
-            else                        horaDiaString = "NOCHE";
+            if (cantHorasTranscurridas < 4)         horaDiaString = "NOCHE";
+            else if (cantHorasTranscurridas < 7)    horaDiaString = "AMANECER";
+            else if (cantHorasTranscurridas < 11)   horaDiaString = "MAÑANA";
+            else if (cantHorasTranscurridas < 14)   horaDiaString = "MEDIODÍA";
+            else if (cantHorasTranscurridas < 17)   horaDiaString = "TARDE";
+            else if (cantHorasTranscurridas < 19)   horaDiaString = "OCASO";
+            else                                    horaDiaString = "NOCHE";
             return horaDiaString;
         }
+
+        private int setMomentoDelDia()
+        {
+            if (horaDelDia > 0.66) return -1; //noche 
+            else if (horaDelDia > 0.33) return 1; //mediodia
+            else return 0;
+        }
+        public int getMomentoDelDia()
+        {
+            return momentoDelDia;
+        }
+
     }
 }

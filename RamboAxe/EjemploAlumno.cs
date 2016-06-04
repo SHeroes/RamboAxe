@@ -45,6 +45,7 @@ namespace AlumnoEjemplos.RamboAxe
         CharacterSheet pj = CharacterSheet.getInstance();
         VistaInventario vistaInventario;
         VistaConstruyendo vistaConstruyendo;
+        float tiempoAcumuladoParaContinue = 0;
           
         TgcPlaneWall piso;
         bool gameOver = false;
@@ -80,8 +81,8 @@ namespace AlumnoEjemplos.RamboAxe
             return "Survival craft 3d.";
         }
         TgcD3dInput d3dInput;
-        TgcText2d text;
-        TgcText2d text2;
+        TgcText2d textHud;
+        TgcText2d textHudExplicacionJuego;
         TgcText2d text3;
         TgcText2d textGameOver;
         TgcText2d textGameContinue;
@@ -421,12 +422,10 @@ namespace AlumnoEjemplos.RamboAxe
                // collisionPointMesh.Position = collisionPoint;
                //  collisionPointMesh.render();
             }
-            String hudInfo;
-            hudInfo = " FPS "+HighResolutionTimer.Instance.FramesPerSecond.ToString()+" "+currentCuadrantX+" "+currentCuadrantZ;
-            text3.Text = hudInfo;
+
                       
         }
-        float tiempoAcumuladoParaContinue =0;
+
         public void handleResetGame(float elapsedTime) {
             TgcD3dInput input = GuiController.Instance.D3dInput;
             textGameOver.render();
@@ -490,17 +489,10 @@ namespace AlumnoEjemplos.RamboAxe
         private void gameLoop(float elapsedTime)
         {
 
-            
-
-         
-          
-
             Vector2 currentCuadrante  = mapa.getCuadranteCoordsFor((int)pj.position.X,(int)pj.position.Z);
             currentCuadrantX = (int)currentCuadrante.X;
             currentCuadrantZ = (int)currentCuadrante.Y;
-            
-
-            
+    
             if (selectedGameObject != null)
             {
                 if (barraInteraccion != null && !barraInteraccion.isActive())
@@ -512,15 +504,10 @@ namespace AlumnoEjemplos.RamboAxe
             }
 
 
-
             //  Estos son los grados a los que apunta la camara con respecto al eje x,z del mundo.
 
-
             //  FastMath.ToDeg(rads).ToString();
-
-
-           
-           
+    
             //Buscando la altura del HeightMap del floor en la coordenada actual.
            
             mapa.getCuadrante(currentCuadrantX, currentCuadrantZ).getTerrain().interpoledHeight(pj.position.X, pj.position.Z, out pj.position.Y);
@@ -633,23 +620,47 @@ namespace AlumnoEjemplos.RamboAxe
             camera.setPosition(pj.position);
             //fin colision jugador con objetos
             
-
             if (pj.vida <= 0)
             {
                 gameOver = true;
-                /*
-                GuiController.Instance.CurrentCamera.Enable = false;
-                GuiController.Instance.CurrentCamera.Enable = true;
-                 */
             }
+            temperaturaCuadranteActual = mapa.getCuadrante((int)currentCuadrantX, (int)currentCuadrantZ).getTemperatura() + HoraDelDia.getInstance().getMomentoDelDia() - 2;
 
             if (temperaturaCuadranteActual > 0) {
                 pj.danioPorCalor(temperaturaCuadranteActual*2);
             }else if (temperaturaCuadranteActual < 0){
                 pj.danioPorFrio(temperaturaCuadranteActual*2);
             }
-            
-            
+
+            string text = "";
+            switch (temperaturaCuadranteActual)
+            {
+                case -3:
+                    text = "Congelante";
+                    break;
+                case -2:
+                    text = "Muy Frio";
+                    break;
+                case -1:
+                    text = "Frio";
+                    break;
+                case 0:
+                    text = "Templado";
+                    break;
+                case 1:
+                    text = "Soleado";
+                    break;
+                case 2:
+                    text = "Caluroso";
+                    break;
+                case 3:
+                    text = "Ardiente";
+                    break;
+            }
+            text3.Text = "Temperatura: " + text + " es " + HoraDelDia.getInstance().getHoraEnString();
+            String hudInfo;
+            hudInfo = " FPS " + HighResolutionTimer.Instance.FramesPerSecond.ToString() + " " + currentCuadrantX + " " + currentCuadrantZ;
+            text3.Text += hudInfo;            
         }
 
 
@@ -694,9 +705,7 @@ namespace AlumnoEjemplos.RamboAxe
             vistaInventario.render();
            
  
-           // text3.Text = "TEMPERATURA: " + vectorTemperaturas[temperaturaCuadranteActual] + "  indiceVector:" + temperaturaCuadranteActual + "tiempoDiaActual:" + tiempoDiaActual + "  x:" + currentCuadrantX + "  z:" + currentCuadrantZ;
-            
-            
+           //text3.Text = "TEMPERATURA: " + vectorTemperaturas[temperaturaCuadranteActual] + "  indiceVector:" + temperaturaCuadranteActual + "tiempoDiaActual:" + tiempoDiaActual + "  x:" + currentCuadrantX + "  z:" + currentCuadrantZ;       
             //text2.render();
             
             if (!vistaInventario.abierto  && !gameOver )
@@ -752,7 +761,7 @@ namespace AlumnoEjemplos.RamboAxe
             }
              
             piso.render();
-            text3.render();
+            
             
            if (selectedGameObject != null)
            {
@@ -763,35 +772,6 @@ namespace AlumnoEjemplos.RamboAxe
                    selectedGameObject.use();
                }
            }
-           string text = "";
-           switch (temperaturaCuadranteActual)
-           {
-               case -3:
-                   text = "Congelante";
-                   break;
-               case -2:
-                   text = "Muy Frio";
-                   break;
-               case -1:
-                   text = "Frio";
-                   break;
-               case 0:
-                   text = "Templado";
-                   break;
-               case 1:
-                   text = "Soleado";
-                   break;
-               case 2:
-                   text = "Caluroso";
-                   break;
-               case 3:
-                   text = "Ardiente";
-                   break;
-           }
-        string momentoDelDiaString = HoraDelDia.getInstance().getHoraEnString();
-           //text3.Text = "Temperatura: " + text+ " es "+ momentoDelDiaString;
-           //   textGameOver.Text = "MUERTE POR:" + vDanioTemp[temperaturaCuadranteActual];
-           //    textGameOver.render();
 
 
            text3.render();
@@ -830,7 +810,7 @@ namespace AlumnoEjemplos.RamboAxe
         private void changeSkyBox()
         {
 
-            float horaDelDia = HoraDelDia.getInstance().getHoraDia() * 24;
+            float horaDelDia = HoraDelDia.getInstance().getHoraDelDia() * 24;
             string momentoDiaString = "";
             
             if (horaDelDia < 4)  momentoDiaString = "Night";  // "Night es el nombre de la Carpeta dentro del skybox"
@@ -849,21 +829,23 @@ namespace AlumnoEjemplos.RamboAxe
 
            public void hud()
         {
-            text = new TgcText2d();
-            //text.Text = "Texto del hud.";
-            text.Align = TgcText2d.TextAlign.LEFT;
-            text.Position = new Point(5, 20);
-            text.Size = new Size(310, 100);
-            text.Color = Color.Gold;
-            text.Position = new Point(5, 20);
+            int ScreenWidth = GuiController.Instance.D3dDevice.Viewport.Width;
+            int ScreenHeight = GuiController.Instance.D3dDevice.Viewport.Width;
+            textHud = new TgcText2d();
+            //textHud.Text = "Texto del hud.";
+            textHud.Align = TgcText2d.TextAlign.LEFT;
+            textHud.Position = new Point(5, 20);
+            textHud.Size = new Size(310, 100);
+            textHud.Color = Color.Gold;
+            textHud.Position = new Point(5, 20);
 
 
-            text2 = new TgcText2d();
-           // text2.Text = "-\"wasd\" para moverse    -\"P\" para capturar el mouse    -\"I\" para el inventario    -\"Click Izq\" para interactuar" ;
-            text2.Align = TgcText2d.TextAlign.LEFT;
-            text2.Size = new Size(800, 100);
-            text2.Color = Color.Gold;
-            text2.Position = new Point(75, 10);
+            textHudExplicacionJuego = new TgcText2d();
+            // textHudExplicacionJuego.Text = "-\"wasd\" para moverse    -\"P\" para capturar el mouse    -\"I\" para el inventario    -\"Click Izq\" para interactuar" ;
+            textHudExplicacionJuego.Align = TgcText2d.TextAlign.LEFT;
+            textHudExplicacionJuego.Size = new Size(800, 100);
+            textHudExplicacionJuego.Color = Color.Gold;
+            textHudExplicacionJuego.Position = new Point(75, 10);
 
             text3 = new TgcText2d();
             
@@ -881,8 +863,6 @@ namespace AlumnoEjemplos.RamboAxe
             //textGameOver.Position = new Point(115, 30);
             System.Drawing.Font font1 = new System.Drawing.Font("Arial", 44);
             textGameOver.changeFont(font1);
-            int ScreenWidth = GuiController.Instance.D3dDevice.Viewport.Width;
-            int ScreenHeight = GuiController.Instance.D3dDevice.Viewport.Width;
             textGameOver.Position = new Point( ScreenWidth /2 -200 , ScreenHeight / 2 - 100);
 
             textGameContinue = new TgcText2d();
@@ -898,8 +878,8 @@ namespace AlumnoEjemplos.RamboAxe
 
         public override void close()
         {
-            text.dispose();
-            text2.dispose();
+            textHud.dispose();
+            textHudExplicacionJuego.dispose();
             text3.dispose();
             textGameContinue.dispose();
             textGameOver.dispose();
