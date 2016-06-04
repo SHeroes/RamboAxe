@@ -54,8 +54,8 @@ namespace AlumnoEjemplos.RamboAxe.Player
         public void dispose()
         {
             estaConstruyendo = false;
-            meshVerde.dispose();
-            meshRojo.dispose();
+            //meshVerde.dispose();
+            //meshRojo.dispose();
         }
 
         /// <summary>
