@@ -24,11 +24,11 @@ namespace AlumnoEjemplos.RamboAxe
 
         public static void dispose()
         {
-            foreach (TgcMesh mesh in meshes.Values)
+          /*  foreach (TgcMesh mesh in meshes.Values)
             {
                 mesh.dispose();
             }
-            meshes.Clear();
+            meshes.Clear();*/
         }
 
         /// <summary>
