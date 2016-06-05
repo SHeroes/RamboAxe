@@ -36,6 +36,15 @@ namespace AlumnoEjemplos.RamboAxe
         BarraEstatica barraSed;
         string[] vectorTemperaturas = new string[7];
         int temperaturaCuadranteActual;
+        // poner en la parte de variables globales
+        Random RanWind = new Random();
+        int intmomentoDiaAnterior = -10;
+        float vientoX;
+        float vientoZ;
+        float intensidadViento;
+        Vector2 vientoCuadranteActual = new Vector2();
+        string vientoInfo = "\n Viento Direccion: ";
+
         float distanciaObjeto = 0;
         TgcPickingRay pickingRay;
         static EjemploAlumno game;
@@ -245,7 +254,7 @@ namespace AlumnoEjemplos.RamboAxe
                         pj.stand();
                     }
                 }
-                direction = new Vector3(0, 0, 0);
+                //direction = new Vector3(0, 0, 0);
             }
            // Vector3 realMovement = collisionManager.moveCharacter(characterElipsoid, direction, objetosColisionables);
 
@@ -678,6 +687,21 @@ namespace AlumnoEjemplos.RamboAxe
                 gameOver = true;
             }
             temperaturaCuadranteActual = mapa.getCuadrante((int)currentCuadrantX, (int)currentCuadrantZ).getTemperatura() + HoraDelDia.getInstance().getMomentoDelDia() - 2;
+            if (HoraDelDia.getInstance().getMomentoDelDia() != intmomentoDiaAnterior)
+            {
+                intmomentoDiaAnterior = HoraDelDia.getInstance().getMomentoDelDia();
+                vientoX = (float)RanWind.NextDouble() - 0.5f;
+                vientoZ = (float)RanWind.NextDouble() - 0.5f;
+                intensidadViento = (float)RanWind.NextDouble();
+                vientoCuadranteActual = new Vector2(vientoX, vientoZ);
+                vientoCuadranteActual.Normalize();
+
+                vientoInfo = "\n Viento Direccion: " + vientoCuadranteActualString();
+                vientoInfo += "\t VectorVientoNormalizado" + vientoCuadranteActual.X.ToString() + vientoCuadranteActual.Y.ToString();
+            };
+
+
+
 
             if (temperaturaCuadranteActual > 0) {
                 pj.cantDanioPorCalor = temperaturaCuadranteActual * 2;
@@ -714,6 +738,7 @@ namespace AlumnoEjemplos.RamboAxe
             String hudInfo;
             hudInfo = " FPS " + HighResolutionTimer.Instance.FramesPerSecond.ToString() + " " + currentCuadrantX + " " + currentCuadrantZ;
             text3.Text += hudInfo;
+            text3.Text += vientoInfo;
             barraHambre.valorActual = pj.hambre;
             barraVida.valorActual = pj.vida;
             barraSed.valorActual = pj.sed;
@@ -936,6 +961,44 @@ namespace AlumnoEjemplos.RamboAxe
             textGameContinue.Position = new Point(ScreenWidth / 2 - 200, ScreenHeight / 2 );               
 
 
+        }
+
+        private string vientoCuadranteActualString()
+        {
+            string viento = "";
+            double angulo = FastMath.ToDeg(FastMath.Atan2(vientoCuadranteActual.Y, vientoCuadranteActual.X));
+            if (angulo < 22.5f || angulo >337.5f ) {
+                viento += "ESTE";
+            }
+            else if (angulo < 22.5f+45f )
+            {
+                viento += "NORESTE";
+            }
+            else if (angulo < 22.5f + 90f)
+            {
+                viento += "NORTE";
+            }
+            else if (angulo < 22.5f + 135f)
+            {
+                viento += "NOROESTE";
+            }
+            else if (angulo < 22.5f + 180f)
+            {
+                viento += "OESTE";
+            }
+            else if (angulo < 22.5f + 225f)
+            {
+                viento += "SUROESTE";
+            }
+            else if (angulo < 22.5f + 270f)
+            {
+                viento += "SUR";
+            }
+            else if (angulo < 22.5f + 315f)
+            {
+                viento += "SURESTE";
+            }
+            return ((int)angulo).ToString() + "º " + "DIR VIENTO: " + viento;
         }
 
         public override void close()
