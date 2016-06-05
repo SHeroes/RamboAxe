@@ -114,6 +114,18 @@ namespace AlumnoEjemplos.RamboAxe.GameObjects
             //meshFile = TgcViewer.GuiController.Instance.AlumnoEjemplosDir + "RamboAxe\\Media\\cabin-TgcScene.xml";
             //Mesh bueno para cuando se cree una casa a través de una receta.
 
+             //Lenias prendidas, se podria hacer algo como:
+                // Se forma receta con Leñas + algun elemento x y se puede poner tirar al escenario
+                // Si estas cerca -> Te baja el frio.
+             /*meshFile = TgcViewer.GuiController.Instance.AlumnoEjemplosDir + "RamboAxe\\Media\\leniasencendidas-TgcScene.xml";
+             scene = loader.loadSceneFromFile(meshFile);
+             foreach (TgcMesh mesh in scene.Meshes)
+             {
+                 mesh.Scale = new Vector3(1.0f, 1.0f, 1.0f);
+                 mesh.updateBoundingBox();
+                 gameMeshes.Add(mesh);
+             }*/
+
             //Hasta ACA
 
         }
