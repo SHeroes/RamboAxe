@@ -23,6 +23,7 @@ namespace AlumnoEjemplos.RamboAxe.Inventario
             {
                 personaje.desequiparObjetoDeParteDelCuerpo(posicionCuerpo);
             }
+            CharacterSheet.getInstance().getInventario().sacar(this);
             personaje.equiparObjetoEnParteDelCuerpo(posicionCuerpo, this);
         }
     }

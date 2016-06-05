@@ -134,6 +134,7 @@ namespace AlumnoEjemplos.RamboAxe.Player
             {
                 equipoEnUso.Remove(parteDelCuerpo);
                 equipoEnUso.Add(parteDelCuerpo, null);
+                inv.agregar(objetoDesequipado);
             }
             huboCambios();
             return objetoDesequipado;

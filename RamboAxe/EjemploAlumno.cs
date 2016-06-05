@@ -409,27 +409,7 @@ namespace AlumnoEjemplos.RamboAxe
                 }
                 else if (input.keyPressed(Key.Return))
                 {
-                    if (!vistaInventario.esReceta)
-                    {
-                        if (vistaInventario.esInventario)
-                        {
-                            vistaInventario.usarActual();
-                        }
-
-                        else if (vistaInventario.esEquipable)
-                        {
-                            //TAB EQUIPO
-
-                        }
-
-                        // TODO: hacer algo al consumir
-                        // Console.WriteLine("Item consumido: {0}", consumido);
-                        // GuiController.Instance.Logger.log
-                    }
-                    else
-                    {
-                        vistaInventario.fabricarActual();
-                    }
+                    vistaInventario.accionarItem();
                 }
             }
             if (selected)
