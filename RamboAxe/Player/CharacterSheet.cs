@@ -181,10 +181,10 @@ namespace AlumnoEjemplos.RamboAxe.Player
         /// <param name="aConstruir"></param>
         public void empezarConstruccion(ObjetoInventario aConstruir)
         {
-            GameObjectAbstract go;
+          /*  GameObjectAbstract go;
             if(aConstruir == InventarioManager.Arbol){
                 TgcMesh mesh = MapaDelJuego.getGameMesh(5).clone("arbol_const" );
-                go = new Arbol(mesh,0,0,0);
+            //    go = new Arbol(mesh,0,0,0);
             }
             else
             {
@@ -193,7 +193,7 @@ namespace AlumnoEjemplos.RamboAxe.Player
             if(go != null){
                 construyendo = go;
                 huboCambios();
-            }
+            }*/
         }
 
         /// <summary>

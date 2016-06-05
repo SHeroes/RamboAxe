@@ -46,9 +46,8 @@ namespace AlumnoEjemplos.RamboAxe
         VistaInventario vistaInventario;
         VistaConstruyendo vistaConstruyendo;
         float tiempoAcumuladoParaContinue = 0;
-
         TgcPlaneWall piso;
-        TgcPlaneWall piso2;
+        
         bool gameOver = false;
         public bool forceUpdate = true;
         int tiempoDelContinue = 9;
@@ -112,7 +111,6 @@ namespace AlumnoEjemplos.RamboAxe
             pickingRay = new TgcPickingRay();
             TgcTexture texture = TgcTexture.createTexture(d3dDevice, GuiController.Instance.AlumnoEjemplosDir + "Ramboaxe\\Media\\" + "agua.jpg");
             piso = new TgcPlaneWall(new Vector3(0, 0, 0), new Vector3(heightCuadrante, 0, widthCuadrante), TgcPlaneWall.Orientations.XZplane, texture);
-            piso2 = new TgcPlaneWall(new Vector3(0, 0, 0), new Vector3(heightCuadrante, 0, widthCuadrante), TgcPlaneWall.Orientations.XZplane, texture);
 
             pj.position = new Vector3(500, 125,500);
 
@@ -604,53 +602,61 @@ namespace AlumnoEjemplos.RamboAxe
             foreach (GameObjectAbstract go in unCuadrante.getObjects())
             {
                 TgcBoundingBox cuerpoBounds=  cuerpoPj.BoundingBox;
-                float y = 0;
-                TgcBoundingBox goBounds =  go.getMesh().BoundingBox;
-                TgcCollisionUtils.BoxBoxResult collisionPjObjetosCuadrantes = TgcCollisionUtils.classifyBoxBox(cuerpoBounds,goBounds);
-
-                if ((collisionPjObjetosCuadrantes != TgcCollisionUtils.BoxBoxResult.Afuera))
+                bool collisionFound = false;
+                foreach (TgcMesh bounds in go.getBounds())
                 {
+                  
+                    TgcBoundingBox goBounds = bounds.BoundingBox;
+                    TgcCollisionUtils.BoxBoxResult collisionPjObjetosCuadrantes = TgcCollisionUtils.classifyBoxBox(cuerpoBounds, goBounds);
 
-                    //colision norte
-                    int fixDistance = 6;
-                    int fixDistanceCorner = 5;
-                    if (cuerpoBounds.PMin.X > goBounds.PMin.X && cuerpoBounds.PMax.X < goBounds.PMax.X && cuerpoBounds.PMin.Z < goBounds.PMax.Z && cuerpoBounds.PMax.Z > goBounds.PMax.Z)
+                    if ((collisionPjObjetosCuadrantes != TgcCollisionUtils.BoxBoxResult.Afuera))
                     {
-                        pj.position.Z = goBounds.PMax.Z + fixDistance;
-                    }//colision sur
-                    else if (cuerpoBounds.PMax.X > goBounds.PMin.Z && cuerpoBounds.PMin.Z < goBounds.PMin.Z && cuerpoBounds.PMin.X > goBounds.PMin.X && cuerpoBounds.PMax.X < goBounds.PMax.X)
-                    {
-                        pj.position.Z = goBounds.PMin.Z - fixDistance;
-                    }//colision oeste
-                    else if (cuerpoBounds.PMin.X < goBounds.PMin.X && cuerpoBounds.PMax.X > goBounds.PMin.X && cuerpoBounds.PMax.Z < goBounds.PMax.Z && cuerpoBounds.PMin.Z > goBounds.PMin.Z)
-                    {
-                        pj.position.X = goBounds.PMin.X - fixDistance;
-                    }//colision este
-                    else if (cuerpoBounds.PMin.X < goBounds.PMax.X && cuerpoBounds.PMax.X > goBounds.PMax.X && cuerpoBounds.PMax.Z < goBounds.PMax.Z && cuerpoBounds.PMin.Z > goBounds.PMin.Z)
-                    {
-                        pj.position.X = goBounds.PMax.X + fixDistance;
-                    }//colision noroeste
-                    else if (cuerpoBounds.PMin.X > goBounds.PMin.X && cuerpoBounds.PMax.X < goBounds.PMax.X && cuerpoBounds.PMin.Z < goBounds.PMax.Z && cuerpoBounds.PMax.Z < goBounds.PMax.Z)
-                    {
-                        pj.position.Z = goBounds.PMax.Z + fixDistanceCorner;
-                        pj.position.X = goBounds.PMin.X - fixDistanceCorner;
-                    }//colision noreste
-                    else if (cuerpoBounds.PMin.X < goBounds.PMax.X && cuerpoBounds.PMax.X > goBounds.PMax.X && cuerpoBounds.PMin.Z > goBounds.PMax.Z && cuerpoBounds.PMax.Z > goBounds.PMax.Z)
-                    {
-                        pj.position.Z = goBounds.PMax.Z + fixDistanceCorner;
-                        pj.position.X = goBounds.PMax.X + fixDistanceCorner;
-                    }//colision suroeste
-                    else if (cuerpoBounds.PMin.X < goBounds.PMin.X && cuerpoBounds.PMax.X > goBounds.PMin.X && cuerpoBounds.PMax.Z > goBounds.PMin.Z && cuerpoBounds.PMax.Z < goBounds.PMax.Z)
-                    {
-                        pj.position.Z = goBounds.PMin.Z - fixDistanceCorner;
-                        pj.position.X = goBounds.PMin.X - fixDistanceCorner;
-                        
-                    }//colision sureste
-                    else if (cuerpoBounds.PMin.X < goBounds.PMax.X && cuerpoBounds.PMax.X > goBounds.PMax.X && cuerpoBounds.PMax.Z > goBounds.PMin.Z && cuerpoBounds.PMax.Z < goBounds.PMax.Z)
-                    {
-                        pj.position.Z = goBounds.PMin.Z - fixDistanceCorner ;
-                        pj.position.X = goBounds.PMax.X + fixDistanceCorner;
+
+                        //colision norte
+                        int fixDistance = 6;
+                        int fixDistanceCorner = 5;
+                        if (cuerpoBounds.PMin.X > goBounds.PMin.X && cuerpoBounds.PMax.X < goBounds.PMax.X && cuerpoBounds.PMin.Z < goBounds.PMax.Z && cuerpoBounds.PMax.Z > goBounds.PMax.Z)
+                        {
+                            pj.position.Z = goBounds.PMax.Z + fixDistance;
+                        }//colision sur
+                        else if (cuerpoBounds.PMax.X > goBounds.PMin.Z && cuerpoBounds.PMin.Z < goBounds.PMin.Z && cuerpoBounds.PMin.X > goBounds.PMin.X && cuerpoBounds.PMax.X < goBounds.PMax.X)
+                        {
+                            pj.position.Z = goBounds.PMin.Z - fixDistance;
+                        }//colision oeste
+                        else if (cuerpoBounds.PMin.X < goBounds.PMin.X && cuerpoBounds.PMax.X > goBounds.PMin.X && cuerpoBounds.PMax.Z < goBounds.PMax.Z && cuerpoBounds.PMin.Z > goBounds.PMin.Z)
+                        {
+                            pj.position.X = goBounds.PMin.X - fixDistance;
+                        }//colision este
+                        else if (cuerpoBounds.PMin.X < goBounds.PMax.X && cuerpoBounds.PMax.X > goBounds.PMax.X && cuerpoBounds.PMax.Z < goBounds.PMax.Z && cuerpoBounds.PMin.Z > goBounds.PMin.Z)
+                        {
+                            pj.position.X = goBounds.PMax.X + fixDistance;
+                        }//colision noroeste
+                        else if (cuerpoBounds.PMin.X > goBounds.PMin.X && cuerpoBounds.PMax.X < goBounds.PMax.X && cuerpoBounds.PMin.Z < goBounds.PMax.Z && cuerpoBounds.PMax.Z < goBounds.PMax.Z)
+                        {
+                            pj.position.Z = goBounds.PMax.Z + fixDistanceCorner;
+                            pj.position.X = goBounds.PMin.X - fixDistanceCorner;
+                        }//colision noreste
+                        else if (cuerpoBounds.PMin.X < goBounds.PMax.X && cuerpoBounds.PMax.X > goBounds.PMax.X && cuerpoBounds.PMin.Z > goBounds.PMax.Z && cuerpoBounds.PMax.Z > goBounds.PMax.Z)
+                        {
+                            pj.position.Z = goBounds.PMax.Z + fixDistanceCorner;
+                            pj.position.X = goBounds.PMax.X + fixDistanceCorner;
+                        }//colision suroeste
+                        else if (cuerpoBounds.PMin.X < goBounds.PMin.X && cuerpoBounds.PMax.X > goBounds.PMin.X && cuerpoBounds.PMax.Z > goBounds.PMin.Z && cuerpoBounds.PMax.Z < goBounds.PMax.Z)
+                        {
+                            pj.position.Z = goBounds.PMin.Z - fixDistanceCorner;
+                            pj.position.X = goBounds.PMin.X - fixDistanceCorner;
+
+                        }//colision sureste
+                        else if (cuerpoBounds.PMin.X < goBounds.PMax.X && cuerpoBounds.PMax.X > goBounds.PMax.X && cuerpoBounds.PMax.Z > goBounds.PMin.Z && cuerpoBounds.PMax.Z < goBounds.PMax.Z)
+                        {
+                            pj.position.Z = goBounds.PMin.Z - fixDistanceCorner;
+                            pj.position.X = goBounds.PMax.X + fixDistanceCorner;
+                        }
+                        collisionFound = true;
                     }
+                }
+                if (collisionFound)
+                {
                     break;
                 }
             }
@@ -797,16 +803,17 @@ namespace AlumnoEjemplos.RamboAxe
                              int foreachCuadranteX = currentCuadrantX + x - 1;
                              int foreachCuadranteZ = currentCuadrantZ + z - 1;
                              TgcMesh mesh = go.getMesh();
-                             float y = 0;
-                             
-                             mesh.updateBoundingBox();
                              r = TgcCollisionUtils.classifyFrustumAABB(GuiController.Instance.Frustum, mesh.BoundingBox);
-
+                             
                              if (r == TgcCollisionUtils.FrustumResult.INSIDE|| r == TgcCollisionUtils.FrustumResult.INTERSECT)
                              {
-                                mesh.BoundingBox.render();
+                                 foreach (TgcMesh bound in go.getBounds())
+                                 {
+                                     bound.BoundingBox.render();
+                                 }
                                 mesh.render();
                              }
+                             
 
                          }
                      }
@@ -879,8 +886,7 @@ namespace AlumnoEjemplos.RamboAxe
                 string pisoTexture = GuiController.Instance.AlumnoEjemplosDir + "RamboAxe\\Media\\skyBox\\" + momentoDiaString + "\\down.jpg";
                 piso.dispose();
                 TgcTexture texture = TgcTexture.createTexture(GuiController.Instance.D3dDevice,pisoTexture);
-                piso = new TgcPlaneWall(new Vector3(0, 0, 0), new Vector3(heightCuadrante, 0, widthCuadrante), TgcPlaneWall.Orientations.XZplane, texture);
-                piso.setExtremes(new Vector3(pj.position.X - (3000), 8, pj.position.Z - 3000), new Vector3(pj.position.X + 3000, 8, pj.position.Z + 3000));
+                piso.setTexture(texture);
                 momentoDiaAnterior = momentoDiaString;
             }           
         }

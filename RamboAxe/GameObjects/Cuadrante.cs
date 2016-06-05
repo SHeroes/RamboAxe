@@ -57,10 +57,7 @@ namespace AlumnoEjemplos.RamboAxe.GameObjects
             else 
             {
                 terrainHm = terrainHm + "hm6.jpg";
-            }
-
-            
-            
+            }           
             terrain.loadTexture(terrainHm);
             terrain.loadHeightmap(terrainHm, 10f, 0.7f, new Vector3(((float)(latitud + 0.5f) * (width/10)), 0, (longitud + 0.5f) * (height/10)));
             //terrain.loadPlainHeightmap(100, 100, 50, 100, 1, new Vector3(500, 0, 500));
@@ -69,9 +66,16 @@ namespace AlumnoEjemplos.RamboAxe.GameObjects
             this.latitud = latitud;
             this.longitud = longitud;
             this.cuadrantObjects = new List<GameObjectAbstract>();
+            float y;
+            getTerrain().interpoledHeight(420 + boundingBox.PMin.X, 380 + boundingBox.PMin.Z, out y);
+            GameObjectAbstract go = new Dispencer(GuiController.Instance.AlumnoEjemplosDir + "\\Ramboaxe\\Media\\dispenser\\DispenserAgua-TgcScene.xml", 420 + boundingBox.PMin.X, y, 380 + boundingBox.PMin.Z);
+            this.cuadrantObjects.Add(go);
+            getTerrain().interpoledHeight(600 + boundingBox.PMin.X, 700 + boundingBox.PMin.Z, out y);
+            go = new RuinaPared(600 + boundingBox.PMin.X, y, 700 + boundingBox.PMin.Z);
+            this.cuadrantObjects.Add(go);
             
-            TgcMesh mesh;
-            GameObjectAbstract go;
+            //go = new Arbol(440 + latitud * width, y, 300 + longitud * height);
+           // this.cuadrantObjects.Add(go);
            /*  mesh = MapaDelJuego.getGameMesh(1).clone("comida_1");
              go = new Racion(mesh, (float)(300), 0, (float)(200));
              go.getMesh().rotateY((float)(FastMath.ToRad(new Random().Next(-20, 20))));
@@ -93,7 +97,7 @@ namespace AlumnoEjemplos.RamboAxe.GameObjects
              go.getMesh().rotateY((float)(FastMath.ToRad(new Random().Next(-20, 20))));
              this.cuadrantObjects.Add(go);*/
 
-            
+            /*
             for (int inCuadx = 1; inCuadx < 4; inCuadx++)
             {
                 for (int inCuadz = 1; inCuadz < 4; inCuadz++)
@@ -143,7 +147,7 @@ namespace AlumnoEjemplos.RamboAxe.GameObjects
                            this.cuadrantObjects.Add(go);
                        }
                 }
-            }
+            }*/
 
         }
 
