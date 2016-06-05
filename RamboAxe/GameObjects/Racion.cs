@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using TgcViewer.Utils.TgcSceneLoader;
 using AlumnoEjemplos.RamboAxe.Inventario;
+using AlumnoEjemplos.RamboAxe.Inventario.Objetos;
 
 namespace AlumnoEjemplos.RamboAxe.GameObjects
 {

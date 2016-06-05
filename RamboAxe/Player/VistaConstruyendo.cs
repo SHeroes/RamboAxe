@@ -100,6 +100,8 @@ namespace AlumnoEjemplos.RamboAxe.Player
 
         public void cambioObservable()
         {
+            // TODO: Pasar a vista de inventario cuando hagamos Observables de Varios
+            EjemploAlumno.getInstance().vistaInventario.cambioObservable();
             if(estaConstruyendo){
                 if (!CharacterSheet.getInstance().estaConstruyendo)
                 {

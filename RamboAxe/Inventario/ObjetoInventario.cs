@@ -12,19 +12,25 @@ namespace AlumnoEjemplos.RamboAxe.Inventario
         Construible
     }
 
-    public class ObjetoInventario
+    public abstract class ObjetoInventario
     {
-        public string nombre;
-        public TipoObjetoInventario tipo;
-        public int peso;
+        public string nombre { get; protected set; }
+        public TipoObjetoInventario tipo { get; protected set; }
+        public int peso { get; protected set; }
 
         public bool esEquipable { get { return (tipo == TipoObjetoInventario.Equipable); } }
         public bool esConsumible { get { return (tipo == TipoObjetoInventario.Consumible); } }
         public bool esConstruible { get { return (tipo == TipoObjetoInventario.Construible); } }
 
-        public ObjetoInventario(){
-            tipo = TipoObjetoInventario.Ninguno;
-            peso = 0;
+        protected ObjetoInventario(
+            String nombre,
+            TipoObjetoInventario tipo = TipoObjetoInventario.Ninguno,
+            int peso = 0
+        )
+        {
+            this.nombre = nombre;
+            this.tipo = tipo;
+            this.peso = peso;
         }
 
         public void dispose()
@@ -32,26 +38,9 @@ namespace AlumnoEjemplos.RamboAxe.Inventario
 
         }
 
-        # region Comportamiento custom de SubClases
-        public void alConsumir()
-        {
-
-        }
-
-        public void alEquipar()
-        {
-
-        }
-
-        public void alDesEquipar()
-        {
-
-        }
-
-        public void alConstruir()
-        {
-
-        }
-        # endregion
+        /// <summary>
+        /// Usa un objeto
+        /// </summary>
+        public abstract void usar();
     }
 }

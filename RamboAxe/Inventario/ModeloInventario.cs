@@ -96,14 +96,14 @@ namespace AlumnoEjemplos.RamboAxe.Inventario
         /// <param name="objeto">Objeto a sacar</param>
         /// <param name="cantidad">Cantidad a sacar</param>
         /// <returns>Si se saco o no el objeto</returns>
-        public bool consumir(ObjetoInventario objeto, int cantidad = 1)
+        public bool sacar(ObjetoInventario objeto, int cantidad = 1)
         {
-            bool consumido = false;
+            bool usado = false;
             int cantidadActual;
             if (cantidadObjetos.TryGetValue(objeto.nombre, out cantidadActual))
             {
                 if(cantidadActual >= cantidad){
-                    consumido = true;
+                    usado = true;
                     cantidadActual -= cantidad;
                     pesoActual -= objeto.peso * cantidad;
                     if(cantidadActual == 0){
@@ -114,15 +114,11 @@ namespace AlumnoEjemplos.RamboAxe.Inventario
                     {
                         cantidadObjetos[objeto.nombre] = cantidadActual;
                     }
-                    while(cantidad > 0){
-                        objeto.alConsumir();
-                        cantidad--;
-                    }
                     recalcularAccesosRapidos();
                     huboCambios();
                 }
             }
-            return consumido;
+            return usado;
         }
 
         /// <summary>
@@ -131,13 +127,13 @@ namespace AlumnoEjemplos.RamboAxe.Inventario
         /// <param name="posicion">Posicion del objeto en el inventario</param>
         /// <param name="cantidad">Cantidad a sacar</param>
         /// <returns>Si se saco o no el objeto</returns>
-        public bool consumir(int posicion, int cantidad = 1)
+        public bool sacar(int posicion, int cantidad = 1)
         {
             ObjetoInventario objeto = obtenerObjetoEnPosicion(posicion);
             if(objeto == null){
                 return false;
             }
-            return consumir(objeto, cantidad);
+            return sacar(objeto, cantidad);
         }
 
         /// <summary>
@@ -176,7 +172,7 @@ namespace AlumnoEjemplos.RamboAxe.Inventario
                     }
                     else
                     {
-                        CharacterSheet.getInstance().empezarConstruccion(objeto);
+                        objeto.usar();
                     }
                     recalcularAccesosRapidos();
                     huboCambios();
@@ -302,7 +298,7 @@ namespace AlumnoEjemplos.RamboAxe.Inventario
             bool pudoUsarse = false;
             if(objeto != null){
                 if(objeto.esConsumible){
-                    pudoUsarse = consumir(objeto);
+                    pudoUsarse = sacar(objeto);
                 }
                 else
                 {

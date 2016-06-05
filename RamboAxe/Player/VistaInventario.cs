@@ -429,18 +429,14 @@ namespace AlumnoEjemplos.RamboAxe.Player
             }
         }
 
-        public string consumirActual()
+        public void usarActual()
         {
             if (esInventario)
             {
                 ObjetoInventario objeto = inv.obtenerObjetoEnPosicion(currentRow);
-                if (inv.consumir(currentRow))
-                {
-                    items.Text = generateItemText();
-                    return objeto.nombre;
-                }
+                objeto.usar();
+                items.Text = generateItemText();
             }
-            return null;
         }
 
         public void fabricarActual()

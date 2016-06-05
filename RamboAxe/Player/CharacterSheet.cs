@@ -120,6 +120,12 @@ namespace AlumnoEjemplos.RamboAxe.Player
             danioPorFrio(cantDanioPorFrio);
         }
 
+        public bool estaEquipadaParteDelCuerpo(string parteDelCuerpo)
+        {
+            ObjetoInventario objeto = null;
+            return equipoEnUso.TryGetValue(parteDelCuerpo, out objeto);
+        }
+
         public ObjetoInventario desequiparObjetoDeParteDelCuerpo(String parteDelCuerpo)        //desequipar
         {
             ObjetoInventario objetoDesequipado = null;
@@ -129,6 +135,7 @@ namespace AlumnoEjemplos.RamboAxe.Player
                 equipoEnUso.Remove(parteDelCuerpo);
                 equipoEnUso.Add(parteDelCuerpo, null);
             }
+            huboCambios();
             return objetoDesequipado;
         }
         public ObjetoInventario equiparObjetoEnParteDelCuerpo(String parteDelCuerpo, ObjetoInventario objetoAEquipar)        //equipar
@@ -137,6 +144,7 @@ namespace AlumnoEjemplos.RamboAxe.Player
             objetoDesequipado = desequiparObjetoDeParteDelCuerpo(parteDelCuerpo);
             equipoEnUso.Remove(parteDelCuerpo);
             equipoEnUso.Add(parteDelCuerpo, objetoAEquipar);
+            huboCambios();
             return objetoDesequipado;
         }          
 
@@ -188,19 +196,11 @@ namespace AlumnoEjemplos.RamboAxe.Player
         /// Se empieza un plan de construir un objeto
         /// </summary>
         /// <param name="aConstruir"></param>
-        public void empezarConstruccion(ObjetoInventario aConstruir)
+        public void empezarConstruccion(GameObjectAbstract aConstruir)
         {
-            GameObjectAbstract go;
-            if(aConstruir == InventarioManager.Arbol){
-                TgcMesh mesh = MapaDelJuego.getGameMesh(5).clone("arbol_const" );
-                go = new Arbol(mesh,0,0,0);
-            }
-            else
+            if (aConstruir != null)
             {
-                go = null;
-            }
-            if(go != null){
-                construyendo = go;
+                construyendo = aConstruir;
                 huboCambios();
             }
         }
