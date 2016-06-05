@@ -806,7 +806,7 @@ namespace AlumnoEjemplos.RamboAxe
             }
 
             // TODO: descomentar para ver el construyendo actual
-            //vistaConstruyendo.render();
+            vistaConstruyendo.render();
            // box.render();
 
 
