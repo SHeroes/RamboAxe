@@ -111,6 +111,9 @@ namespace AlumnoEjemplos.RamboAxe.GameObjects
                 gameMeshes.Add(mesh);
              }
 
+            //meshFile = TgcViewer.GuiController.Instance.AlumnoEjemplosDir + "RamboAxe\\Media\\cabin-TgcScene.xml";
+            //Mesh bueno para cuando se cree una casa a través de una receta.
+
             //Hasta ACA
 
         }
