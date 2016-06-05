@@ -805,7 +805,6 @@ namespace AlumnoEjemplos.RamboAxe
                 vistaInventario.render();
             }
 
-            // TODO: descomentar para ver el construyendo actual
             vistaConstruyendo.render();
            // box.render();
 
