@@ -435,6 +435,10 @@ namespace AlumnoEjemplos.RamboAxe.Player
             {
                 ObjetoInventario objeto = inv.obtenerObjetoEnPosicion(currentRow);
                 objeto.usar();
+                if(objeto.esEquipable){
+                    currentTab = 2;
+                    currentRow = -1;
+                }
                 items.Text = generateItemText();
             }
         }
