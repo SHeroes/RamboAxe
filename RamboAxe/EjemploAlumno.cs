@@ -42,8 +42,8 @@ namespace AlumnoEjemplos.RamboAxe
         float vientoX;
         float vientoZ;
         float intensidadViento;
-        Vector2 vientoCuadranteActual = new Vector2();
-        string vientoInfo = "\n Viento Direccion: ";
+        Vector2 vientoActual = new Vector2();
+        string vientoInfo = "Viento Dirección: ";
 
         float distanciaObjeto = 0;
         TgcPickingRay pickingRay;
@@ -693,11 +693,11 @@ namespace AlumnoEjemplos.RamboAxe
                 vientoX = (float)RanWind.NextDouble() - 0.5f;
                 vientoZ = (float)RanWind.NextDouble() - 0.5f;
                 intensidadViento = (float)RanWind.NextDouble();
-                vientoCuadranteActual = new Vector2(vientoX, vientoZ);
-                vientoCuadranteActual.Normalize();
+                vientoActual = new Vector2(vientoX, vientoZ);
+                vientoActual.Normalize();
 
-                vientoInfo = "\n Viento Direccion: " + vientoCuadranteActualString();
-                vientoInfo += "\t VectorVientoNormalizado" + vientoCuadranteActual.X.ToString() + vientoCuadranteActual.Y.ToString();
+                vientoInfo = "\n Viento Direccion: " + vientoActualString();
+                //vientoInfo += "\t VectorVientoNormalizado" + vientoActual.X.ToString() + vientoActual.Y.ToString();
             };
 
 
@@ -963,10 +963,10 @@ namespace AlumnoEjemplos.RamboAxe
 
         }
 
-        private string vientoCuadranteActualString()
+        private string vientoActualString()
         {
             string viento = "";
-            double angulo = FastMath.ToDeg(FastMath.Atan2(vientoCuadranteActual.Y, vientoCuadranteActual.X));
+            double angulo = FastMath.ToDeg(FastMath.Atan2(vientoActual.Y, vientoActual.X));
             if (angulo < 22.5f || angulo >337.5f ) {
                 viento += "ESTE";
             }
@@ -998,7 +998,8 @@ namespace AlumnoEjemplos.RamboAxe
             {
                 viento += "SURESTE";
             }
-            return ((int)angulo).ToString() + "º " + "DIR VIENTO: " + viento;
+            //return ((int)angulo).ToString() + "º " + "DIR VIENTO: " + viento;
+            return viento;
         }
 
         public override void close()
