@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using AlumnoEjemplos.RamboAxe.Inventario.Objetos;
 
 namespace AlumnoEjemplos.RamboAxe.Inventario
 {
@@ -13,21 +14,14 @@ namespace AlumnoEjemplos.RamboAxe.Inventario
 
         # region Objetos
         public static ObjetoInventario Piedra { get { return objetos["Piedra"]; } }
-        public static ObjetoInventario Leña { get { return objetos["Leña"]; } }
-        public static ObjetoInventario Palos { get { return objetos["Palos"]; } }
-        public static ObjetoInventario Casa { get { return objetos["Casa"]; } }
         public static ObjetoInventario Ramita { get { return objetos["Ramita"]; } }
         public static ObjetoInventario Racion { get { return objetos["Racion"]; } }
         public static ObjetoInventario Hacha { get { return objetos["Hacha"]; } }
         public static ObjetoInventario Arbol { get { return objetos["Arbol"]; } }
         public static ObjetoInventario Pantalon { get { return objetos["Pantalon"]; } }
-        public static ObjetoInventario Buzo { get { return objetos["Buzo"]; } }
-        public static ObjetoInventario Casco { get { return objetos["Casco"]; } }
-        public static ObjetoInventario Gorra { get { return objetos["Gorra"]; } }
         # endregion
 
         # region Recetas
-        public static Receta RecetaCasa { get { return recetas["Casa"]; } }
         public static Receta RecetaArbol { get { return recetas["Arbol"]; } }
         # endregion
 
@@ -36,32 +30,18 @@ namespace AlumnoEjemplos.RamboAxe.Inventario
             objetos = new Dictionary<String, ObjetoInventario>();
             recetas = new Dictionary<String, Receta>();
             /* Listado de Objetos */
-            agregarObjeto("Piedra", TipoObjetoInventario.Ninguno, 2);
-            agregarObjeto("Leña", TipoObjetoInventario.Ninguno, 4);
-            agregarObjeto("Palos", TipoObjetoInventario.Ninguno, 1);
-            agregarObjeto("Casa", TipoObjetoInventario.Construible);
-            agregarObjeto("Ramita", TipoObjetoInventario.Ninguno, 1);
-            agregarObjeto("Racion", TipoObjetoInventario.Consumible);
-            agregarObjeto("Hacha", TipoObjetoInventario.Equipable);
-            agregarObjeto("Arbol",TipoObjetoInventario.Construible);
-            agregarObjeto("Pantalon", TipoObjetoInventario.Equipable, 2);
-            agregarObjeto("Buzo", TipoObjetoInventario.Equipable, 1);
-            agregarObjeto("Casco", TipoObjetoInventario.Equipable, 2);
-            agregarObjeto("Gorra", TipoObjetoInventario.Equipable, 1);
+            agregarObjeto(new ArbolInventario());
+            agregarObjeto(new HachaInventario());
+            agregarObjeto(new PantalonInventario());
+            agregarObjeto(new PiedraInventario());
+            agregarObjeto(new RacionInventario());
+            agregarObjeto(new RamitaInventario());
             /* Listado de Recetas */
-            agregarReceta(
-                Casa, 
-                1, 
-                new Dictionary<ObjetoInventario, int>{
-                    { Leña, 10 },
-                    { Palos, 50 }
-                }
-            );
             agregarReceta(
                 Arbol,
                 1,
                 new Dictionary<ObjetoInventario, int>{
-                    { Leña, 1 }
+                    { Ramita, 2 }
                 }
             );
         }
@@ -75,19 +55,6 @@ namespace AlumnoEjemplos.RamboAxe.Inventario
         }
 
         # region Metodos de Creacion
-
-        /// <summary>
-        /// Crea y agrega un objeto
-        /// </summary>
-        /// <param name="nombre">Nombre del objeto</param>
-        private static void agregarObjeto(String nombre, TipoObjetoInventario tipo = TipoObjetoInventario.Ninguno, int peso = 0)
-        {
-            ObjetoInventario obj = new ObjetoInventario();
-            obj.nombre = nombre;
-            obj.tipo = tipo;
-            obj.peso = peso;
-            agregarObjeto(obj);
-        }
 
         /// <summary>
         /// Agregar un objeto

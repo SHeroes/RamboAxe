@@ -14,6 +14,7 @@ namespace AlumnoEjemplos.RamboAxe.Player
     public class VistaInventario: Observador
     {
         private ModeloInventario inv { get { return CharacterSheet.getInstance().getInventario(); } }
+        private CharacterSheet personaje { get { return CharacterSheet.getInstance(); } }
 
         TgcText2d itemsTitle;
         TgcText2d items;
@@ -153,7 +154,13 @@ namespace AlumnoEjemplos.RamboAxe.Player
                 GuiController.Instance.Drawer2D.beginDrawSprite();
                 back.render();
                 if(currentRow != -1){
-                    renderLine(selector, currentRow);
+                    if(esEquipable){
+                        renderLine(selector, currentRow, 7);
+                    }
+                    else
+                    {
+                        renderLine(selector, currentRow);
+                    }
                 }
                 GuiController.Instance.Drawer2D.endDrawSprite();
                 renderTab("Inventario", 0, tabWidth);
@@ -170,7 +177,6 @@ namespace AlumnoEjemplos.RamboAxe.Player
                 }
                 else if (esEquipable)
                 {
-                    //itemsTitle.render();
                     itemsEquipados.render();
                 }
                 pesoText.render();
@@ -218,25 +224,22 @@ namespace AlumnoEjemplos.RamboAxe.Player
             tabText.render();
         }
 
-        private void renderLine(TgcSprite lineSprite, int position, int leftPadding = 0)
+        private void renderLine(TgcSprite lineSprite, int position, int widthTimes = 3)
         {
             int widthTick = selectorMiddle.Width / 2;
-            auxPoint.X = 30 + leftPadding + upperLeftCorner.X;
+            auxPoint.X = 30 + upperLeftCorner.X;
             auxPoint.Y = 40 + upperLeftCorner.Y + position * (selectorBorder.Height / 2);
             lineSprite.Position = auxPoint;
             lineSprite.SrcRect = selectorBorder;
             lineSprite.render();
             lineSprite.SrcRect = selectorMiddle;
-            lineSprite.render();
-            auxPoint.X += widthTick;
-            lineSprite.Position = auxPoint;
-            lineSprite.render();
-            auxPoint.X += widthTick;
-            lineSprite.Position = auxPoint;
-            lineSprite.render();
+            while(widthTimes > 0){
+                lineSprite.render();
+                auxPoint.X += widthTick;
+                lineSprite.Position = auxPoint;
+                widthTimes--;
+            }
             lineSprite.SrcRect = selectorBorder;
-            auxPoint.X += widthTick;
-            lineSprite.Position = auxPoint;
             lineSprite.render();
         }
 
@@ -290,14 +293,12 @@ namespace AlumnoEjemplos.RamboAxe.Player
         /// <returns></returns>
         private string generateItemEquipadoText()
         {
-            CharacterSheet pj = CharacterSheet.getInstance();
-
             string itemList = "";
 
 
            // ObjetoInventario objeto;
 
-            foreach (var partBody in pj.equipoEnUso){
+            foreach (var partBody in personaje.equipoEnUso){
                 string itemEn = "";
                 if (partBody.Value != null)
                 {
@@ -405,7 +406,7 @@ namespace AlumnoEjemplos.RamboAxe.Player
             }
             else
             {
-                return 0;
+                return personaje.equipoEnUso.Count;
             }
         }
 
@@ -429,18 +430,18 @@ namespace AlumnoEjemplos.RamboAxe.Player
             }
         }
 
-        public string consumirActual()
+        public void usarActual()
         {
             if (esInventario)
             {
                 ObjetoInventario objeto = inv.obtenerObjetoEnPosicion(currentRow);
-                if (inv.consumir(currentRow))
-                {
-                    items.Text = generateItemText();
-                    return objeto.nombre;
+                objeto.usar();
+                if(objeto.esEquipable){
+                    while(currentTab != 2){
+                        cambiarTab();
+                    }
                 }
             }
-            return null;
         }
 
         public void fabricarActual()
@@ -451,13 +452,31 @@ namespace AlumnoEjemplos.RamboAxe.Player
             }
         }
 
+        public void desequiparActual()
+        {
+            if(esEquipable){
+                String parteDelCuerpo = personaje.equipoEnUso.Keys.ElementAt(currentRow);
+                if (personaje.estaEquipadaParteDelCuerpo(parteDelCuerpo))
+                {
+                    personaje.desequiparObjetoDeParteDelCuerpo(parteDelCuerpo);
+                }
+            }
+        }
+
         public void cambioObservable()
         {
             items.Text = generateItemText();
             itemsEquipados.Text = generateItemEquipadoText();
             recetasText.Text = generateRecetasText();
             ingredientesText.Text = generateIngredientesText();
-            pesoText.Text = "Peso: " + inv.pesoActual + "/" + CharacterSheet.getInstance().pesoMaximo;
+            pesoText.Text = "Peso: " + inv.pesoActual + "/" + personaje.pesoMaximo;
+        }
+
+        public void accionarItem()
+        {
+            fabricarActual();
+            usarActual();
+            desequiparActual();
         }
     }
 }

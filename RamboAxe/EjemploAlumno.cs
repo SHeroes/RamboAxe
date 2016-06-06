@@ -57,7 +57,7 @@ namespace AlumnoEjemplos.RamboAxe
         GameObjectAbstract selectedGameObject;
         int currentCuadrantX, currentCuadrantZ = 1;
         CharacterSheet pj = CharacterSheet.getInstance();
-        VistaInventario vistaInventario;
+        public VistaInventario vistaInventario;
         VistaConstruyendo vistaConstruyendo;
         float tiempoAcumuladoParaContinue = 0;
           
@@ -414,67 +414,7 @@ namespace AlumnoEjemplos.RamboAxe
                 }
                 else if (input.keyPressed(Key.Return))
                 {
-                    if (!vistaInventario.esReceta)
-                    {
-                        if (vistaInventario.esInventario)
-                        {
-                            string consumido = vistaInventario.consumirActual();
-                            if (consumido == "Racion")
-                            {
-                                pj.addLevelHambre(-20);
-                            }
-                            else if (consumido == "Hacha")
-                            {   /*
-                                if (!hachaEquipada)
-                                {
-                                    hachaEquipada = true;
-                                    GuiController.Instance.Drawer2D.beginDrawSprite();
-                                    spriteHacha.render();
-                                    GuiController.Instance.Drawer2D.endDrawSprite();
-                                }*/
-                            }
-                            else if (consumido == "Pantalon")
-                            {
-                                CharacterSheet.getInstance().getInventario().agregar(InventarioManager.Pantalon);
-                                ObjetoInventario objAEquipar = new ObjetoInventario();
-                                objAEquipar.nombre = consumido;
-                                if (objAEquipar != null)
-                                {
-                                    text4.Text = "OBJETO EQUIPADO: " + objAEquipar.nombre;
-                                }
-                                else
-                                {
-                                    text4.Text = "ERROR EQUIPANDO OBJETO";
-                                }
-                                ObjetoInventario obj;
-                                pj.equipoEnUso.TryGetValue(CharacterSheet.PIERNAS, out obj);
-                                if (obj != null)
-                                {
-                                    pj.desequiparObjetoDeParteDelCuerpo(CharacterSheet.PIERNAS);
-                                }
-                                else
-                                {
-                                    pj.equiparObjetoEnParteDelCuerpo(CharacterSheet.PIERNAS, objAEquipar);
-                                }
-
-                                vistaInventario.cambioObservable();
-                            }
-                        }
-
-                        else if (vistaInventario.esEquipable)
-                        {
-                            //TAB EQUIPO
-
-                        }
-
-                        // TODO: hacer algo al consumir
-                        // Console.WriteLine("Item consumido: {0}", consumido);
-                        // GuiController.Instance.Logger.log
-                    }
-                    else
-                    {
-                        vistaInventario.fabricarActual();
-                    }
+                    vistaInventario.accionarItem();
                 }
             }
             if (selected)
@@ -515,26 +455,12 @@ namespace AlumnoEjemplos.RamboAxe
         public void initInventario() {
             InventarioManager.init();
             vistaInventario = new VistaInventario();
-            pj.getInventario().agregar(InventarioManager.Palos);
-            pj.getInventario().agregar(InventarioManager.Leña);
-            pj.getInventario().agregar(InventarioManager.Leña);
-            pj.getInventario().agregar(InventarioManager.Leña);
-            pj.getInventario().agregar(InventarioManager.Leña);
-            pj.getInventario().agregar(InventarioManager.Leña);
-            pj.getInventario().agregar(InventarioManager.Leña);
-            pj.getInventario().agregar(InventarioManager.Leña);
-            pj.getInventario().agregar(InventarioManager.Leña);
-            pj.getInventario().agregar(InventarioManager.Leña);
-            pj.getInventario().agregar(InventarioManager.Leña);
-            pj.getInventario().agregar(InventarioManager.Leña);
-            pj.getInventario().agregar(InventarioManager.Piedra);
-            pj.getInventario().agregar(InventarioManager.Piedra);
-            pj.getInventario().agregar(InventarioManager.RecetaCasa);
-            pj.getInventario().agregar(InventarioManager.RecetaArbol);
+            pj.getInventario().agregar(InventarioManager.Ramita, 10);
+            pj.getInventario().agregar(InventarioManager.Piedra, 2);
             pj.getInventario().agregar(InventarioManager.Hacha);
             pj.getInventario().agregar(InventarioManager.Pantalon);
-
-
+            pj.getInventario().agregar(InventarioManager.Racion, 10);
+            pj.getInventario().agregar(InventarioManager.RecetaArbol);
         }
 
         public void initCamera()
@@ -844,8 +770,7 @@ namespace AlumnoEjemplos.RamboAxe
                 vistaInventario.render();
             }
 
-            // TODO: descomentar para ver el construyendo actual
-            //vistaConstruyendo.render();
+            vistaConstruyendo.render();
            // box.render();
 
 

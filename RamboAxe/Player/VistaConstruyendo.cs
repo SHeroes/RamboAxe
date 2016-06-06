@@ -23,20 +23,18 @@ namespace AlumnoEjemplos.RamboAxe.Player
 
         public VistaConstruyendo()
         {
-
-            init();
             estaConstruyendo = false;
             CharacterSheet.getInstance().agregarObservador(this);
         }
 
         private void init()
         {
-            /*meshVerde = CharacterSheet.getInstance().construyendo.getMesh().clone("ConstruyendoCorrecto");
+            meshVerde = CharacterSheet.getInstance().construyendo.getMesh().clone("ConstruyendoCorrecto");
             meshRojo = meshVerde.clone("ConstruyendoIncorrecto");
             meshVerde.setColor(Color.LightGreen);
             meshRojo.setColor(Color.Salmon);
             construyendo = meshVerde;
-            estaConstruyendo = true;*/
+            estaConstruyendo = true;
         }
 
         public void render()
@@ -53,9 +51,11 @@ namespace AlumnoEjemplos.RamboAxe.Player
 
         public void dispose()
         {
-            estaConstruyendo = false;
-            //meshVerde.dispose();
-            //meshRojo.dispose();
+            if(estaConstruyendo){
+                estaConstruyendo = false;
+                meshVerde.dispose();
+                meshRojo.dispose();
+            }
         }
 
         /// <summary>
@@ -75,11 +75,16 @@ namespace AlumnoEjemplos.RamboAxe.Player
             /* Cambio el angulo para centrarlo en la pantalla */
             radians -= FastMath.ToRad(33.3f);
             /* Lo muevo a la posicion con respecto de la camara */
-            meshVerde.Position = new Vector3(
+            Vector3 meshPosition = new Vector3(
                 ultimoEye.X + DISTANCIA_CONSTRUIBLE * FastMath.Cos(radians),
                 0.0f,
                 ultimoEye.Z + DISTANCIA_CONSTRUIBLE * FastMath.Sin(radians)
             );
+            Cuadrante cuad = EjemploAlumno.getInstance().mapa.getCuadranteForPosition(meshPosition);
+            if(cuad.getTerrain() != null){
+                cuad.getTerrain().interpoledHeight(meshPosition.X, meshPosition.Z, out meshPosition.Y);
+            }
+            meshVerde.Position = meshPosition;
             meshVerde.Rotation = new Vector3(
                 0.0f,
                 -1 * radians,
@@ -95,6 +100,8 @@ namespace AlumnoEjemplos.RamboAxe.Player
 
         public void cambioObservable()
         {
+            // TODO: Pasar a vista de inventario cuando hagamos Observables de Varios
+            EjemploAlumno.getInstance().vistaInventario.cambioObservable();
             if(estaConstruyendo){
                 if (!CharacterSheet.getInstance().estaConstruyendo)
                 {

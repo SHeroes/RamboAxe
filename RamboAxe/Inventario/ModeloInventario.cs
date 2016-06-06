@@ -12,6 +12,7 @@ namespace AlumnoEjemplos.RamboAxe.Inventario
         public Dictionary<string, ObjetoInventario> equipoEnUso;
         private Dictionary<string, int> cantidadObjetos;
         private List<string> recetas;
+        private List<string> accesosRapidos;
         private int pesoMaximo { get { return CharacterSheet.getInstance().pesoMaximo; } }
         public int pesoActual { get; private set; }
 
@@ -20,7 +21,29 @@ namespace AlumnoEjemplos.RamboAxe.Inventario
             ordenObjetos = new List<string>();
             cantidadObjetos = new Dictionary<string, int>();
             recetas = new List<string>();
+            accesosRapidos = new List<string>();
             pesoActual = 0;
+        }
+
+        /// <summary>
+        /// Calcula que items del inventario pueden ser accesos rapidos
+        /// </summary>
+        private void recalcularAccesosRapidos()
+        {
+            List<string> nuevosAccesos = new List<string>();
+            foreach(string nombreObjeto in ordenObjetos){
+                ObjetoInventario obj = InventarioManager.obtenerObjetoPorNombre(nombreObjeto);
+                if(obj != null && obj.esConsumible){
+                    nuevosAccesos.Add(nombreObjeto);
+                }
+            }
+            foreach(string nombreReceta in recetas){
+                Receta receta = InventarioManager.obtenerRecetaPorNombre(nombreReceta);
+                if(receta != null && receta.resultado.esConstruible && receta.puedeFabricar(cantidadObjetos)){
+                    nuevosAccesos.Add(receta.resultado.nombre);
+                }
+            }
+            accesosRapidos = nuevosAccesos;
         }
 
         # region Cambiar objetos y recetas
@@ -35,6 +58,7 @@ namespace AlumnoEjemplos.RamboAxe.Inventario
             if(recetas.IndexOf(nombre) == -1){
                 recetas.Add(nombre);
             }
+            recalcularAccesosRapidos();
             huboCambios();
         }
 
@@ -61,6 +85,7 @@ namespace AlumnoEjemplos.RamboAxe.Inventario
                 cantidadActual += cantidad;
                 cantidadObjetos[objeto.nombre] = cantidadActual;
             }
+            recalcularAccesosRapidos();
             huboCambios();
             return true;
         }
@@ -71,14 +96,14 @@ namespace AlumnoEjemplos.RamboAxe.Inventario
         /// <param name="objeto">Objeto a sacar</param>
         /// <param name="cantidad">Cantidad a sacar</param>
         /// <returns>Si se saco o no el objeto</returns>
-        public bool consumir(ObjetoInventario objeto, int cantidad = 1)
+        public bool sacar(ObjetoInventario objeto, int cantidad = 1)
         {
-            bool consumido = false;
+            bool usado = false;
             int cantidadActual;
             if (cantidadObjetos.TryGetValue(objeto.nombre, out cantidadActual))
             {
                 if(cantidadActual >= cantidad){
-                    consumido = true;
+                    usado = true;
                     cantidadActual -= cantidad;
                     pesoActual -= objeto.peso * cantidad;
                     if(cantidadActual == 0){
@@ -89,14 +114,11 @@ namespace AlumnoEjemplos.RamboAxe.Inventario
                     {
                         cantidadObjetos[objeto.nombre] = cantidadActual;
                     }
-                    while(cantidad > 0){
-                        objeto.alConsumir();
-                        cantidad--;
-                    }
+                    recalcularAccesosRapidos();
                     huboCambios();
                 }
             }
-            return consumido;
+            return usado;
         }
 
         /// <summary>
@@ -105,13 +127,13 @@ namespace AlumnoEjemplos.RamboAxe.Inventario
         /// <param name="posicion">Posicion del objeto en el inventario</param>
         /// <param name="cantidad">Cantidad a sacar</param>
         /// <returns>Si se saco o no el objeto</returns>
-        public bool consumir(int posicion, int cantidad = 1)
+        public bool sacar(int posicion, int cantidad = 1)
         {
             ObjetoInventario objeto = obtenerObjetoEnPosicion(posicion);
             if(objeto == null){
                 return false;
             }
-            return consumir(objeto, cantidad);
+            return sacar(objeto, cantidad);
         }
 
         /// <summary>
@@ -121,6 +143,9 @@ namespace AlumnoEjemplos.RamboAxe.Inventario
         /// <returns>Si pudo o no fabricar</returns>
         public bool fabricar(Receta receta)
         {
+            if(receta == null){
+                return false;
+            }
             bool seFabrico = false;
             int indiceReceta = recetas.IndexOf(receta.resultado.nombre);
             if(indiceReceta != -1){
@@ -147,8 +172,9 @@ namespace AlumnoEjemplos.RamboAxe.Inventario
                     }
                     else
                     {
-                        CharacterSheet.getInstance().empezarConstruccion(objeto);
+                        objeto.usar();
                     }
+                    recalcularAccesosRapidos();
                     huboCambios();
                 }
             }
@@ -234,6 +260,53 @@ namespace AlumnoEjemplos.RamboAxe.Inventario
                 receta = InventarioManager.obtenerRecetaPorNombre(nombre);
             }
             return receta;
+        }
+
+        /// <summary>
+        /// Cantidad de accesos rapidos en el inventario
+        /// </summary>
+        /// <returns></returns>
+        public int contarAccesosRapidos()
+        {
+            return accesosRapidos.Count;
+        }
+
+        /// <summary>
+        /// Obtiene un acceso rapido por su posicion en el inventario
+        /// </summary>
+        /// <param name="posicion">Posicion del Acceso Rapido</param>
+        /// <returns>Acceso Rapido en la posicion</returns>
+        public ObjetoInventario obtenerAccesoRapidoEnPosicion(int posicion)
+        {
+            ObjetoInventario objeto = null;
+            if (posicion >= 0 && posicion < accesosRapidos.Count)
+            {
+                string nombre = accesosRapidos[posicion];
+                objeto = InventarioManager.obtenerObjetoPorNombre(nombre);
+            }
+            return objeto;
+        }
+
+        /// <summary>
+        /// Consume o Fabrica el Acceso Rapido segun corresponda
+        /// </summary>
+        /// <param name="posicion">Posicion del Acceso Rapido en el Inventario</param>
+        /// <returns>Si pudo o no usarse</returns>
+        public bool usarAccesoRapidoEnPosicion(int posicion)
+        {
+            ObjetoInventario objeto = obtenerAccesoRapidoEnPosicion(posicion);
+            bool pudoUsarse = false;
+            if(objeto != null){
+                if(objeto.esConsumible){
+                    pudoUsarse = sacar(objeto);
+                }
+                else
+                {
+                    Receta receta = InventarioManager.obtenerRecetaPorNombre(objeto.nombre);
+                    pudoUsarse = fabricar(receta);
+                }
+            }
+            return pudoUsarse;
         }
 
         # endregion
