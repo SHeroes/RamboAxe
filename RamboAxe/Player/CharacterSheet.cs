@@ -36,7 +36,7 @@ namespace AlumnoEjemplos.RamboAxe.Player
         {
             if (jumpHeight == 0)
             {
-                jumpHeight = 100;
+                jumpHeight = 60;
                 nextFall = -10;
             }
         }

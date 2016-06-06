@@ -60,8 +60,8 @@ namespace AlumnoEjemplos.RamboAxe
         public VistaInventario vistaInventario;
         VistaConstruyendo vistaConstruyendo;
         float tiempoAcumuladoParaContinue = 0;
-          
         TgcPlaneWall piso;
+        
         bool gameOver = false;
         public bool forceUpdate = true;
         int tiempoDelContinue = 3;
@@ -123,7 +123,7 @@ namespace AlumnoEjemplos.RamboAxe
             
             //Iniciarlizar PickingRay
             pickingRay = new TgcPickingRay();
-            TgcTexture texture = TgcTexture.createTexture(d3dDevice, GuiController.Instance.AlumnoEjemplosDir + "Ramboaxe\\Media\\" + "tile_black.png");
+            TgcTexture texture = TgcTexture.createTexture(d3dDevice, GuiController.Instance.AlumnoEjemplosDir + "Ramboaxe\\Media\\" + "agua.jpg");
             piso = new TgcPlaneWall(new Vector3(0, 0, 0), new Vector3(heightCuadrante, 0, widthCuadrante), TgcPlaneWall.Orientations.XZplane, texture);
 
             pj.position = new Vector3(500, 125,500);
@@ -141,7 +141,7 @@ namespace AlumnoEjemplos.RamboAxe
             this.hud();
             this.skyboxInit();
             this.initBarrasVida();
-           
+            
         }
         public void initMapa(){
             mapa = new MapaDelJuego((int)widthCuadrante,(int)heightCuadrante);
@@ -149,7 +149,7 @@ namespace AlumnoEjemplos.RamboAxe
     
         public void initbarraInteraccion(float time,int color)
         {
-            barraInteraccion        = new Barra();
+            barraInteraccion = new Barra();
             barraInteraccion.init(color, true, 360, 160, time);
         }
         public void initBarrasVida()
@@ -170,6 +170,7 @@ namespace AlumnoEjemplos.RamboAxe
             barraSed.barTitleText = "Nivel de Sed";
             barraHambre.barTitleText          = "Hambre";
         }
+
         private bool rotateCameraWithMouse = false;
         private float rads = 0;
         private Vector3 direction = new Vector3(0.0f, 0.0f, 0.0f);
@@ -294,8 +295,7 @@ namespace AlumnoEjemplos.RamboAxe
                 rads = (FastMath.PI * (2)) - FastMath.Atan(tangente);
             }
            
-            piso.setExtremes(new Vector3(pj.position.X - (2000), -10, pj.position.Z - 2000), new Vector3(pj.position.X + 2000, -10, pj.position.Z + 2000));
-            piso.updateValues();
+            
 
             bool abierto = vistaInventario.abierto;
             bool selected = false;
@@ -479,7 +479,6 @@ namespace AlumnoEjemplos.RamboAxe
             objetosColisionables.Clear();
         }
 
-        
         private void gameLoop(float elapsedTime)
         {
 
@@ -552,66 +551,78 @@ namespace AlumnoEjemplos.RamboAxe
             //Fin movimiento PJ.
             cuerpoPj.Position = pj.position;
             cuerpoPj.updateValues();
+            camera.setPosition(pj.position);
+            camera.updateCamera();
+            camera.updateViewMatrix(GuiController.Instance.D3dDevice);
+
             //Colision del jugador con objetos del cuadrante.
             Cuadrante unCuadrante = mapa.getCuadrante(currentCuadrantX,currentCuadrantZ);
             foreach (GameObjectAbstract go in unCuadrante.getObjects())
             {
                 TgcBoundingBox cuerpoBounds=  cuerpoPj.BoundingBox;
-                float y = 0;
-                unCuadrante.getTerrain().interpoledHeight(go.getX(), go.getZ(), out y);
-                go.getMesh().Position = new Vector3(go.getX() + (currentCuadrantX * widthCuadrante), y, go.getZ() + (heightCuadrante * currentCuadrantZ));
-                TgcBoundingBox goBounds =  go.getMesh().BoundingBox;
-                TgcCollisionUtils.BoxBoxResult collisionPjObjetosCuadrantes = TgcCollisionUtils.classifyBoxBox(cuerpoBounds,goBounds);
-
-                if ((collisionPjObjetosCuadrantes != TgcCollisionUtils.BoxBoxResult.Afuera))
+                bool collisionFound = false;
+                foreach (TgcMesh bounds in go.getBounds())
                 {
+                  
+                    TgcBoundingBox goBounds = bounds.BoundingBox;
+                    TgcCollisionUtils.BoxBoxResult collisionPjObjetosCuadrantes = TgcCollisionUtils.classifyBoxBox(cuerpoBounds, goBounds);
 
-                    //colision norte
-                    int fixDistance = 6;
-                    int fixDistanceCorner = 5;
-                    if (cuerpoBounds.PMin.X > goBounds.PMin.X && cuerpoBounds.PMax.X < goBounds.PMax.X && cuerpoBounds.PMin.Z < goBounds.PMax.Z && cuerpoBounds.PMax.Z > goBounds.PMax.Z)
+                    if ((collisionPjObjetosCuadrantes != TgcCollisionUtils.BoxBoxResult.Afuera))
                     {
-                        pj.position.Z = goBounds.PMax.Z + fixDistance;
-                    }//colision sur
-                    else if (cuerpoBounds.PMax.X > goBounds.PMin.Z && cuerpoBounds.PMin.Z < goBounds.PMin.Z && cuerpoBounds.PMin.X > goBounds.PMin.X && cuerpoBounds.PMax.X < goBounds.PMax.X)
-                    {
-                        pj.position.Z = goBounds.PMin.Z - fixDistance;
-                    }//colision oeste
-                    else if (cuerpoBounds.PMin.X < goBounds.PMin.X && cuerpoBounds.PMax.X > goBounds.PMin.X && cuerpoBounds.PMax.Z < goBounds.PMax.Z && cuerpoBounds.PMin.Z > goBounds.PMin.Z)
-                    {
-                        pj.position.X = goBounds.PMin.X - fixDistance;
-                    }//colision este
-                    else if (cuerpoBounds.PMin.X < goBounds.PMax.X && cuerpoBounds.PMax.X > goBounds.PMax.X && cuerpoBounds.PMax.Z < goBounds.PMax.Z && cuerpoBounds.PMin.Z > goBounds.PMin.Z)
-                    {
-                        pj.position.X = goBounds.PMax.X + fixDistance;
-                    }//colision noroeste
-                    else if (cuerpoBounds.PMin.X > goBounds.PMin.X && cuerpoBounds.PMax.X < goBounds.PMax.X && cuerpoBounds.PMin.Z < goBounds.PMax.Z && cuerpoBounds.PMax.Z < goBounds.PMax.Z)
-                    {
-                        pj.position.Z = goBounds.PMax.Z + fixDistanceCorner;
-                        pj.position.X = goBounds.PMin.X - fixDistanceCorner;
-                    }//colision noreste
-                    else if (cuerpoBounds.PMin.X < goBounds.PMax.X && cuerpoBounds.PMax.X > goBounds.PMax.X && cuerpoBounds.PMin.Z > goBounds.PMax.Z && cuerpoBounds.PMax.Z > goBounds.PMax.Z)
-                    {
-                        pj.position.Z = goBounds.PMax.Z + fixDistanceCorner;
-                        pj.position.X = goBounds.PMax.X + fixDistanceCorner;
-                    }//colision suroeste
-                    else if (cuerpoBounds.PMin.X < goBounds.PMin.X && cuerpoBounds.PMax.X > goBounds.PMin.X && cuerpoBounds.PMax.Z > goBounds.PMin.Z && cuerpoBounds.PMax.Z < goBounds.PMax.Z)
-                    {
-                        pj.position.Z = goBounds.PMin.Z - fixDistanceCorner;
-                        pj.position.X = goBounds.PMin.X - fixDistanceCorner;
-                        
-                    }//colision sureste
-                    else if (cuerpoBounds.PMin.X < goBounds.PMax.X && cuerpoBounds.PMax.X > goBounds.PMax.X && cuerpoBounds.PMax.Z > goBounds.PMin.Z && cuerpoBounds.PMax.Z < goBounds.PMax.Z)
-                    {
-                        pj.position.Z = goBounds.PMin.Z - fixDistanceCorner ;
-                        pj.position.X = goBounds.PMax.X + fixDistanceCorner;
+
+                        //colision norte
+                        int fixDistance = 6;
+                        int fixDistanceCorner = 5;
+                        if (cuerpoBounds.PMin.X > goBounds.PMin.X && cuerpoBounds.PMax.X < goBounds.PMax.X && cuerpoBounds.PMin.Z < goBounds.PMax.Z && cuerpoBounds.PMax.Z > goBounds.PMax.Z)
+                        {
+                            pj.position.Z = goBounds.PMax.Z + fixDistance;
+                        }//colision sur
+                        else if (cuerpoBounds.PMax.X > goBounds.PMin.Z && cuerpoBounds.PMin.Z < goBounds.PMin.Z && cuerpoBounds.PMin.X > goBounds.PMin.X && cuerpoBounds.PMax.X < goBounds.PMax.X)
+                        {
+                            pj.position.Z = goBounds.PMin.Z - fixDistance;
+                        }//colision oeste
+                        else if (cuerpoBounds.PMin.X < goBounds.PMin.X && cuerpoBounds.PMax.X > goBounds.PMin.X && cuerpoBounds.PMax.Z < goBounds.PMax.Z && cuerpoBounds.PMin.Z > goBounds.PMin.Z)
+                        {
+                            pj.position.X = goBounds.PMin.X - fixDistance;
+                        }//colision este
+                        else if (cuerpoBounds.PMin.X < goBounds.PMax.X && cuerpoBounds.PMax.X > goBounds.PMax.X && cuerpoBounds.PMax.Z < goBounds.PMax.Z && cuerpoBounds.PMin.Z > goBounds.PMin.Z)
+                        {
+                            pj.position.X = goBounds.PMax.X + fixDistance;
+                        }//colision noroeste
+                        else if (cuerpoBounds.PMin.X > goBounds.PMin.X && cuerpoBounds.PMax.X < goBounds.PMax.X && cuerpoBounds.PMin.Z < goBounds.PMax.Z && cuerpoBounds.PMax.Z < goBounds.PMax.Z)
+                        {
+                            pj.position.Z = goBounds.PMax.Z + fixDistanceCorner;
+                            pj.position.X = goBounds.PMin.X - fixDistanceCorner;
+                        }//colision noreste
+                        else if (cuerpoBounds.PMin.X < goBounds.PMax.X && cuerpoBounds.PMax.X > goBounds.PMax.X && cuerpoBounds.PMin.Z > goBounds.PMax.Z && cuerpoBounds.PMax.Z > goBounds.PMax.Z)
+                        {
+                            pj.position.Z = goBounds.PMax.Z + fixDistanceCorner;
+                            pj.position.X = goBounds.PMax.X + fixDistanceCorner;
+                        }//colision suroeste
+                        else if (cuerpoBounds.PMin.X < goBounds.PMin.X && cuerpoBounds.PMax.X > goBounds.PMin.X && cuerpoBounds.PMax.Z > goBounds.PMin.Z && cuerpoBounds.PMax.Z < goBounds.PMax.Z)
+                        {
+                            pj.position.Z = goBounds.PMin.Z - fixDistanceCorner;
+                            pj.position.X = goBounds.PMin.X - fixDistanceCorner;
+
+                        }//colision sureste
+                        else if (cuerpoBounds.PMin.X < goBounds.PMax.X && cuerpoBounds.PMax.X > goBounds.PMax.X && cuerpoBounds.PMax.Z > goBounds.PMin.Z && cuerpoBounds.PMax.Z < goBounds.PMax.Z)
+                        {
+                            pj.position.Z = goBounds.PMin.Z - fixDistanceCorner;
+                            pj.position.X = goBounds.PMax.X + fixDistanceCorner;
+                        }
+                        collisionFound = true;
                     }
+                }
+                if (collisionFound)
+                {
                     break;
                 }
             }
             cuerpoPj.Position = pj.position;
             cuerpoPj.updateValues();
-            camera.setPosition(pj.position);
+            
+            piso.setExtremes(new Vector3(pj.position.X - (3000), 8, pj.position.Z - 3000), new Vector3(pj.position.X + 3000, 8, pj.position.Z + 3000));
+            piso.updateValues();
             //fin colision jugador con objetos
             
             if (pj.vida <= 0)
@@ -711,10 +722,11 @@ namespace AlumnoEjemplos.RamboAxe
 
         }
 
-
-        public override void render(float elapsedTime)
-        {
-            if (gameOver){
+            barraHambre.valorActual = pj.hambre;
+            barraVida.valorActual = pj.vida;
+            barraSed.valorActual = pj.sed;
+            if (gameOver)
+            {
                 if (barraInteraccion != null)
                 {
                     barraInteraccion.dispose();
@@ -723,33 +735,46 @@ namespace AlumnoEjemplos.RamboAxe
                 }
                 direction = new Vector3(0, 0, 0);
                 this.handleResetGame(elapsedTime);
-            }else{
-                this.handleInput();
             }
             
-            cuerpoPj.BoundingBox.render();
-            Microsoft.DirectX.Direct3D.Device d3dDevice = GuiController.Instance.D3dDevice;
+          
+          
             
-            d3dDevice.BeginScene();
+        }
 
+
+        public override void render(float elapsedTime)
+        {
             if (_lastTime > 0.03)
             {
                 gameLoop(elapsedTime);
                 _lastTime = 0;
             }
             _lastTime += elapsedTime;
-                
+
+            if(!gameOver){
+                this.handleInput();
+                vistaInventario.render();
+                if (barraInteraccion != null)
+                {
+                    barraInteraccion.render(elapsedTime);
+                }
+            }
+            //RENDER BEGINS
+
+            Microsoft.DirectX.Direct3D.Device d3dDevice = GuiController.Instance.D3dDevice;
+           
+            d3dDevice.BeginScene();
+
 
             barraSed.render(elapsedTime);
             barraVida.render(elapsedTime);
             barraHambre.render(elapsedTime);
 
-
             if (barraInteraccion != null)
             {
                 barraInteraccion.render(elapsedTime);
             }
-
             vistaInventario.render();
            
  
@@ -764,15 +789,10 @@ namespace AlumnoEjemplos.RamboAxe
                 vistaInventario.cerrar();
             }
             
-            if (barraInteraccion != null && !gameOver) {
-                barraInteraccion.render(elapsedTime);
-            }else{
-                vistaInventario.render();
-            }
+         
 
             vistaConstruyendo.render();
            // box.render();
-
 
 
 
@@ -781,26 +801,43 @@ namespace AlumnoEjemplos.RamboAxe
             skyBox.Center = camera.Position;
             skyBox.updateValues();
             skyBox.render();
-            Vector2 result = new Vector2(0, 0);
-            for (int x = 0; x < 3; x++)
+
+            int boxesToCheck = 9;
+            text4.Text = "";
+            
+            for (int x = 0; x < boxesToCheck; x++)
             {
-                for (int z = 0; z < 3; z++)
+                for (int z = 0; z < boxesToCheck; z++)
                 {
-                    Cuadrante unCuadrante = mapa.getCuadrante((int)(currentCuadrantX+(x-1)), ((int)currentCuadrantZ+z-1));
-                    unCuadrante.getTerrain().render();
-                    foreach (GameObjectAbstract go in unCuadrante.getObjects())
-                    {
-                        int foreachCuadranteX = currentCuadrantX + x -1;
-                        int foreachCuadranteZ = currentCuadrantZ + z -1;
-                        TgcMesh mesh = go.getMesh();
-                        float y = 0;
-                        unCuadrante.getTerrain().interpoledHeight(go.getX(), go.getZ(),out y);
-                        mesh.Position = new Vector3(go.getX() + (foreachCuadranteX * widthCuadrante), y, go.getZ() + (heightCuadrante * foreachCuadranteZ));
-                        mesh.updateBoundingBox();
-                        
-                        mesh.BoundingBox.render();
-                        mesh.render();
-                    }
+
+                    Cuadrante unCuadrante = mapa.getCuadrante((int)(currentCuadrantX+(x-((int)boxesToCheck/2))), ((int)currentCuadrantZ+z-(int)boxesToCheck/2));
+                     TgcCollisionUtils.FrustumResult r = TgcCollisionUtils.classifyFrustumAABB(GuiController.Instance.Frustum, unCuadrante.getBoundingBox());
+                    
+                     if (r == TgcCollisionUtils.FrustumResult.INTERSECT|| r == TgcCollisionUtils.FrustumResult.INSIDE)
+                     {
+
+                         unCuadrante.getTerrain().render();
+                        // text4.Text += ">> " +unCuadrante.getLatitud().ToString() + " " + unCuadrante.getLongitud().ToString()+"\n";
+                         foreach (GameObjectAbstract go in unCuadrante.getObjects())
+                         {
+
+                             int foreachCuadranteX = currentCuadrantX + x - 1;
+                             int foreachCuadranteZ = currentCuadrantZ + z - 1;
+                             TgcMesh mesh = go.getMesh();
+                             r = TgcCollisionUtils.classifyFrustumAABB(GuiController.Instance.Frustum, mesh.BoundingBox);
+                             
+                             if (r == TgcCollisionUtils.FrustumResult.INSIDE|| r == TgcCollisionUtils.FrustumResult.INTERSECT)
+                             {
+                                 foreach (TgcMesh bound in go.getBounds())
+                                 {
+                                     bound.BoundingBox.render();
+                                 }
+                                mesh.render();
+                             }
+                             
+
+                         }
+                     }
                 }
             }
              
@@ -819,7 +856,7 @@ namespace AlumnoEjemplos.RamboAxe
 
 
            text3.render();
-       //    text4.render();
+           text4.render();
            GuiController.Instance.D3dDevice.EndScene();
            
         }
@@ -867,6 +904,10 @@ namespace AlumnoEjemplos.RamboAxe
             if (momentoDiaAnterior != momentoDiaString)
             {
                 skyBox.updateSkyBoxTextures(momentoDiaString);
+                string pisoTexture = GuiController.Instance.AlumnoEjemplosDir + "RamboAxe\\Media\\skyBox\\" + momentoDiaString + "\\down.jpg";
+                piso.dispose();
+                TgcTexture texture = TgcTexture.createTexture(GuiController.Instance.D3dDevice,pisoTexture);
+                piso.setTexture(texture);
                 momentoDiaAnterior = momentoDiaString;
             }           
         }

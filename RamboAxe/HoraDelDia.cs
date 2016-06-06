@@ -37,10 +37,10 @@ namespace AlumnoEjemplos.RamboAxe
             this.momentoDelDia = setMomentoDelDia();
 
             // test de que aumente la sed.... /// recordar que se esta ejecutando cada 1 segundo  aTimer = new System.Timers.Timer(1000);
-            pj.addLevelSed(1); 
+           // pj.addLevelSed(1); 
             //
             // test de que aumente la sed.... /// recordar que se esta ejecutando cada 1 segundo  aTimer = new System.Timers.Timer(1000);
-            pj.addLevelHambre(1);
+          //  pj.addLevelHambre(1);
             //
            
         }

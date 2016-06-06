@@ -13,7 +13,7 @@ namespace AlumnoEjemplos.RamboAxe.GameObjects
     {
         float uses = 2;
         
-        public Arbol(TgcMesh mesh,float x,float y, float z): base(mesh, x, y, z)
+        public Arbol(string meshfile,float x,float y, float z): base(meshfile,x, y, z)
         {
             delayUso = 7f;   
         }
@@ -38,7 +38,7 @@ namespace AlumnoEjemplos.RamboAxe.GameObjects
             }
             return null;
         }
-         public override void place(int x, int y, int z)
+         public override void place(float x, float y, float z)
          {
              base.place(x, y, z);
              this.mesh = mesh.clone("arbolin_" + x.ToString() + z.ToString());
