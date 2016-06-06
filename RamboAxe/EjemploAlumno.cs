@@ -82,7 +82,7 @@ namespace AlumnoEjemplos.RamboAxe
         public bool falling = false;
         List<Collider> objetosColisionables = new List<Collider>();
         ElipsoidCollisionManager collisionManager;
-
+        TgcSprite menuAyuda;
         TgcElipsoid characterElipsoid;
         double prevCuadrantX = 1;
         double prevCuadrantZ = 1;
@@ -102,6 +102,16 @@ namespace AlumnoEjemplos.RamboAxe
             pickingRay = new TgcPickingRay();
             TgcTexture texture = TgcTexture.createTexture(d3dDevice, GuiController.Instance.AlumnoEjemplosDir + "RamboAxe\\Media\\" + "tile_1.png");
            // string terrainHm = GuiController.Instance.AlumnoEjemplosMediaDir + "RamboAxe\\" + "fps2\\" + "hm.jpg";
+            menuAyuda = new TgcSprite();
+            menuAyuda.Texture = TgcTexture.createTexture(GuiController.Instance.AlumnoEjemplosDir + "RamboAxe\\Media\\menuayuda.png");
+
+            float ScreenWidth = GuiController.Instance.D3dDevice.Viewport.Width;
+            float ScreenHeight = GuiController.Instance.D3dDevice.Viewport.Height;
+            Size tamaño = menuAyuda.Texture.Size;
+
+            menuAyuda.Position = new Vector2((ScreenWidth - tamaño.Width) / 2,
+                   (ScreenHeight - tamaño.Height / 2) / 2);
+            menuAyuda.Scaling = new Vector2(1f, 0.6f);
 
             
             ground = new TgcPlaneWall(new Vector3(0,0,0),new Vector3(width,0,height),TgcPlaneWall.Orientations.XZplane,texture);
@@ -247,7 +257,12 @@ namespace AlumnoEjemplos.RamboAxe
                         barraInteraccion = null;
                     }
                 }
-
+                if (input.keyDown(Key.F1))
+                {
+                    GuiController.Instance.Drawer2D.beginDrawSprite();
+                    menuAyuda.render();
+                    GuiController.Instance.Drawer2D.endDrawSprite();
+                }
                 
             }
 
