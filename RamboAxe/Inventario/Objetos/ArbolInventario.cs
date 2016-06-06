@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using AlumnoEjemplos.RamboAxe.GameObjects;
 using TgcViewer.Utils.TgcSceneLoader;
+using TgcViewer;
 
 namespace AlumnoEjemplos.RamboAxe.Inventario.Objetos
 {
@@ -16,8 +17,11 @@ namespace AlumnoEjemplos.RamboAxe.Inventario.Objetos
 
         protected override GameObjectAbstract crearConstruible()
         {
-            TgcMesh mesh = MapaDelJuego.getGameMesh(5).clone("arbol_const");
-            return new Arbol(mesh, 0, 0, 0);
+            //TgcMesh mesh = MapaDelJuego.getGameMesh(5).clone("arbol_const");
+            return new Arbol(
+                GuiController.Instance.AlumnoEjemplosDir + "\\Ramboaxe\\Media\\bol-TgcScene.xml",
+                0, 0, 0
+            );
         }
     }
 }

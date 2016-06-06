@@ -718,13 +718,6 @@ namespace AlumnoEjemplos.RamboAxe
             barraHambre.valorActual = pj.hambre;
             barraVida.valorActual = pj.vida;
             barraSed.valorActual = pj.sed;
-
-
-        }
-
-            barraHambre.valorActual = pj.hambre;
-            barraVida.valorActual = pj.vida;
-            barraSed.valorActual = pj.sed;
             if (gameOver)
             {
                 if (barraInteraccion != null)
