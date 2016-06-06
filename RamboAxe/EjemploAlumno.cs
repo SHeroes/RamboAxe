@@ -432,13 +432,13 @@ namespace AlumnoEjemplos.RamboAxe
 
         public void handleResetGame(float elapsedTime) {
             TgcD3dInput input = GuiController.Instance.D3dInput;
-            textGameOver.render();
+            
             tiempoAcumuladoParaContinue = tiempoAcumuladoParaContinue + elapsedTime;
             int COUNTDOWN = tiempoDelContinue - (int)tiempoAcumuladoParaContinue;
             if (COUNTDOWN < 0) COUNTDOWN = 0;
             textGameContinue.Text = "Espere y presione la tecla \" C \" si desea otra oportunidad  " + COUNTDOWN.ToString();
 
-            textGameContinue.render();
+            
 
             if (tiempoAcumuladoParaContinue > 3 && input.keyDown(Key.C))
             {
@@ -660,7 +660,7 @@ namespace AlumnoEjemplos.RamboAxe
                 vientoActual.Normalize();
                 intensidadViento = (float)RanWind.NextDouble() * (float)RanWind.NextDouble() * (float)RanWind.NextDouble() * (float)RanWind.NextDouble();
                 intensidadLluvia = (float)RanWind.NextDouble() * (float)RanWind.NextDouble();
-                vientoInfo = "\n Viento Direccion: " + vientoActualString() + " intensidad: " + intensidadViento * 120 + "KM/h";
+                vientoInfo = "\n Viento Direccion: " + vientoActualString() + " intensidad: " + (int)(intensidadViento * 120) + "KM/h";
 
                 //vientoInfo += "\t VectorVientoNormalizado" + vientoActual.X.ToString() + vientoActual.Y.ToString();
             };
@@ -669,7 +669,7 @@ namespace AlumnoEjemplos.RamboAxe
             {
                 foreach (var debuff in pj.deBuffes)
                 {
-                    pjStatusInfo += debuff + "\n ";
+                    pjStatusInfo += " " + debuff + "\n ";
                 }
             }
             else { }
@@ -752,7 +752,13 @@ namespace AlumnoEjemplos.RamboAxe
                 {
                     barraInteraccion.render(elapsedTime);
                 }
+            }else{
+                vistaInventario.cerrar();
+                textGameOver.render();
+                textGameContinue.render();
+
             }
+            
             //RENDER BEGINS
 
             Microsoft.DirectX.Direct3D.Device d3dDevice = GuiController.Instance.D3dDevice;
@@ -770,18 +776,6 @@ namespace AlumnoEjemplos.RamboAxe
             }
             vistaInventario.render();
            
- 
-           //text3.Text = "TEMPERATURA: " + vectorTemperaturas[temperaturaCuadranteActual] + "  indiceVector:" + temperaturaCuadranteActual + "tiempoDiaActual:" + tiempoDiaActual + "  x:" + currentCuadrantX + "  z:" + currentCuadrantZ;       
-            //text2.render();
-            barraSed.render(elapsedTime);
-            barraVida.render(elapsedTime);
-            barraHambre.render(elapsedTime);
-            
-            if (gameOver )
-            {
-                vistaInventario.cerrar();
-            }
-            
          
 
             vistaConstruyendo.render();
@@ -850,6 +844,8 @@ namespace AlumnoEjemplos.RamboAxe
 
            text3.render();
            text4.render();
+
+
            GuiController.Instance.D3dDevice.EndScene();
            
         }
