@@ -44,6 +44,11 @@ namespace AlumnoEjemplos.RamboAxe
         float intensidadViento;
         Vector2 vientoActual = new Vector2();
         string vientoInfo = "Viento Dirección: ";
+        bool llueve = false;
+        float intensidadLluvia;
+        string lluviaInfo = "";
+        float chanceLluvia = 0.5f;
+        string pjStatusInfo = "";
 
         float distanciaObjeto = 0;
         TgcPickingRay pickingRay;
@@ -59,7 +64,7 @@ namespace AlumnoEjemplos.RamboAxe
         TgcPlaneWall piso;
         bool gameOver = false;
         public bool forceUpdate = true;
-        int tiempoDelContinue = 9;
+        int tiempoDelContinue = 3;
         public MapaDelJuego mapa;
       
         public static EjemploAlumno getInstance()
@@ -495,12 +500,13 @@ namespace AlumnoEjemplos.RamboAxe
 
             textGameContinue.render();
 
-            if (tiempoAcumuladoParaContinue > 9 && input.keyDown(Key.C))
+            if (tiempoAcumuladoParaContinue > 3 && input.keyDown(Key.C))
             {
+                
                 pj.incrementContinueCounter();
                 pj.reloadContinueStats();
                 gameOver = false;
-                tiempoAcumuladoParaContinue = 9;
+                tiempoAcumuladoParaContinue = 3;
             }
 
         }
@@ -687,18 +693,49 @@ namespace AlumnoEjemplos.RamboAxe
                 gameOver = true;
             }
             temperaturaCuadranteActual = mapa.getCuadrante((int)currentCuadrantX, (int)currentCuadrantZ).getTemperatura() + HoraDelDia.getInstance().getMomentoDelDia() - 2;
+            
+            //Cuando cambia momento del dia
             if (HoraDelDia.getInstance().getMomentoDelDia() != intmomentoDiaAnterior)
             {
+                if (chanceLluvia > (float)RanWind.NextDouble()) {
+                    llueve = true;
+                    lluviaInfo = " Llueve " + getLluviaIntensidadString();
+                    if (!pj.deBuffes.Contains("Mojado"))
+                    {
+                        pj.deBuffes.Add("Mojado");
+                    }
+                    
+                }
+                //Si esta calentito te secas
+                if (temperaturaCuadranteActual > 0)
+                {
+                    if (pj.deBuffes.Contains("Mojado"))
+                    {
+                        pj.deBuffes.Remove("Mojado");
+                    }
+                }
+
                 intmomentoDiaAnterior = HoraDelDia.getInstance().getMomentoDelDia();
                 vientoX = (float)RanWind.NextDouble() - 0.5f;
                 vientoZ = (float)RanWind.NextDouble() - 0.5f;
                 intensidadViento = (float)RanWind.NextDouble();
                 vientoActual = new Vector2(vientoX, vientoZ);
                 vientoActual.Normalize();
+                intensidadViento = (float)RanWind.NextDouble() * (float)RanWind.NextDouble() * (float)RanWind.NextDouble() * (float)RanWind.NextDouble();
+                intensidadLluvia = (float)RanWind.NextDouble() * (float)RanWind.NextDouble();
+                vientoInfo = "\n Viento Direccion: " + vientoActualString() + " intensidad: " + intensidadViento * 120 + "KM/h";
 
-                vientoInfo = "\n Viento Direccion: " + vientoActualString();
                 //vientoInfo += "\t VectorVientoNormalizado" + vientoActual.X.ToString() + vientoActual.Y.ToString();
             };
+            pjStatusInfo = "";
+            if (pj.deBuffes.Count != 0)
+            {
+                foreach (var debuff in pj.deBuffes)
+                {
+                    pjStatusInfo += debuff + "\n ";
+                }
+            }
+            else { }
 
 
 
@@ -739,6 +776,8 @@ namespace AlumnoEjemplos.RamboAxe
             hudInfo = " FPS " + HighResolutionTimer.Instance.FramesPerSecond.ToString() + " " + currentCuadrantX + " " + currentCuadrantZ;
             text3.Text += hudInfo;
             text3.Text += vientoInfo;
+            text3.Text += lluviaInfo;
+            text3.Text += pjStatusInfo;
             barraHambre.valorActual = pj.hambre;
             barraVida.valorActual = pj.vida;
             barraSed.valorActual = pj.sed;
@@ -963,6 +1002,26 @@ namespace AlumnoEjemplos.RamboAxe
 
         }
 
+        private string getLluviaIntensidadString() {
+            string intensidadLluviaString = "";
+            if (intensidadLluvia < 0.1) { 
+                intensidadLluviaString = "Finito";
+            } else
+            if (intensidadLluvia < 0.3)
+            {
+                intensidadLluviaString = "Poco";
+            } else
+            if (intensidadLluvia < 0.5)
+            {
+                intensidadLluviaString = "Mucho";
+             } else
+            if (intensidadLluvia < 0.8)
+            {
+                intensidadLluviaString = "Demasiado";
+            }
+            return intensidadLluviaString;
+        }
+
         private string vientoActualString()
         {
             string viento = "";
@@ -1000,6 +1059,14 @@ namespace AlumnoEjemplos.RamboAxe
             }
             //return ((int)angulo).ToString() + "º " + "DIR VIENTO: " + viento;
             return viento;
+        }
+
+        private string anguloDeCaidaLLuvia(){
+
+            //depende de para donde mire el pj entonces seria algo asi como:
+            //Math.PI /2 * intensidadViento //productoVectorial con elVector de a donde mira el pj ;
+            //return ((int)angulo).ToString() + " º";
+            return "max 45Grados";
         }
 
         public override void close()

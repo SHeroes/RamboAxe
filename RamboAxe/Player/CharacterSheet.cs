@@ -19,6 +19,7 @@ namespace AlumnoEjemplos.RamboAxe.Player
         public const string CINTURA = "Cintura";
         public const string PIERNAS = "Piernas";
         public const string PIES = "Pies";
+        public List<string> deBuffes;
 
         public int continueCounter { get; private set; }
         public int vida { get; private set; }
@@ -105,7 +106,7 @@ namespace AlumnoEjemplos.RamboAxe.Player
             pesoMaximo = 100;
             vida = maximaVida;
             hambre = 0; sed = 0;
-
+            deBuffes = new List<string>();
             inv = new ModeloInventario();
 
             inv.equipoEnUso = equipoEnUso;
@@ -246,12 +247,14 @@ namespace AlumnoEjemplos.RamboAxe.Player
             if (vida < 0) vida = 0;
         }
          * */
-        public void danioPorCalor(int cantidadDanio) {           
-            this.addLevelSed(cantidadDanio);
+        public void danioPorCalor(int cantidadDanio) {
+            int danioFinal = cantidadDanio;
+            this.addLevelSed(danioFinal);
         }
         public void danioPorFrio(int cantidadDanio)
         {
-            this.addLevelHambre(cantidadDanio);
+            int danioFinal = cantidadDanio;
+            this.addLevelHambre(danioFinal);
         }
     }
 }
