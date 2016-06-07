@@ -19,6 +19,7 @@ using AlumnoEjemplos.RamboAxe;
 using AlumnoEjemplos.RamboAxe.GameObjects;
 using AlumnoEjemplos.RamboAxe.Player;
 using AlumnoEjemplos.RamboAxe.Inventario;
+using TgcViewer.Utils.Shaders;
 namespace AlumnoEjemplos.RamboAxe
 {
     public class EjemploAlumno : TgcExample
@@ -90,7 +91,10 @@ namespace AlumnoEjemplos.RamboAxe
         float height = 2000;    
         int ScreenWidth = GuiController.Instance.D3dDevice.Viewport.Width;
         int ScreenHeight = GuiController.Instance.D3dDevice.Viewport.Height;
-
+        Surface pOldRT;
+        Texture renderTarget2D;
+        VertexBuffer screenQuadVB;
+        Microsoft.DirectX.Direct3D.Effect effect;
         TgcPlaneWall[][] floors = new TgcPlaneWall [3][];
         
         public override void init()
@@ -108,12 +112,10 @@ namespace AlumnoEjemplos.RamboAxe
             float ScreenWidth = GuiController.Instance.D3dDevice.Viewport.Width;
             float ScreenHeight = GuiController.Instance.D3dDevice.Viewport.Height;
             Size tamaño = menuAyuda.Texture.Size;
+            menuAyuda.Scaling = new Vector2(1.2f, 0.8f);
+            menuAyuda.Position = new Vector2((ScreenWidth - tamaño.Width) / 2.2f,
+                   (ScreenHeight - tamaño.Height / 2) / 2.8f);
 
-            menuAyuda.Position = new Vector2((ScreenWidth - tamaño.Width) / 2,
-                   (ScreenHeight - tamaño.Height / 2) / 2);
-            menuAyuda.Scaling = new Vector2(1f, 0.6f);
-
-            
             ground = new TgcPlaneWall(new Vector3(0,0,0),new Vector3(width,0,height),TgcPlaneWall.Orientations.XZplane,texture);
 
             for(int i = 0;i<3;i++){
@@ -146,6 +148,7 @@ namespace AlumnoEjemplos.RamboAxe
             characterElipsoid = new TgcElipsoid(new Vector3(0, 250, 0), new Vector3(12, 48, 12));
             this.initMapa();
             this.initInventario();
+            this.initBlur(d3dDevice);
             this.initCollisions();
             this.initCamera();
             vistaConstruyendo = new VistaConstruyendo(this);
@@ -153,6 +156,45 @@ namespace AlumnoEjemplos.RamboAxe
             this.skyboxInit();
             this.initBarrasVida();
            
+        }
+
+        private void initBlur(Microsoft.DirectX.Direct3D.Device d3dDevice)
+        {
+
+            //Activamos el renderizado customizado. De esta forma el framework nos delega control total sobre como dibujar en pantalla
+            //La responsabilidad cae toda de nuestro lado
+            GuiController.Instance.CustomRenderEnabled = true;
+
+
+            //Se crean 2 triangulos (o Quad) con las dimensiones de la pantalla con sus posiciones ya transformadas
+            // x = -1 es el extremo izquiedo de la pantalla, x = 1 es el extremo derecho
+            // Lo mismo para la Y con arriba y abajo
+            // la Z en 1 simpre
+            CustomVertex.PositionTextured[] screenQuadVertices = new CustomVertex.PositionTextured[]
+		    {
+    			new CustomVertex.PositionTextured( -1, 1, 1, 0,0), 
+			    new CustomVertex.PositionTextured(1,  1, 1, 1,0),
+			    new CustomVertex.PositionTextured(-1, -1, 1, 0,1),
+			    new CustomVertex.PositionTextured(1,-1, 1, 1,1)
+    		};
+            //vertex buffer de los triangulos
+            screenQuadVB = new VertexBuffer(typeof(CustomVertex.PositionTextured),
+                    4, d3dDevice, Usage.Dynamic | Usage.WriteOnly,
+                        CustomVertex.PositionTextured.Format, Pool.Default);
+            screenQuadVB.SetData(screenQuadVertices, 0, LockFlags.None);
+
+            //Creamos un Render Targer sobre el cual se va a dibujar la pantalla
+            renderTarget2D = new Texture(d3dDevice, d3dDevice.PresentationParameters.BackBufferWidth
+                    , d3dDevice.PresentationParameters.BackBufferHeight, 1, Usage.RenderTarget,
+                        Format.X8R8G8B8, Pool.Default);
+
+
+            //Cargar shader con efectos de Post-Procesado
+            effect = TgcShaders.loadEffect(GuiController.Instance.ExamplesMediaDir + "Shaders\\PostProcess.fx");
+
+            //Configurar Technique dentro del shader
+            effect.Technique = "BlurTechnique";
+
         }
         public void initMapa(){
             mapa = new MapaDelJuego((int)width,(int)height);
@@ -400,9 +442,9 @@ namespace AlumnoEjemplos.RamboAxe
                 barraVida.valorActual = pj.vida;
                 barraSed.valorActual = pj.sed;
 
-                barraSed.render(elapsedTime);
-                barraVida.render(elapsedTime);
-                barraHambre.render(elapsedTime);
+                //barraSed.render(elapsedTime);
+                //barraVida.render(elapsedTime);
+                //barraHambre.render(elapsedTime);
             }
             
             Microsoft.DirectX.Direct3D.Device d3dDevice = GuiController.Instance.D3dDevice;
@@ -425,7 +467,7 @@ namespace AlumnoEjemplos.RamboAxe
                 case 0 :  { //MAÑANA
                             skyBox0.Center = camera.Position;
                             skyBox0.updateValues();
-                            skyBox0.render();
+                            //skyBox0.render(); COMENTADO PARA APLICAR BLUR NOMAS.
                             break;
                             }
                 case 1:   { //MEDIO DIA
@@ -446,14 +488,16 @@ namespace AlumnoEjemplos.RamboAxe
 
           //  currentScene.renderAll();
             String floorCords ="";
-            for (int i = 0; i < 3; i++)
+
+            //COMENTADO PARA BLURREAR LOS PISOS
+            /*for (int i = 0; i < 3; i++)
             {
                 for (int x = 0; x < 3; x++)
                 {
                     floors[i][x].render();
                     floorCords+= "\n["+i.ToString()+"/"+x.ToString()+"]"+floors[i][x].Position.X+floors[i][x].Position.Z;
                 }
-            }
+            }*/
             currentCuadrantX = (Math.Floor(characterElipsoid.Position.X / width)-1);
             currentCuadrantZ = (Math.Floor(characterElipsoid.Position.Z / width)-1);
             if (currentCuadrantX != prevCuadrantX || currentCuadrantZ != prevCuadrantZ || firstRun)
@@ -490,6 +534,7 @@ namespace AlumnoEjemplos.RamboAxe
                 prevCuadrantZ = currentCuadrantZ;
 
             }
+            List<TgcMesh> meshes = new List<TgcMesh>();
             for (int x = 0; x < 3; x++)
             {
                 for (int z = 0; z < 3; z++)
@@ -497,7 +542,8 @@ namespace AlumnoEjemplos.RamboAxe
                     foreach (GameObjectAbstract go in mapa.getCuadrante((int)(currentCuadrantX+(x-1)), ((int)currentCuadrantZ+z-1)).getObjects())
                     {
                         TgcMesh mesh = go.getMesh();
-                        mesh.render();
+                        meshes.Add(mesh);
+                        //mesh.render();
                     }
                 }
             }
@@ -511,7 +557,113 @@ namespace AlumnoEjemplos.RamboAxe
                    selectedGameObject.use();
                }
            }
-           
+
+           postProcess(d3dDevice,meshes,elapsedTime);
+
+        }
+
+        private void postProcess(Microsoft.DirectX.Direct3D.Device d3dDevice,List<TgcMesh> objects,float elapsedTime)
+        {
+            pOldRT = d3dDevice.GetRenderTarget(0);
+            Surface pSurf = renderTarget2D.GetSurfaceLevel(0);
+            d3dDevice.SetRenderTarget(0, pSurf);
+            d3dDevice.Clear(ClearFlags.Target | ClearFlags.ZBuffer, Color.Black, 1.0f, 0);
+            //Dibujamos la escena comun, pero en vez de a la pantalla al Render Target
+            drawSceneToRenderTarget(d3dDevice,objects,elapsedTime);
+            //Liberar memoria de surface de Render Target
+            pSurf.Dispose();
+            //Si quisieramos ver que se dibujo, podemos guardar el resultado a una textura en un archivo para debugear su resultado (ojo, es lento)
+            //TextureLoader.Save(GuiController.Instance.ExamplesMediaDir + "Shaders\\render_target.bmp", ImageFileFormat.Bmp, renderTarget2D);
+            //Ahora volvemos a restaurar el Render Target original (osea dibujar a la pantalla)
+            d3dDevice.SetRenderTarget(0, pOldRT);
+            //Luego tomamos lo dibujado antes y lo combinamos con una textura con efecto de alarma
+            drawPostProcess(d3dDevice);
+        }
+        private void drawSceneToRenderTarget(Microsoft.DirectX.Direct3D.Device d3dDevice,List<TgcMesh> objetos,float elapsedTime)
+        {
+            //Arrancamos el renderizado. Esto lo tenemos que hacer nosotros a mano porque estamos en modo CustomRenderEnabled = true
+            d3dDevice.BeginScene();
+
+
+            //Como estamos en modo CustomRenderEnabled, tenemos que dibujar todo nosotros, incluso el contador de FPS
+            GuiController.Instance.Text3d.drawText("FPS: " + HighResolutionTimer.Instance.FramesPerSecond, 0, 0, Color.Yellow);
+
+            //Tambien hay que dibujar el indicador de los ejes cartesianos
+            GuiController.Instance.AxisLines.render();
+
+            barraSed.render(elapsedTime);
+            barraVida.render(elapsedTime);
+            barraHambre.render(elapsedTime);
+
+            foreach (TgcMesh mesh in objetos)
+            {
+                mesh.render();
+            }
+            skyBox0.Center = camera.Position;
+            skyBox0.updateValues();
+            skyBox0.render();
+
+            for (int i = 0; i < 3; i++)
+            {
+                for (int x = 0; x < 3; x++)
+                {
+                    floors[i][x].render();
+                    //floorCords += "\n[" + i.ToString() + "/" + x.ToString() + "]" + floors[i][x].Position.X + floors[i][x].Position.Z;
+                }
+            }
+
+            //Dibujamos todos los meshes del escenario
+            /*foreach (TgcMesh m in meshes)
+            {
+                m.render();
+            }*/
+
+
+            //Terminamos manualmente el renderizado de esta escena. Esto manda todo a dibujar al GPU al Render Target que cargamos antes
+            d3dDevice.EndScene();
+        }
+
+
+        /// <summary>
+        /// Se toma todo lo dibujado antes, que se guardo en una textura, y se le aplica un shader para borronear la imagen
+        /// </summary>
+        private void drawPostProcess(Microsoft.DirectX.Direct3D.Device d3dDevice)
+        {
+            //Arrancamos la escena
+            d3dDevice.BeginScene();
+
+            //Cargamos para renderizar el unico modelo que tenemos, un Quad que ocupa toda la pantalla, con la textura de todo lo dibujado antes
+            d3dDevice.VertexFormat = CustomVertex.PositionTextured.Format;
+            d3dDevice.SetStreamSource(0, screenQuadVB, 0);
+
+            //Ver si el efecto de oscurecer esta activado, configurar Technique del shader segun corresponda
+            effect.Technique = "BlurTechnique";
+            /*bool activar_efecto = (bool)GuiController.Instance.Modifiers["activar_efecto"];
+            if (activar_efecto)
+            {
+                effect.Technique = "BlurTechnique";
+            }
+            else
+            {
+                effect.Technique = "DefaultTechnique";
+            }*/
+
+            //Cargamos parametros en el shader de Post-Procesado
+            effect.SetValue("render_target2D", renderTarget2D);
+            effect.SetValue("blur_intensity", 0.01f);
+
+
+            //Limiamos la pantalla y ejecutamos el render del shader
+            d3dDevice.Clear(ClearFlags.Target | ClearFlags.ZBuffer, Color.Black, 1.0f, 0);
+            effect.Begin(FX.None);
+            effect.BeginPass(0);
+            d3dDevice.DrawPrimitives(PrimitiveType.TriangleStrip, 0, 2);
+            effect.EndPass();
+            effect.End();
+
+            GuiController.Instance.Text3d.drawText("FPS: " + HighResolutionTimer.Instance.FramesPerSecond, 0, 0, Color.Yellow);
+            //Terminamos el renderizado de la escena
+            d3dDevice.EndScene();
         }
 
 
