@@ -417,6 +417,20 @@ namespace AlumnoEjemplos.RamboAxe
                     vistaInventario.accionarItem();
                 }
             }
+            else
+            {
+                if(input.keyPressed(Key.Q)){
+                    vistaInventario.anteriorItem();
+                }
+                else if (input.keyPressed(Key.E))
+                {
+                    vistaInventario.siguienteItem();
+                }
+                else if (input.keyPressed(Key.R))
+                {
+                    vistaInventario.usarAccesoRapido();
+                }
+            }
             if (selected)
             {
                 //Render de AABB

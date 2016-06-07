@@ -298,7 +298,8 @@ namespace AlumnoEjemplos.RamboAxe.Inventario
             bool pudoUsarse = false;
             if(objeto != null){
                 if(objeto.esConsumible){
-                    pudoUsarse = sacar(objeto);
+                    objeto.usar();
+                    pudoUsarse = true;
                 }
                 else
                 {

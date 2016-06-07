@@ -30,6 +30,7 @@ namespace AlumnoEjemplos.RamboAxe.Player
         Vector2 auxPoint;
         Vector2 upperLeftCorner;
         TgcText2d pesoText;
+        TgcText2d accesoText;
         /* Tab render variables */
         TgcSprite tabBackground;
         TgcText2d tabText;
@@ -142,6 +143,12 @@ namespace AlumnoEjemplos.RamboAxe.Player
             pesoText.Position = new Point(((int)upperLeftCorner.X) + 20, (int)(upperLeftCorner.Y + back.SrcRect.Height * 1.5f) - 35);
             pesoText.Size = ingredientesText.Size;
             pesoText.Color = Color.White;
+            /* Inicializacion del texto de acceso rapido */
+            accesoText = new TgcText2d();
+            accesoText.Align = TgcText2d.TextAlign.LEFT;
+            accesoText.Position = new Point(20, (int)(ScreenHeight / 2) - 20);
+            accesoText.Size = ingredientesText.Size;
+            accesoText.Color = Color.White;
             /* Observando los datos del modelo */
             inv.agregarObservador(this);
             cambioObservable();
@@ -180,6 +187,10 @@ namespace AlumnoEjemplos.RamboAxe.Player
                     itemsEquipados.render();
                 }
                 pesoText.render();
+            }
+            else
+            {
+                accesoText.render();
             }
         }
 
@@ -265,11 +276,15 @@ namespace AlumnoEjemplos.RamboAxe.Player
         public void abrir()
         {
             abierto = true;
+            currentTab--;
+            cambiarTab();
         }
 
         public void cerrar()
         {
             abierto = false;
+            cambiarTab();
+            currentTab--;
         }
 
         /// <summary>
@@ -374,7 +389,11 @@ namespace AlumnoEjemplos.RamboAxe.Player
             {
                 currentRow++;
             }
-            if (esReceta)
+            if (!abierto)
+            {
+                accesoText.Text = generateCurrentAcceso();
+            }
+            else if (esReceta)
             {
                 ingredientesText.Text = generateIngredientesText();
             }
@@ -390,14 +409,19 @@ namespace AlumnoEjemplos.RamboAxe.Player
             {
                 currentRow--;
             }
-            if(esReceta){
+            if(!abierto){
+                accesoText.Text = generateCurrentAcceso();
+            } else if(esReceta){
                 ingredientesText.Text = generateIngredientesText();
             }
         }
 
         private int seleccionCount()
         {
-            if(esReceta){
+            if(!abierto){
+                return inv.contarAccesosRapidos();
+            } 
+            else if(esReceta){
                 return inv.contarRecetas();
             }
             else if(esInventario)
@@ -430,7 +454,7 @@ namespace AlumnoEjemplos.RamboAxe.Player
             }
         }
 
-        public void usarActual()
+        private void usarActual()
         {
             if (esInventario)
             {
@@ -444,7 +468,7 @@ namespace AlumnoEjemplos.RamboAxe.Player
             }
         }
 
-        public void fabricarActual()
+        private void fabricarActual()
         {
             if (esReceta)
             {
@@ -452,7 +476,7 @@ namespace AlumnoEjemplos.RamboAxe.Player
             }
         }
 
-        public void desequiparActual()
+        private void desequiparActual()
         {
             if(esEquipable){
                 String parteDelCuerpo = personaje.equipoEnUso.Keys.ElementAt(currentRow);
@@ -463,6 +487,34 @@ namespace AlumnoEjemplos.RamboAxe.Player
             }
         }
 
+        public void usarAccesoRapido()
+        {
+            if(!abierto){
+                inv.usarAccesoRapidoEnPosicion(currentRow);
+            }
+        }
+
+        private String generateCurrentAcceso()
+        {
+            if(abierto){
+                return accesoText.Text;
+            }
+            if(currentRow == -1 || inv.contarAccesosRapidos() == 0){
+                return "";
+            }
+            ObjetoInventario obj = inv.obtenerAccesoRapidoEnPosicion(currentRow);
+            int objCount = inv.cantidadPorObjeto(obj);
+            String text;
+            if(objCount > 0){
+                text = "Usar " + obj.nombre + " x"+ objCount;
+            }
+            else
+            {
+                text = "Construir "+ obj.nombre;
+            }
+            return text;
+        }
+
         public void cambioObservable()
         {
             items.Text = generateItemText();
@@ -470,6 +522,7 @@ namespace AlumnoEjemplos.RamboAxe.Player
             recetasText.Text = generateRecetasText();
             ingredientesText.Text = generateIngredientesText();
             pesoText.Text = "Peso: " + inv.pesoActual + "/" + personaje.pesoMaximo;
+            accesoText.Text = generateCurrentAcceso();
         }
 
         public void accionarItem()
