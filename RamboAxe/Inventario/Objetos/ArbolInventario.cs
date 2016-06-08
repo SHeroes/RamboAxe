@@ -18,10 +18,11 @@ namespace AlumnoEjemplos.RamboAxe.Inventario.Objetos
         protected override GameObjectAbstract crearConstruible()
         {
             //TgcMesh mesh = MapaDelJuego.getGameMesh(5).clone("arbol_const");
-            return new Arbol(
+         /*   return new Arbol(
                 GuiController.Instance.AlumnoEjemplosDir + "\\Ramboaxe\\Media\\bol-TgcScene.xml",
                 0, 0, 0
-            );
+            );*/
+            return null;
         }
     }
 }

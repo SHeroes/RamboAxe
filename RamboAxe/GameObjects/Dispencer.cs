@@ -18,11 +18,7 @@ namespace AlumnoEjemplos.RamboAxe.GameObjects
             delayUso = 2f;
             this.loadMeshes(GuiController.Instance.AlumnoEjemplosDir + "\\Ramboaxe\\Media\\dispenser\\DispenserAgua-TgcScene.xml");
         }
-        public Dispencer(string mesh, float x, float y, float z)
-            : base(mesh, x, y, z)
-        {
-            delayUso = 2f;
-        }
+        
          public  override InteractuableResponse use()
         {
           //  Objeto obj1 = new Objeto();

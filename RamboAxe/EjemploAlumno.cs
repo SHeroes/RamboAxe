@@ -111,11 +111,12 @@ namespace AlumnoEjemplos.RamboAxe
         int widthCuadrante = 1000;
         int heightCuadrante = 1000;
         private TgcBox cuerpoPj;
-
+        TgcSprite hudBack;
         
         public override void init()
         {
-    
+            hudBack = new TgcSprite();
+            hudBack.Texture = TgcTexture.createTexture(GuiController.Instance.AlumnoEjemplosDir + "RamboAxe\\Media\\fondo_hud_violeta_16a.png");
             Microsoft.DirectX.Direct3D.Device d3dDevice = GuiController.Instance.D3dDevice;
             GuiController.Instance.CustomRenderEnabled = true;
            
@@ -692,9 +693,9 @@ namespace AlumnoEjemplos.RamboAxe
 
 
             if (temperaturaCuadranteActual > 0) {
-                pj.cantDanioPorCalor = temperaturaCuadranteActual * 2;
+               // pj.cantDanioPorCalor = temperaturaCuadranteActual;
             }else if (temperaturaCuadranteActual < 0){
-                pj.cantDanioPorFrio = temperaturaCuadranteActual * -2;
+                //pj.cantDanioPorFrio = temperaturaCuadranteActual *;
             }
 
             string text = "";
@@ -743,9 +744,13 @@ namespace AlumnoEjemplos.RamboAxe
                 direction = new Vector3(0, 0, 0);
                 this.handleResetGame(elapsedTime);
             }
+
+            hudBack.Position = new Vector2(10, 10);
             
-          
-          
+            float _result = ((GuiController.Instance.D3dDevice.Viewport.Width-20) / 32);
+            
+            hudBack.Scaling = new Vector2(_result, 1.9f);
+         
             
         }
 
@@ -854,11 +859,14 @@ namespace AlumnoEjemplos.RamboAxe
                    selectedGameObject.use();
                }
            }
-
-
-           text3.render();
-           text4.render();
-
+           if (!vistaInventario.abierto)
+           {
+               GuiController.Instance.Drawer2D.beginDrawSprite();
+               hudBack.render();
+               GuiController.Instance.Drawer2D.endDrawSprite();
+               text3.render();
+               text4.render();
+           }
 
            GuiController.Instance.D3dDevice.EndScene();
            
@@ -940,7 +948,7 @@ namespace AlumnoEjemplos.RamboAxe
             
             text3.Align = TgcText2d.TextAlign.CENTER;
             text3.Size = new Size(800, 100);
-            text3.Color = Color.Black;
+            text3.Color = Color.Gold;
             text3.Position = new Point(115, 30);
 
             text4 = new TgcText2d();

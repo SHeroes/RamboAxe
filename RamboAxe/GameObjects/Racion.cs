@@ -7,15 +7,18 @@ using System.Text;
 using TgcViewer.Utils.TgcSceneLoader;
 using AlumnoEjemplos.RamboAxe.Inventario;
 using AlumnoEjemplos.RamboAxe.Inventario.Objetos;
+using TgcViewer;
 
 namespace AlumnoEjemplos.RamboAxe.GameObjects
 {
     class Racion:GameObjectAbstract
     {
         float uses = 1;
-        public Racion(String mesh,float x, float y,float z):base(mesh,x,y,z)
+        public Racion(float x, float y,float z):base(x,y,z)
         {
-            
+            loadMeshes(GuiController.Instance.AlumnoEjemplosDir + "Ramboaxe\\Media\\raciones\\racion_1-TgcScene.xml");
+           // normalizarTamanio();
+            resize(2f, 2f, 5f);
         }
          public  override InteractuableResponse use()
         {
@@ -25,7 +28,7 @@ namespace AlumnoEjemplos.RamboAxe.GameObjects
                 CharacterSheet.getInstance().getInventario().agregar(InventarioManager.Racion);
                 if (uses == 0)
                 {
-                    getMesh().Scale = new Vector3(0f, 0f, 0f);
+                    resize(0, 0, 0);
                 }
              }
             return null;

@@ -109,8 +109,10 @@
     <Compile Include="RamboAxe\ControlTermico.cs" />
     <Compile Include="RamboAxe\EjemploAlumno.cs" />
     <Compile Include="RamboAxe\GameCamera.cs" />
+    <Compile Include="RamboAxe\GameObjects\ArbolCristalGo.cs" />
     <Compile Include="RamboAxe\GameObjects\Arbol.cs" />
     <Compile Include="RamboAxe\GameObjects\Cuadrante.cs" />
+    <Compile Include="RamboAxe\GameObjects\Jugo.cs" />
     <Compile Include="RamboAxe\GameObjects\RuinaPared.cs" />
     <Compile Include="RamboAxe\GameObjects\Hacha.cs" />
     <Compile Include="RamboAxe\GameObjects\Obstaculo.cs" />
@@ -131,6 +133,7 @@
     <Compile Include="RamboAxe\Inventario\Objetos\HachaInventario.cs" />
     <Compile Include="RamboAxe\Inventario\Objetos\PantalonInventario.cs" />
     <Compile Include="RamboAxe\Inventario\Objetos\PiedraInventario.cs" />
+    <Compile Include="RamboAxe\Inventario\Objetos\JugoInventario.cs" />
     <Compile Include="RamboAxe\Inventario\Objetos\RacionInventario.cs" />
     <Compile Include="RamboAxe\Inventario\Objetos\RamitaInventario.cs" />
     <Compile Include="RamboAxe\MeshManager.cs" />

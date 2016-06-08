@@ -100,8 +100,8 @@ namespace AlumnoEjemplos.RamboAxe.Player
 
 
             continueCounter = 0;
-            maximaSed = 40;
-            maximaHambre = 80;
+            maximaSed = 180;
+            maximaHambre = 240;
             maximaVida = 100;
             pesoMaximo = 100;
             vida = maximaVida;

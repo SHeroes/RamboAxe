@@ -12,8 +12,8 @@ namespace AlumnoEjemplos.RamboAxe.GameObjects
     class Piedra : GameObjectAbstract
     {
         float uses = 1;
-        public Piedra(String mesh, int x, int y, int z)
-            : base(mesh, x, y, z)
+        public Piedra(int x, int y, int z)
+            : base( x, y, z)
         {
             delayUso = 4f;
         }

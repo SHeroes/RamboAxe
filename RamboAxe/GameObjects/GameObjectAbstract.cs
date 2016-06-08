@@ -17,6 +17,7 @@ namespace AlumnoEjemplos.RamboAxe.GameObjects
         float x;
         float y;
         float z;
+        Vector3 normalizadoOriginal;
         protected static Dictionary<String, TgcScene> scenes;
        
         public float delayUso
@@ -25,10 +26,7 @@ namespace AlumnoEjemplos.RamboAxe.GameObjects
             set;
         }
 
-        public GameObjectAbstract(string meshfile, float x, float y, float z):this(x,y,z)
-        {
-            this.loadMeshes(meshfile);
-        }
+       
 
         public GameObjectAbstract(float x, float y, float z)
         {
@@ -41,6 +39,7 @@ namespace AlumnoEjemplos.RamboAxe.GameObjects
             this.y = y;
             this.z = z;
             this.delayUso = 0;
+            normalizadoOriginal = new Vector3(1,1,1);
         }
 
         protected void loadMeshes(string meshfile){
@@ -61,8 +60,10 @@ namespace AlumnoEjemplos.RamboAxe.GameObjects
               
                 if (mesh.Layer == "0")
                 {
+                    
                     this.mesh = mesh.clone(mesh.Name + " " + x + "_" + z);
-                    this.mesh.Scale = new Vector3(1f, 1f, 1f);
+                    normalizadoOriginal = new Vector3(-1f / this.mesh.BoundingBox.calculateSize().X, 1f / this.mesh.BoundingBox.calculateSize().Y, 1f / this.mesh.BoundingBox.calculateSize().Z);
+                    this.mesh.Scale = normalizadoOriginal;
                     this.mesh.updateBoundingBox();
                     this.mesh.Position = new Vector3(x, y, z);
                     
@@ -71,7 +72,7 @@ namespace AlumnoEjemplos.RamboAxe.GameObjects
                 {
                     TgcMesh meshBound = mesh.clone(mesh.Name + " " + x + "_" + z);
                     atleastOne = true;
-                    meshBound.Scale = new Vector3(1f, 1f, 1f);
+                    meshBound.Scale = normalizadoOriginal;//new Vector3(-1f / this.mesh.BoundingBox.calculateSize().X, 1f / this.mesh.BoundingBox.calculateSize().Y,1f / this.mesh.BoundingBox.calculateSize().Z);
                     meshBound.Position = new Vector3(x, y, z);
                     meshBound.updateBoundingBox();
                     this.bounds.Add(meshBound);
@@ -82,6 +83,29 @@ namespace AlumnoEjemplos.RamboAxe.GameObjects
                 this.bounds.Add(this.mesh);
             }
         }
+       /* public void normalizarTamanio()
+        {
+            this.mesh.Scale = new Vector3(-1f / this.mesh.BoundingBox.calculateSize().X, 1f / this.mesh.BoundingBox.calculateSize().Y, 1f / this.mesh.BoundingBox.calculateSize().Z);
+            this.mesh.updateBoundingBox();
+            foreach (TgcMesh boundMesh in this.bounds)
+            {
+                boundMesh.Scale = new Vector3(-1f / boundMesh.BoundingBox.calculateSize().X, 1f / boundMesh.BoundingBox.calculateSize().Y, 1f / boundMesh.BoundingBox.calculateSize().Z);
+                boundMesh.updateBoundingBox();
+            }
+        }*/
+        public void resize(float x,float y, float z){
+            this.mesh.Scale = new Vector3(normalizadoOriginal.X * x, normalizadoOriginal.Y * y, normalizadoOriginal.Z * z);
+            this.mesh.updateBoundingBox();
+            this.mesh.Position = new Vector3(this.x, this.y, this.z);
+            foreach (TgcMesh boundMesh in this.bounds)
+            {
+                boundMesh.Scale = new Vector3(normalizadoOriginal.X * x, normalizadoOriginal.Y * y, normalizadoOriginal.Z * z);
+                boundMesh.updateBoundingBox();
+                boundMesh.Position = new Vector3(this.x, this.y, this.z);
+                
+            }
+        }
+
         public GameObjectAbstract()
         {
 

@@ -36,6 +36,7 @@ namespace AlumnoEjemplos.RamboAxe.Inventario
             agregarObjeto(new PiedraInventario());
             agregarObjeto(new RacionInventario());
             agregarObjeto(new RamitaInventario());
+            agregarObjeto(new JugoInventario());
             /* Listado de Recetas */
             agregarReceta(
                 Arbol,

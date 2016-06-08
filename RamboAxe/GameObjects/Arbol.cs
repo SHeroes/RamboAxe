@@ -13,7 +13,7 @@ namespace AlumnoEjemplos.RamboAxe.GameObjects
     {
         float uses = 2;
         
-        public Arbol(string meshfile,float x,float y, float z): base(meshfile,x, y, z)
+        public Arbol(float x,float y, float z): base(x, y, z)
         {
             delayUso = 7f;   
         }

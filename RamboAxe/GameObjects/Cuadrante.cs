@@ -67,11 +67,18 @@ namespace AlumnoEjemplos.RamboAxe.GameObjects
             this.longitud = longitud;
             this.cuadrantObjects = new List<GameObjectAbstract>();
             float y;
-            getTerrain().interpoledHeight(420 + boundingBox.PMin.X, 380 + boundingBox.PMin.Z, out y);
-            GameObjectAbstract go = new Dispencer(GuiController.Instance.AlumnoEjemplosDir + "\\Ramboaxe\\Media\\dispenser\\DispenserAgua-TgcScene.xml", 420 + boundingBox.PMin.X, y, 380 + boundingBox.PMin.Z);
+            
+            getTerrain().interpoledHeight(100 + boundingBox.PMin.X, 100 + boundingBox.PMin.Z, out y);
+            GameObjectAbstract go = new JugoGo(100 + boundingBox.PMin.X, y, 100 + boundingBox.PMin.Z);
             this.cuadrantObjects.Add(go);
-            getTerrain().interpoledHeight(600 + boundingBox.PMin.X, 700 + boundingBox.PMin.Z, out y);
-            go = new RuinaPared(600 + boundingBox.PMin.X, y, 700 + boundingBox.PMin.Z);
+
+            getTerrain().interpoledHeight(400 + boundingBox.PMin.X, 500 + boundingBox.PMin.Z, out y);
+            go = new Racion(400 + boundingBox.PMin.X, y, 500 + boundingBox.PMin.Z);
+            this.cuadrantObjects.Add(go);
+
+            getTerrain().interpoledHeight(700 + boundingBox.PMin.X, 700 + boundingBox.PMin.Z, out y);
+            go = new ArbolCristalGo(700 + boundingBox.PMin.X, y, 700 + boundingBox.PMin.Z);
+            
             this.cuadrantObjects.Add(go);
             
             //go = new Arbol(440 + latitud * width, y, 300 + longitud * height);
