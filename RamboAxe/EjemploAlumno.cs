@@ -21,6 +21,7 @@ using AlumnoEjemplos.RamboAxe.Player;
 using AlumnoEjemplos.RamboAxe.Inventario;
 using AlumnoEjemplos.Ramboaxe;
 using System.Windows.Forms;
+using TgcViewer.Utils.Shaders;
 namespace AlumnoEjemplos.RamboAxe
 {
     public class EjemploAlumno : TgcExample
@@ -68,7 +69,10 @@ namespace AlumnoEjemplos.RamboAxe
         public MapaDelJuego mapa;
         Sonido sonidoDeFondo;
         TgcSprite menuAyuda;
-
+        Surface pOldRT;
+        Texture renderTarget2D;
+        VertexBuffer screenQuadVB;
+        Microsoft.DirectX.Direct3D.Effect effect;
         public static EjemploAlumno getInstance()
         {
             return game;
@@ -148,7 +152,7 @@ namespace AlumnoEjemplos.RamboAxe
             this.initMapa();
             this.initInventario();
             this.initCollisions();
-
+            this.initBlur(d3dDevice);
             this.initCamera();
 
             this.vistaConstruyendo = new VistaConstruyendo();
@@ -156,6 +160,43 @@ namespace AlumnoEjemplos.RamboAxe
             this.skyboxInit();
             this.initBarrasVida(ScreenWidth,ScreenHeight);
             
+        }
+
+        private void initBlur(Microsoft.DirectX.Direct3D.Device d3dDevice)
+        {
+            //Activamos el renderizado customizado. De esta forma el framework nos delega control total sobre como dibujar en pantalla
+            //La responsabilidad cae toda de nuestro lado
+            GuiController.Instance.CustomRenderEnabled = true;
+
+
+            //Se crean 2 triangulos (o Quad) con las dimensiones de la pantalla con sus posiciones ya transformadas
+            // x = -1 es el extremo izquiedo de la pantalla, x = 1 es el extremo derecho
+            // Lo mismo para la Y con arriba y abajo
+            // la Z en 1 simpre
+            CustomVertex.PositionTextured[] screenQuadVertices = new CustomVertex.PositionTextured[]
+		    {
+    			new CustomVertex.PositionTextured( -1, 1, 1, 0,0), 
+			    new CustomVertex.PositionTextured(1,  1, 1, 1,0),
+			    new CustomVertex.PositionTextured(-1, -1, 1, 0,1),
+			    new CustomVertex.PositionTextured(1,-1, 1, 1,1)
+    		};
+            //vertex buffer de los triangulos
+            screenQuadVB = new VertexBuffer(typeof(CustomVertex.PositionTextured),
+                    4, d3dDevice, Usage.Dynamic | Usage.WriteOnly,
+                        CustomVertex.PositionTextured.Format, Pool.Default);
+            screenQuadVB.SetData(screenQuadVertices, 0, LockFlags.None);
+
+            //Creamos un Render Targer sobre el cual se va a dibujar la pantalla
+            renderTarget2D = new Texture(d3dDevice, d3dDevice.PresentationParameters.BackBufferWidth
+                    , d3dDevice.PresentationParameters.BackBufferHeight, 1, Usage.RenderTarget,
+                        Format.X8R8G8B8, Pool.Default);
+
+
+            //Cargar shader con efectos de Post-Procesado
+            effect = TgcShaders.loadEffect(GuiController.Instance.ExamplesMediaDir + "Shaders\\PostProcess.fx");
+
+            //Configurar Technique dentro del shader
+            effect.Technique = "BlurTechnique";
         }
         public void initMapa(){
             mapa = new MapaDelJuego((int)widthCuadrante,(int)heightCuadrante);
@@ -811,33 +852,36 @@ namespace AlumnoEjemplos.RamboAxe
 
             Microsoft.DirectX.Direct3D.Device d3dDevice = GuiController.Instance.D3dDevice;
            
-            d3dDevice.BeginScene();
+            //d3dDevice.BeginScene();
+            GuiController.Instance.Logger.log(Convert.ToString(barraVida.valorActual));
+            this.customRender(d3dDevice,elapsedTime,barraVida.valorActual);
 
+            //barraSed.render(elapsedTime);
+            //barraVida.render(elapsedTime);
+            //barraHambre.render(elapsedTime);
 
-            barraSed.render(elapsedTime);
-            barraVida.render(elapsedTime);
-            barraHambre.render(elapsedTime);
-
-            if (barraInteraccion != null)
+            /*if (barraInteraccion != null)
             {
                 barraInteraccion.render(elapsedTime);
             }
-            vistaInventario.render();
+            vistaInventario.render();*/
            
          
 
-            vistaConstruyendo.render();
-           // box.render();
+            //vistaConstruyendo.render();
+           
+            
+            // box.render();
 
 
 
 
-            changeSkyBox();
+            /*changeSkyBox();
             skyBox.Center = camera.Position;
             skyBox.updateValues();
-            skyBox.render();
+            skyBox.render();*/
 
-            int boxesToCheck = 9;
+            /*int boxesToCheck = 9;
             text4.Text = "";
             
             for (int x = 0; x < boxesToCheck; x++)
@@ -895,11 +939,162 @@ namespace AlumnoEjemplos.RamboAxe
                GuiController.Instance.Drawer2D.endDrawSprite();
                text3.render();
                text4.render();
-           }
+           }*/
 
-           sonidoDeFondo.playMusic();
-           GuiController.Instance.D3dDevice.EndScene();
+           //sonidoDeFondo.playMusic();
+           //GuiController.Instance.D3dDevice.EndScene();
            
+        }
+
+        private void customRender(Microsoft.DirectX.Direct3D.Device d3dDevice, float elapsedTime,int vidaActual)
+        {
+            pOldRT = d3dDevice.GetRenderTarget(0);
+            Surface pSurf = renderTarget2D.GetSurfaceLevel(0);
+            d3dDevice.SetRenderTarget(0, pSurf);
+            d3dDevice.Clear(ClearFlags.Target | ClearFlags.ZBuffer, Color.Black, 1.0f, 0);
+            //Dibujamos la escena comun, pero en vez de a la pantalla al Render Target
+            drawSceneToRenderTarget(d3dDevice, elapsedTime);
+            //Liberar memoria de surface de Render Target
+            pSurf.Dispose();
+            //Si quisieramos ver que se dibujo, podemos guardar el resultado a una textura en un archivo para debugear su resultado (ojo, es lento)
+            //TextureLoader.Save(GuiController.Instance.ExamplesMediaDir + "Shaders\\render_target.bmp", ImageFileFormat.Bmp, renderTarget2D);
+            //Ahora volvemos a restaurar el Render Target original (osea dibujar a la pantalla)
+            d3dDevice.SetRenderTarget(0, pOldRT);
+            //Luego tomamos lo dibujado antes y lo combinamos con una textura con efecto de alarma
+            drawPostProcess(d3dDevice,vidaActual);
+        }
+        private void drawSceneToRenderTarget(Microsoft.DirectX.Direct3D.Device d3dDevice, float elapsedTime)
+        {
+            //Arrancamos el renderizado. Esto lo tenemos que hacer nosotros a mano porque estamos en modo CustomRenderEnabled = true
+            d3dDevice.BeginScene();
+
+
+            //Como estamos en modo CustomRenderEnabled, tenemos que dibujar todo nosotros, incluso el contador de FPS
+            GuiController.Instance.Text3d.drawText("FPS: " + HighResolutionTimer.Instance.FramesPerSecond, 0, 0, Color.Yellow);
+
+            //Tambien hay que dibujar el indicador de los ejes cartesianos
+            GuiController.Instance.AxisLines.render();
+
+            barraSed.render(elapsedTime);
+            barraVida.render(elapsedTime);
+            barraHambre.render(elapsedTime);
+
+            if (barraInteraccion != null)
+            {
+                barraInteraccion.render(elapsedTime);
+            }
+            vistaInventario.render();
+            vistaConstruyendo.render();
+
+            changeSkyBox();
+            skyBox.Center = camera.Position;
+            skyBox.updateValues();
+            skyBox.render();
+
+            int boxesToCheck = 9;
+            text4.Text = "";
+
+            for (int x = 0; x < boxesToCheck; x++)
+            {
+                for (int z = 0; z < boxesToCheck; z++)
+                {
+
+                    Cuadrante unCuadrante = mapa.getCuadrante((int)(currentCuadrantX + (x - ((int)boxesToCheck / 2))), ((int)currentCuadrantZ + z - (int)boxesToCheck / 2));
+                    TgcCollisionUtils.FrustumResult r = TgcCollisionUtils.classifyFrustumAABB(GuiController.Instance.Frustum, unCuadrante.getBoundingBox());
+
+                    if (r == TgcCollisionUtils.FrustumResult.INTERSECT || r == TgcCollisionUtils.FrustumResult.INSIDE)
+                    {
+
+                        unCuadrante.getTerrain().render();
+                        // text4.Text += ">> " +unCuadrante.getLatitud().ToString() + " " + unCuadrante.getLongitud().ToString()+"\n";
+                        foreach (GameObjectAbstract go in unCuadrante.getObjects())
+                        {
+
+                            int foreachCuadranteX = currentCuadrantX + x - 1;
+                            int foreachCuadranteZ = currentCuadrantZ + z - 1;
+                            TgcMesh mesh = go.getMesh();
+                            r = TgcCollisionUtils.classifyFrustumAABB(GuiController.Instance.Frustum, mesh.BoundingBox);
+
+                            if (r == TgcCollisionUtils.FrustumResult.INSIDE || r == TgcCollisionUtils.FrustumResult.INTERSECT)
+                            {
+                                foreach (TgcMesh bound in go.getBounds())
+                                {
+                                    bound.BoundingBox.render();
+                                }
+                                mesh.render();
+                            }
+
+
+                        }
+                    }
+                }
+            }
+
+            piso.render();
+
+
+            if (selectedGameObject != null)
+            {
+                if (barraInteraccion != null && !barraInteraccion.isActive())
+                {
+                    barraInteraccion.dispose();
+                    barraInteraccion = null;
+                    selectedGameObject.use();
+                }
+            }
+            if (!vistaInventario.abierto)
+            {
+                GuiController.Instance.Drawer2D.beginDrawSprite();
+                hudBack.render();
+                GuiController.Instance.Drawer2D.endDrawSprite();
+                text3.render();
+                text4.render();
+            }
+            sonidoDeFondo.playMusic();
+            //Terminamos manualmente el renderizado de esta escena. Esto manda todo a dibujar al GPU al Render Target que cargamos antes
+            d3dDevice.EndScene();
+        }
+
+
+        /// <summary>
+        /// Se toma todo lo dibujado antes, que se guardo en una textura, y se le aplica un shader para borronear la imagen
+        /// </summary>
+        private void drawPostProcess(Microsoft.DirectX.Direct3D.Device d3dDevice, int cantVidaActual)
+        {
+            //Arrancamos la escena
+            d3dDevice.BeginScene();
+
+            //Cargamos para renderizar el unico modelo que tenemos, un Quad que ocupa toda la pantalla, con la textura de todo lo dibujado antes
+            d3dDevice.VertexFormat = CustomVertex.PositionTextured.Format;
+            d3dDevice.SetStreamSource(0, screenQuadVB, 0);
+
+            //Ver si el efecto de oscurecer esta activado, configurar Technique del shader segun corresponda
+            //effect.Technique = "BlurTechnique";
+            if (cantVidaActual < 30)
+            {
+                effect.Technique = "BlurTechnique";
+            }
+            else
+            {
+                effect.Technique = "DefaultTechnique";
+            }
+
+            //Cargamos parametros en el shader de Post-Procesado
+            effect.SetValue("render_target2D", renderTarget2D);
+            effect.SetValue("blur_intensity", 0.01f);
+
+
+            //Limiamos la pantalla y ejecutamos el render del shader
+            d3dDevice.Clear(ClearFlags.Target | ClearFlags.ZBuffer, Color.Black, 1.0f, 0);
+            effect.Begin(FX.None);
+            effect.BeginPass(0);
+            d3dDevice.DrawPrimitives(PrimitiveType.TriangleStrip, 0, 2);
+            effect.EndPass();
+            effect.End();
+
+            GuiController.Instance.Text3d.drawText("FPS: " + HighResolutionTimer.Instance.FramesPerSecond, 0, 0, Color.Yellow);
+            //Terminamos el renderizado de la escena
+            d3dDevice.EndScene();
         }
 
         public void userVars()
