@@ -61,7 +61,12 @@ namespace AlumnoEjemplos.RamboAxe
         VistaConstruyendo vistaConstruyendo;
         float tiempoAcumuladoParaContinue = 0;
         TgcPlaneWall piso;
-        
+        TgcSprite lluviaSprite;
+        Vector2 posicionLluvia;
+
+        int ScreenWidth = GuiController.Instance.D3dDevice.Viewport.Width;
+        int ScreenHeight = GuiController.Instance.D3dDevice.Viewport.Height;
+
         bool gameOver = false;
         public bool forceUpdate = true;
         int tiempoDelContinue = 3;
@@ -117,8 +122,10 @@ namespace AlumnoEjemplos.RamboAxe
         
         public override void init()
         {
+
             hudBack = new TgcSprite();
             hudBack.Texture = TgcTexture.createTexture(GuiController.Instance.AlumnoEjemplosDir + "RamboAxe\\Media\\fondo_hud_violeta_16a.png");
+            initLluviaSprites();
             Microsoft.DirectX.Direct3D.Device d3dDevice = GuiController.Instance.D3dDevice;
             GuiController.Instance.CustomRenderEnabled = true;
            
@@ -128,8 +135,6 @@ namespace AlumnoEjemplos.RamboAxe
 
             menuAyuda = new TgcSprite();
             menuAyuda.Texture = TgcTexture.createTexture(GuiController.Instance.AlumnoEjemplosDir + "RamboAxe\\Media\\menuayuda.png");
-            float ScreenWidth = GuiController.Instance.D3dDevice.Viewport.Width;
-            float ScreenHeight = GuiController.Instance.D3dDevice.Viewport.Height;
             Size tamaño = menuAyuda.Texture.Size;
             menuAyuda.Scaling = new Vector2(1.2f, 0.8f);
             menuAyuda.Position = new Vector2((ScreenWidth - tamaño.Width) / 2.2f,
@@ -173,9 +178,9 @@ namespace AlumnoEjemplos.RamboAxe
             barraSed = new BarraEstatica();
             barraVida = new BarraEstatica();
 
-            barraHambre.init(BarraEstatica.RED, GuiController.Instance.AlumnoEjemplosDir + "RamboAxe\\Media\\comidaicon.png",80 + (screenWidth / 7), screenHeight - 100, 0, pj.maximaHambre);
-            barraSed.init(BarraEstatica.VIOLET, GuiController.Instance.AlumnoEjemplosDir + "RamboAxe\\Media\\sedicon.png",(barrasWidth) + 80 + (screenWidth / 7), screenHeight - 100, 0, pj.maximaSed);
-            barraVida.init(BarraEstatica.YELLOW, GuiController.Instance.AlumnoEjemplosDir + "RamboAxe\\Media\\vidaicon.png", (barrasWidth * 2) + 80 + (screenWidth / 7), screenHeight - 100, 0, pj.maximaVida);
+            barraHambre.init(BarraEstatica.RED, GuiController.Instance.AlumnoEjemplosDir + "RamboAxe\\Media\\comidaicon.png",80, screenHeight - 30, 0, pj.maximaHambre);
+            barraSed.init(BarraEstatica.VIOLET, GuiController.Instance.AlumnoEjemplosDir + "RamboAxe\\Media\\sedicon.png", (barrasWidth) + 80, screenHeight - 30, 0, pj.maximaSed);
+            barraVida.init(BarraEstatica.YELLOW, GuiController.Instance.AlumnoEjemplosDir + "RamboAxe\\Media\\vidaicon.png", (barrasWidth * 2) + 80, screenHeight - 30, 0, pj.maximaVida);
             
             //barraHambre.init(BarraEstatica.RED, 80, 460, 0, pj.maximaHambre);
             //barraSed.init(BarraEstatica.VIOLET, (barrasWidth) + 80, 460, 0, pj.maximaSed);
@@ -213,12 +218,10 @@ namespace AlumnoEjemplos.RamboAxe
             }
             if (rotateCameraWithMouse)
             {
-                int ScreenWidth = GuiController.Instance.D3dDevice.Viewport.Width;
-                int ScreenHeight = GuiController.Instance.D3dDevice.Viewport.Height;
                 int ScreenX = GuiController.Instance.D3dDevice.Viewport.X;
                 int ScreenY = GuiController.Instance.D3dDevice.Viewport.Y;
                 
-                Cursor.Position = new Point(MainForm.ActiveForm.Width/2, ScreenY + (ScreenHeight / 2));
+                Cursor.Position = new Point(MainForm.ActiveForm.Width/2, ScreenY + ((int)ScreenHeight / 2));
             }
 
             float heading = 0.0f;
@@ -492,7 +495,16 @@ namespace AlumnoEjemplos.RamboAxe
             }
 
         }
-        
+
+        public void initLluviaSprites()
+        {
+            lluviaSprite = new TgcSprite();
+            //lluviaSprite.Texture = TgcTexture.createTexture(GuiController.Instance.AlumnoEjemplosDir + "RamboAxe\\Media\\Rain_Effect.png");
+            lluviaSprite.Texture = TgcTexture.createTexture(GuiController.Instance.AlumnoEjemplosDir + "RamboAxe\\Media\\rain-sprite.png");
+            posicionLluvia = new Vector2(0f, 0f);
+            lluviaSprite.Position = posicionLluvia;
+            lluviaSprite.Scaling = new Vector2(1f, 1f);
+        }
 
         public void initInventario() {
             InventarioManager.init();
@@ -813,10 +825,13 @@ namespace AlumnoEjemplos.RamboAxe
            
             d3dDevice.BeginScene();
 
+            if (!d3dInput.keyDown(Key.F5)) //menua ayuda
+            {
+                barraSed.render(elapsedTime);
+                barraVida.render(elapsedTime);
+                barraHambre.render(elapsedTime);
+            }
 
-            barraSed.render(elapsedTime);
-            barraVida.render(elapsedTime);
-            barraHambre.render(elapsedTime);
 
             if (barraInteraccion != null)
             {
@@ -896,7 +911,9 @@ namespace AlumnoEjemplos.RamboAxe
                text3.render();
                text4.render();
            }
-
+           if (llueve && intensidadLluvia > 0.5) {
+               lluviaFuerte();
+           }
            sonidoDeFondo.playMusic();
            GuiController.Instance.D3dDevice.EndScene();
            
@@ -956,8 +973,6 @@ namespace AlumnoEjemplos.RamboAxe
 
            public void hud()
         {
-            int ScreenWidth = GuiController.Instance.D3dDevice.Viewport.Width;
-            int ScreenHeight = GuiController.Instance.D3dDevice.Viewport.Width;
             textHud = new TgcText2d();
             //textHud.Text = "Texto del hud.";
             textHud.Align = TgcText2d.TextAlign.LEFT;
@@ -996,7 +1011,7 @@ namespace AlumnoEjemplos.RamboAxe
             //textGameOver.Position = new Point(115, 30);
             System.Drawing.Font font1 = new System.Drawing.Font("Arial", 44);
             textGameOver.changeFont(font1);
-            textGameOver.Position = new Point( ScreenWidth /2 -200 , ScreenHeight / 2 - 100);
+            textGameOver.Position = new Point(ScreenWidth / 2 - 200, ScreenHeight / 2 - 100);
 
             textGameContinue = new TgcText2d();
             textGameContinue.Text = "Espere y presione la tecla \" C \" si desea otra oportunidad  ";
@@ -1004,7 +1019,7 @@ namespace AlumnoEjemplos.RamboAxe
             textGameContinue.Size = new Size(400, 100);
             textGameContinue.Color = Color.Red;
             System.Drawing.Font font2 = new System.Drawing.Font("Arial", 44);
-            textGameContinue.Position = new Point(ScreenWidth / 2 - 200, ScreenHeight / 2 );               
+            textGameContinue.Position = new Point((int)ScreenWidth / 2 - 200, (int)ScreenHeight / 2 );               
 
 
         }
@@ -1028,7 +1043,38 @@ namespace AlumnoEjemplos.RamboAxe
             }
             return intensidadLluviaString;
         }
+        private void lluviaFuerte()
+        {
+            Random rx = new Random();
+            float rx1 = (float)rx.NextDouble();
+            posicionLluvia.X = (rx1 * ScreenWidth - ScreenWidth / 2);
+            lluviaSprite.Position = posicionLluvia;
+            GuiController.Instance.Drawer2D.beginDrawSprite();
 
+            lluviaSprite.render();
+            posicionLluvia.X = (rx1 * ScreenWidth * 2);
+            lluviaSprite.Position = posicionLluvia;
+            lluviaSprite.render();
+            posicionLluvia.X = (rx1 * ScreenWidth);
+            lluviaSprite.Position = posicionLluvia;
+            lluviaSprite.render();
+            GuiController.Instance.Drawer2D.endDrawSprite();
+        }
+        private void lluviaSuave()
+        {
+            Random rx = new Random();
+            float rx1 = (float)rx.NextDouble();
+            float r2 = rx1 * ScreenWidth / 8;
+            posicionLluvia.X = (r2);
+            lluviaSprite.Position = posicionLluvia;
+
+            GuiController.Instance.Drawer2D.beginDrawSprite();
+            lluviaSprite.render();
+            posicionLluvia.X = (r2 + ScreenWidth / 2);
+            lluviaSprite.Position = posicionLluvia;
+            lluviaSprite.render();
+            GuiController.Instance.Drawer2D.endDrawSprite();
+        }
         private string vientoActualString()
         {
             string viento = "";

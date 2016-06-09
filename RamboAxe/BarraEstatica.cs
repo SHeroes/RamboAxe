@@ -58,13 +58,14 @@ namespace AlumnoEjemplos.RamboAxe
 
             barIcon = new TgcSprite();
             barIcon.Texture = TgcTexture.createTexture(texturePath);
-            barIcon.Position = new Vector2(barraVaciaPosX -5, barraVaciaPosY -100);
+            barIcon.Position = new Vector2(barraVaciaPosX -5, barraVaciaPosY -60 );
             if (texturePath.Contains("vidaicon"))
             {
-                barIcon.Scaling = new Vector2(0.2f, 0.2f);
+                //barIcon.Scaling = new Vector2(0.2f, 0.2f);
             }
             else{
-                barIcon.Scaling = new Vector2(0.15f, 0.15f);
+                barIcon.Position = new Vector2(barraVaciaPosX + 5, barraVaciaPosY - 40);
+                //barIcon.Scaling = new Vector2(0.5f, 0.5f);
             }
 
             barTitle = new TgcText2d();

@@ -15,6 +15,8 @@ namespace AlumnoEjemplos.RamboAxe.GameObjects
         List<GameObjectAbstract> cuadrantObjects;
         int latitud; 
         int longitud;
+        public static string HeightMapStyleTextureTerrain = "";
+        string hgMapTexture; 
         private int temperatura;
         private HeightMapTerrain terrain;
         private TgcBoundingBox boundingBox;
@@ -35,30 +37,40 @@ namespace AlumnoEjemplos.RamboAxe.GameObjects
             boundingBox = new TgcBoundingBox(new Vector3(latitud*width,0,longitud*height),new Vector3(latitud*width+width,1000,longitud*height+height));
             terrain = new HeightMapTerrain();
             Random rX = new Random();
+            //hardocdeado para la prueba tomas las texturas de la carpeta textureMap\\green 
+            HeightMapStyleTextureTerrain = "green";
+
             string terrainHm = GuiController.Instance.AlumnoEjemplosDir + "Ramboaxe\\Media\\";
             if (rX.NextDouble() < 0.2)
             {
+                hgMapTexture = terrainHm + "textureMap\\" + HeightMapStyleTextureTerrain +"\\hm1.jpg";
                 terrainHm = terrainHm + "hm1.jpg";
+
             }else if (rX.NextDouble() < 0.4)
             {
+                hgMapTexture = terrainHm + "textureMap\\" + HeightMapStyleTextureTerrain + "\\hm2.jpg";
                 terrainHm = terrainHm + "hm2.jpg";
             }else if (rX.NextDouble() < 0.56)
             {
+                hgMapTexture = terrainHm + "textureMap\\" + HeightMapStyleTextureTerrain + "\\hm3.jpg";
                 terrainHm = terrainHm + "hm3.jpg";
             }
             else if (rX.NextDouble() < 0.61)
             {
+                hgMapTexture = terrainHm + "textureMap\\" + HeightMapStyleTextureTerrain + "\\hm4.jpg";
                 terrainHm = terrainHm + "hm4.jpg";
             }
             else if (rX.NextDouble() < 0.76)
             {
+                hgMapTexture = terrainHm + "textureMap\\" + HeightMapStyleTextureTerrain + "\\hm5.jpg";
                 terrainHm = terrainHm + "hm5.jpg";
             }
             else 
             {
+                hgMapTexture = terrainHm + "textureMap\\" + HeightMapStyleTextureTerrain + "\\hm6.jpg";
                 terrainHm = terrainHm + "hm6.jpg";
-            }           
-            terrain.loadTexture(terrainHm);
+            }
+            terrain.loadTexture(hgMapTexture);
             terrain.loadHeightmap(terrainHm, 10f, 0.7f, new Vector3(((float)(latitud + 0.5f) * (width/10)), 0, (longitud + 0.5f) * (height/10)));
             //terrain.loadPlainHeightmap(100, 100, 50, 100, 1, new Vector3(500, 0, 500));
             setTempratura((latitud + longitud) % 10); //el resto de la division por 10
