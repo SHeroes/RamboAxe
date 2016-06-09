@@ -13,7 +13,8 @@ namespace AlumnoEjemplos.Ramboaxe
     public class HeightMapTerrain
     {
         #region Private fields
-
+        protected static Dictionary<String, Bitmap> heightmaps;
+        protected static Dictionary<String, Bitmap> textures;
         private float maxIntensity;
         private float minIntensity;
         private Vector3 traslation;
@@ -108,7 +109,8 @@ namespace AlumnoEjemplos.Ramboaxe
         {
             enabled = true;
             alphaBlendEnable = false;
-
+            heightmaps = new Dictionary<string, Bitmap>();
+            textures = new Dictionary<string, Bitmap>();
             //Shader     
             Effect = TgcShaders.loadEffect(GuiController.Instance.ExamplesDir + "TerrainEditor\\Shaders\\EditableTerrain.fx");
             Technique = "PositionColoredTextured";
@@ -129,7 +131,16 @@ namespace AlumnoEjemplos.Ramboaxe
         /// </summary>
         protected float[,] loadHeightMap(Device d3dDevice, string path)
         {
-            Bitmap bitmap = (Bitmap)Bitmap.FromFile(path);
+
+            Bitmap bitmap;
+            if(heightmaps.ContainsKey(path)){
+                bitmap = (Bitmap)heightmaps[path].Clone();
+                
+            }else{
+                bitmap =(Bitmap)Bitmap.FromFile(path);
+                heightmaps.Add(path, bitmap);
+            }
+
             int width = bitmap.Size.Width;
             int length = bitmap.Size.Height;
 
@@ -143,7 +154,6 @@ namespace AlumnoEjemplos.Ramboaxe
                     float intensity = pixel.R * 0.299f + pixel.G * 0.587f + pixel.B * 0.114f;
                     heightmap[i, j] = intensity;
                 }
-
             }
             bitmap.Dispose();
             return heightmap;
@@ -332,6 +342,17 @@ namespace AlumnoEjemplos.Ramboaxe
         /// </summary>
         public void loadTexture(string path)
         {
+            Bitmap b;
+            if (textures.ContainsKey(path))
+            {
+                b = (Bitmap)textures[path].Clone();
+
+            }
+            else
+            {
+                b = (Bitmap)Bitmap.FromFile(path);
+                textures.Add(path, b);
+            }
             //Dispose textura anterior, si habia
             if (terrainTexture != null && !terrainTexture.Disposed)
             {
@@ -341,7 +362,7 @@ namespace AlumnoEjemplos.Ramboaxe
             Device d3dDevice = GuiController.Instance.D3dDevice;
 
             //Rotar e invertir textura
-            Bitmap b = (Bitmap)Bitmap.FromFile(path);
+            
             b.RotateFlip(RotateFlipType.Rotate90FlipX);
             terrainTexture = Texture.FromBitmap(d3dDevice, b, Usage.None, Pool.Managed);
         }

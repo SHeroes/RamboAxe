@@ -102,7 +102,6 @@ namespace AlumnoEjemplos.RamboAxe.GameObjects
                 boundMesh.Scale = new Vector3(normalizadoOriginal.X * x, normalizadoOriginal.Y * y, normalizadoOriginal.Z * z);
                 boundMesh.updateBoundingBox();
                 boundMesh.Position = new Vector3(this.x, this.y, this.z);
-                
             }
         }
 

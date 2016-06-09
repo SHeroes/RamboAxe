@@ -14,7 +14,7 @@ namespace AlumnoEjemplos.RamboAxe
         private float tiempoTranscurridoDelCiclo;
         private float horaDelDia;
         private int momentoDelDia;
-
+        public int dia = 1;
         CharacterSheet pj = CharacterSheet.getInstance();
         private HoraDelDia() {
             tiempoTranscurridoDelCiclo = 0;
@@ -32,6 +32,7 @@ namespace AlumnoEjemplos.RamboAxe
             if (tiempoTranscurridoDelCiclo > tiempoDelCiclo)
             {
                 tiempoTranscurridoDelCiclo = 0;
+                dia++;
             }
             setHoraDia();
             this.momentoDelDia = setMomentoDelDia();

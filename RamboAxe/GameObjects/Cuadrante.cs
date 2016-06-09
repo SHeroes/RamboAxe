@@ -57,12 +57,12 @@ namespace AlumnoEjemplos.RamboAxe.GameObjects
             else 
             {
                 terrainHm = terrainHm + "hm6.jpg";
-            }           
-            terrain.loadTexture(terrainHm);
+            }
+            
             terrain.loadHeightmap(terrainHm, 10f, 0.7f, new Vector3(((float)(latitud + 0.5f) * (width/10)), 0, (longitud + 0.5f) * (height/10)));
             //terrain.loadPlainHeightmap(100, 100, 50, 100, 1, new Vector3(500, 0, 500));
-            setTempratura((latitud + longitud) % 10); //el resto de la division por 10
-
+            setTemperatura((latitud + longitud) % 10); //el resto de la division por 10
+            
             this.latitud = latitud;
             this.longitud = longitud;
             this.cuadrantObjects = new List<GameObjectAbstract>();
@@ -78,7 +78,14 @@ namespace AlumnoEjemplos.RamboAxe.GameObjects
 
             getTerrain().interpoledHeight(700 + boundingBox.PMin.X, 700 + boundingBox.PMin.Z, out y);
             go = new ArbolCristalGo(700 + boundingBox.PMin.X, y, 700 + boundingBox.PMin.Z);
-            
+            this.cuadrantObjects.Add(go);
+
+            getTerrain().interpoledHeight(550 + boundingBox.PMin.X, 550 + boundingBox.PMin.Z, out y);
+            go = new ArbolCalorGo(550 + boundingBox.PMin.X, y, 550 + boundingBox.PMin.Z);
+            this.cuadrantObjects.Add(go);
+           
+            getTerrain().interpoledHeight(700 + boundingBox.PMin.X, 550 + boundingBox.PMin.Z, out y);
+            go = new ArbolHongoGo(700 + boundingBox.PMin.X, y, 550 + boundingBox.PMin.Z);
             this.cuadrantObjects.Add(go);
             
             //go = new Arbol(440 + latitud * width, y, 300 + longitud * height);
@@ -168,7 +175,7 @@ namespace AlumnoEjemplos.RamboAxe.GameObjects
         {
             return temperatura;
         }
-        public void setTempratura(int temp)
+        public void setTemperatura(int temp)
         {
             this.temperatura = temp;
             switch (this.temperatura)
@@ -187,6 +194,24 @@ namespace AlumnoEjemplos.RamboAxe.GameObjects
                 case 9: temperatura = 2; break; //temperaturaString = "TEMPLADO"; break;              
 
                 default: temperatura = 2; break; //temperaturaString = "TEMPLADO"; break;
+            }
+            switch (temperatura)
+            {
+                case 0:
+                    terrain.loadTexture(GuiController.Instance.AlumnoEjemplosDir + "Ramboaxe\\Media\\hm_textures\\muy_frio.jpg");
+                    break;
+                case 1:
+                    terrain.loadTexture(GuiController.Instance.AlumnoEjemplosDir + "Ramboaxe\\Media\\hm_textures\\frio.jpg");
+                    break;
+                case 2:
+                    terrain.loadTexture(GuiController.Instance.AlumnoEjemplosDir + "Ramboaxe\\Media\\hm_textures\\normal.jpg");
+                    break;
+                case 3:
+                    terrain.loadTexture(GuiController.Instance.AlumnoEjemplosDir + "Ramboaxe\\Media\\hm_textures\\caluroso.jpg");
+                    break;
+                case 4:
+                    terrain.loadTexture(GuiController.Instance.AlumnoEjemplosDir + "Ramboaxe\\Media\\hm_textures\\muy_caluroso.jpg");
+                    break;
             }
         }
 
