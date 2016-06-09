@@ -109,6 +109,7 @@
     <Compile Include="RamboAxe\ControlTermico.cs" />
     <Compile Include="RamboAxe\EjemploAlumno.cs" />
     <Compile Include="RamboAxe\GameCamera.cs" />
+    <Compile Include="RamboAxe\GameObjects\MuchosArboles1.cs" />
     <Compile Include="RamboAxe\GameObjects\ArbolCristalGo.cs" />
     <Compile Include="RamboAxe\GameObjects\Arbol.cs" />
     <Compile Include="RamboAxe\GameObjects\Cuadrante.cs" />
