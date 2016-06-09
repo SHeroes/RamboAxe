@@ -210,6 +210,10 @@ namespace AlumnoEjemplos.RamboAxe
             this.initHud();
             this.skyboxInit();
             this.initBarrasVida();
+
+            hudBack.Position = new Vector2(10, 10);
+            float _result = ((GuiController.Instance.D3dDevice.Viewport.Width - 20) / 32);
+            hudBack.Scaling = new Vector2(_result, 1.9f);
             
         }
         public void initMapa(){
@@ -220,6 +224,7 @@ namespace AlumnoEjemplos.RamboAxe
         {
             barraInteraccion = new Barra();
             barraInteraccion.init(color, true, 360, 160, time);
+
         }
         public void initBarrasVida()
         {
@@ -864,12 +869,6 @@ namespace AlumnoEjemplos.RamboAxe
                 this.handleResetGame(elapsedTime);
             }
 
-            hudBack.Position = new Vector2(10, 10);
-            
-
-            float _result = ((GuiController.Instance.D3dDevice.Viewport.Width - 20) / 32);
-            
-            hudBack.Scaling = new Vector2(_result, 1.9f);
 
            
          
@@ -879,7 +878,6 @@ namespace AlumnoEjemplos.RamboAxe
 
         public override void render(float elapsedTime)
         {
-
 
             piso.Position =new Vector3(pj.position.X -4500,8,pj.position.Z - 4500);
             //piso.BoundingBox.render();
@@ -928,7 +926,9 @@ namespace AlumnoEjemplos.RamboAxe
             {
                 if (barraInteraccion != null)
                 {
+
                     barraInteraccion.render(elapsedTime);
+
                 }
                 if (!vistaInventario.abierto)
                 {
@@ -954,6 +954,18 @@ namespace AlumnoEjemplos.RamboAxe
             
             vistaInventario.render();
 
+            if (selectedGameObject != null)
+            {
+                if (barraInteraccion != null && !barraInteraccion.isActive())
+                {
+                    //barraInteraccion.render(elapsedTime);
+
+                    barraInteraccion.dispose();
+                    barraInteraccion = null;
+                    selectedGameObject.use();
+
+                }
+            }
             
 
             d3dDevice.EndScene();
@@ -1075,15 +1087,6 @@ namespace AlumnoEjemplos.RamboAxe
             piso.render();
 
 
-            if (selectedGameObject != null)
-            {
-                if (barraInteraccion != null && !barraInteraccion.isActive())
-                {
-                    barraInteraccion.dispose();
-                    barraInteraccion = null;
-                    selectedGameObject.use();
-                }
-            }
             
             //cuerpoPj.BoundingBox.render();
             d3dDevice.EndScene();
