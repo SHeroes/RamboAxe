@@ -44,16 +44,11 @@ namespace AlumnoEjemplos.RamboAxe.GameObjects
 
         protected void loadMeshes(string meshfile){
             TgcScene scene = null;
-            if (scenes.ContainsKey(meshfile))
+            if (!scenes.ContainsKey(meshfile))
             {
-                scene = scenes[meshfile];   
+                scenes.Add(meshfile, loader.loadSceneFromFile(meshfile));
             }
-            else
-            {
-                scene = loader.loadSceneFromFile(meshfile);
-                scenes.Add(meshfile, scene);
-            }
-
+            scene = scenes[meshfile];  
             bool atleastOne = false;
             foreach (TgcMesh mesh in scene.Meshes)
             {
@@ -102,7 +97,6 @@ namespace AlumnoEjemplos.RamboAxe.GameObjects
                 boundMesh.Scale = new Vector3(normalizadoOriginal.X * x, normalizadoOriginal.Y * y, normalizadoOriginal.Z * z);
                 boundMesh.updateBoundingBox();
                 boundMesh.Position = new Vector3(this.x, this.y, this.z);
-                
             }
         }
 
@@ -135,16 +129,34 @@ namespace AlumnoEjemplos.RamboAxe.GameObjects
            
             this.getMesh().Position = vector;
         }
-        public virtual void place(float x, float y, float z)
-        {
-            this.x = x;
-            this.y = y;
-            this.z = z;
-           
-        }
+        
         public List<TgcMesh> getBounds()
         {
             return this.bounds;
+        }
+        public void dispose()
+        {
+            if(mesh!=null){
+                try
+                { 
+                mesh.dispose();
+                }
+                catch
+                {
+
+                }
+            }
+            
+            foreach(TgcMesh _mesh in bounds){
+                try
+                {
+                    _mesh.dispose();
+                }
+                catch
+                {
+
+                }
+            }
         }
     }
 }

@@ -2,6 +2,7 @@
 using Microsoft.DirectX;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using TgcViewer;
@@ -32,6 +33,11 @@ namespace AlumnoEjemplos.RamboAxe.GameObjects
         {
             return longitud;
         }
+        public Color getColor()
+        {
+            return this.color;
+        }
+        private Color color;
         public Cuadrante(bool randomizedCuadrante, int width, int height, int latitud, int longitud)
         {
             boundingBox = new TgcBoundingBox(new Vector3(latitud*width,0,longitud*height),new Vector3(latitud*width+width,1000,longitud*height+height));
@@ -70,11 +76,12 @@ namespace AlumnoEjemplos.RamboAxe.GameObjects
                 hgMapTexture = terrainHm + "textureMap\\" + HeightMapStyleTextureTerrain + "\\hm6.jpg";
                 terrainHm = terrainHm + "hm6.jpg";
             }
+
             terrain.loadTexture(hgMapTexture);
             terrain.loadHeightmap(terrainHm, 10f, 0.7f, new Vector3(((float)(latitud + 0.5f) * (width/10)), 0, (longitud + 0.5f) * (height/10)));
             //terrain.loadPlainHeightmap(100, 100, 50, 100, 1, new Vector3(500, 0, 500));
-            setTempratura((latitud + longitud) % 10); //el resto de la division por 10
-
+            setTemperatura((latitud + longitud) % 10); //el resto de la division por 10
+            
             this.latitud = latitud;
             this.longitud = longitud;
             this.cuadrantObjects = new List<GameObjectAbstract>();
@@ -90,7 +97,27 @@ namespace AlumnoEjemplos.RamboAxe.GameObjects
 
             getTerrain().interpoledHeight(700 + boundingBox.PMin.X, 700 + boundingBox.PMin.Z, out y);
             go = new ArbolCristalGo(700 + boundingBox.PMin.X, y, 700 + boundingBox.PMin.Z);
-            
+            this.cuadrantObjects.Add(go);
+
+            getTerrain().interpoledHeight(550 + boundingBox.PMin.X, 550 + boundingBox.PMin.Z, out y);
+            go = new ArbolCalorGo(550 + boundingBox.PMin.X, y, 550 + boundingBox.PMin.Z);
+            this.cuadrantObjects.Add(go);
+
+            getTerrain().interpoledHeight(700 + boundingBox.PMin.X, 550 + boundingBox.PMin.Z, out y);
+            go = new ArbolHongoGo(700 + boundingBox.PMin.X, y, 550 + boundingBox.PMin.Z);
+            this.cuadrantObjects.Add(go);
+
+            getTerrain().interpoledHeight(300 + boundingBox.PMin.X, 350 + boundingBox.PMin.Z, out y);
+            go = new PinitosGo(300 + boundingBox.PMin.X, y, 350 + boundingBox.PMin.Z);
+            this.cuadrantObjects.Add(go);
+
+
+            getTerrain().interpoledHeight(800 + boundingBox.PMin.X, 500 + boundingBox.PMin.Z, out y);
+            go = new ParteNave1(800 + boundingBox.PMin.X, y, 500 + boundingBox.PMin.Z);
+            this.cuadrantObjects.Add(go);
+
+            getTerrain().interpoledHeight(200 + boundingBox.PMin.X, 800 + boundingBox.PMin.Z, out y);
+            go = new ParteNave2(200 + boundingBox.PMin.X, y, 800 + boundingBox.PMin.Z);
             this.cuadrantObjects.Add(go);
             
             //go = new Arbol(440 + latitud * width, y, 300 + longitud * height);
@@ -180,7 +207,7 @@ namespace AlumnoEjemplos.RamboAxe.GameObjects
         {
             return temperatura;
         }
-        public void setTempratura(int temp)
+        public void setTemperatura(int temp)
         {
             this.temperatura = temp;
             switch (this.temperatura)
@@ -200,6 +227,31 @@ namespace AlumnoEjemplos.RamboAxe.GameObjects
 
                 default: temperatura = 2; break; //temperaturaString = "TEMPLADO"; break;
             }
+            /*
+            switch (temperatura)
+            {
+                case 0:
+                    terrain.loadTexture(GuiController.Instance.AlumnoEjemplosDir + "Ramboaxe\\Media\\hm_textures\\muy_frio.jpg");
+                    this.color = Color.PaleTurquoise;
+                    break;
+                case 1:
+                    terrain.loadTexture(GuiController.Instance.AlumnoEjemplosDir + "Ramboaxe\\Media\\hm_textures\\frio.jpg");
+                    this.color = Color.LightCyan;
+                    break;
+                case 2:
+                    terrain.loadTexture(GuiController.Instance.AlumnoEjemplosDir + "Ramboaxe\\Media\\hm_textures\\normal.jpg");
+                    this.color = Color.LightGreen;
+                    break;
+                case 3:
+                    terrain.loadTexture(GuiController.Instance.AlumnoEjemplosDir + "Ramboaxe\\Media\\hm_textures\\caluroso.jpg");
+                    this.color = Color.Orange;
+                    break;
+                case 4:
+                    terrain.loadTexture(GuiController.Instance.AlumnoEjemplosDir + "Ramboaxe\\Media\\hm_textures\\muy_caluroso.jpg");
+                    this.color = Color.OrangeRed;
+                    break;
+            }
+             */ 
         }
 
         public void removeMesh(GameObjectAbstract anObject){
@@ -210,6 +262,15 @@ namespace AlumnoEjemplos.RamboAxe.GameObjects
         public List<GameObjectAbstract> getObjects()
         {
             return this.cuadrantObjects;
+        }
+        public void dispose()
+        {
+            
+            foreach (GameObjectAbstract go in cuadrantObjects)
+            {
+                go.dispose();
+            }
+            terrain.dispose();
         }
     }
 }

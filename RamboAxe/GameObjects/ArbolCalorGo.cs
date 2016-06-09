@@ -10,15 +10,15 @@ using TgcViewer;
 
 namespace AlumnoEjemplos.RamboAxe.GameObjects
 {
-    class ArbolCristalGo:GameObjectAbstract
+    class ArbolCalorGo:GameObjectAbstract
     {
-        float uses = 5;
+        float uses = 3;
         
-        public ArbolCristalGo(float x,float y, float z): base(x, y-20, z)
+        public ArbolCalorGo(float x,float y, float z): base(x, y-10, z)
         {
             delayUso = 7f;
-            loadMeshes(GuiController.Instance.AlumnoEjemplosDir + "\\Ramboaxe\\Media\\escenario\\cristal_electrico-TgcScene.xml");
-            resize(10*uses,10*uses*2,10*uses);
+            loadMeshes(GuiController.Instance.AlumnoEjemplosDir + "\\Ramboaxe\\Media\\escenario\\cristal_calor-TgcScene.xml");
+            resize(30,70,30);
         }
         public  override InteractuableResponse use()
         {
@@ -30,7 +30,7 @@ namespace AlumnoEjemplos.RamboAxe.GameObjects
                // base.getMesh().updateBoundingBox();
                 //haracterSheet.getInstance().getInventario().agregar(obj1);
 
-                resize(10*uses,10*uses*2,10*uses);
+                resize(10*uses,10*uses*2.5f,10*uses);
     
                 if (uses == 0)
                 {

@@ -14,11 +14,11 @@ namespace AlumnoEjemplos.RamboAxe.GameObjects
     class JugoGo:GameObjectAbstract
     {
         float uses = 1;
-        public JugoGo(float x, float y,float z):base(x,y,z)
+        public JugoGo(float x, float y,float z):base(x,y+5,z)
         {
             loadMeshes(GuiController.Instance.AlumnoEjemplosDir + "Ramboaxe\\Media\\raciones\\juguito_1-TgcScene.xml");
            // normalizarTamanio();
-            resize(1f, 2f, 1f);
+            resize(2f, 4f, 2f);
         }
          public  override InteractuableResponse use()
         {

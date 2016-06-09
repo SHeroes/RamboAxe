@@ -136,20 +136,7 @@ namespace AlumnoEjemplos.RamboAxe.GameObjects
             }
             return cuadrantes[x.ToString()][z.ToString()];
        }
-        public void placeObject(GameObjectAbstract go)
-        {
-            if(go != null){
-                Vector3 worldPosition = go.getMesh().Position;
-                Vector3 relativePosition = getCuadranteRelativePosition(worldPosition);
-                go.place(
-                    (int)Math.Ceiling(relativePosition.X),
-                    (int)Math.Ceiling(relativePosition.Y),
-                    (int)Math.Ceiling(relativePosition.Z)
-                );
-                getCuadranteForPosition(worldPosition).getObjects().Add(go);
-                EjemploAlumno.getInstance().forceUpdate = true;
-            }
-        }
+       
 
         public Cuadrante getCuadranteForPosition(Vector3 position)
         {
@@ -167,5 +154,17 @@ namespace AlumnoEjemplos.RamboAxe.GameObjects
             posiciones.Z = Math.Abs(position.Z) - Math.Abs(cuadranteZ * widthCuadrante);
             return posiciones;
         }
+        public void dispose()
+        {
+            foreach (String keyX in cuadrantes.Keys)
+            {
+                Dictionary<string, Cuadrante> cuadrantesX = cuadrantes[keyX];
+                foreach (String keyY in cuadrantesX.Keys)
+                {
+                    cuadrantesX[keyY].dispose();
+                }
+            }
+        }
     }
+    
 }

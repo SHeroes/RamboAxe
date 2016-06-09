@@ -28,21 +28,23 @@ namespace AlumnoEjemplos.RamboAxe.Player
 
         public bool crouching = false;
         public float velocity = 3;
-        public float terminalVelocity = 5;
-        public float jumpHeight = 0;
+        public float terminalVelocity = 10;
+        public float fallStrength = 0;
         private float nextFall = 0;
         public float playerHeight = 20;
+        private bool canJump = true;
         public void jump()
         {
-            if (jumpHeight == 0)
+            if (fallStrength == 0 && canJump)
             {
-                jumpHeight = 60;
-                nextFall = -10;
+                canJump = false;
+                fallStrength = -100;
+                nextFall = 1;
             }
         }
         public void crouch()
         {
-            if (jumpHeight == 0)
+            if (fallStrength == 0)
             {
                 crouching = true;
                 playerHeight = 10;
@@ -55,20 +57,31 @@ namespace AlumnoEjemplos.RamboAxe.Player
         }
         public void fall()
         {
-            if (jumpHeight > 0)
+            if (fallStrength < 10)
             {
-                nextFall++;
-                if (nextFall > terminalVelocity)
+                nextFall = nextFall * 1.3f;
+                if (nextFall < terminalVelocity)
                 {
                     nextFall = terminalVelocity;
                 }
-                jumpHeight = jumpHeight - nextFall;
-                if (jumpHeight < 0)
-                {
-                    jumpHeight = 0;
-                }
+                fallStrength = fallStrength + nextFall;
             }
 
+        }
+        private void reenableJump(Object source, System.Timers.ElapsedEventArgs e)
+        {
+            reenableJumpTimer.Dispose();
+            canJump = true;
+        
+        }
+        System.Timers.Timer reenableJumpTimer; 
+        public void golpearPiso()
+        {
+            reenableJumpTimer = new System.Timers.Timer(500);
+            aTimer.Enabled = true;
+            aTimer.Elapsed += reenableJump;
+            fallStrength = 0;
+            nextFall = 0;
         }
         public Vector3 position = new Vector3(0, 0, 0);
         public int pesoMaximo { get; private set; }
@@ -218,7 +231,7 @@ namespace AlumnoEjemplos.RamboAxe.Player
             }
             GameObjectAbstract go = construyendo;
             construyendo = null;
-            EjemploAlumno.getInstance().mapa.placeObject(go);
+            //EjemploAlumno.getInstance().mapa.placeObject(go);
             huboCambios();
         }
 
