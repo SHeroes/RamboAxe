@@ -67,7 +67,8 @@ namespace AlumnoEjemplos.RamboAxe
         int tiempoDelContinue = 3;
         public MapaDelJuego mapa;
         Sonido sonidoDeFondo;
-      
+        TgcSprite menuAyuda;
+
         public static EjemploAlumno getInstance()
         {
             return game;
@@ -124,6 +125,16 @@ namespace AlumnoEjemplos.RamboAxe
             EjemploAlumno.game = this;
             sonidoDeFondo = new Sonido(GuiController.Instance.AlumnoEjemplosDir + "RamboAxe\\Media\\sonidofondo.mp3");
             sonidoDeFondo.setLoop(true);
+
+            menuAyuda = new TgcSprite();
+            menuAyuda.Texture = TgcTexture.createTexture(GuiController.Instance.AlumnoEjemplosDir + "RamboAxe\\Media\\menuayuda.png");
+            float ScreenWidth = GuiController.Instance.D3dDevice.Viewport.Width;
+            float ScreenHeight = GuiController.Instance.D3dDevice.Viewport.Height;
+            Size tamaño = menuAyuda.Texture.Size;
+            menuAyuda.Scaling = new Vector2(1.2f, 0.8f);
+            menuAyuda.Position = new Vector2((ScreenWidth - tamaño.Width) / 2.2f,
+                   (ScreenHeight - tamaño.Height / 2) / 2.8f);
+
             //Iniciarlizar PickingRay
             pickingRay = new TgcPickingRay();
             TgcTexture texture = TgcTexture.createTexture(d3dDevice, GuiController.Instance.AlumnoEjemplosDir + "Ramboaxe\\Media\\" + "agua.jpg");
@@ -143,7 +154,7 @@ namespace AlumnoEjemplos.RamboAxe
             this.vistaConstruyendo = new VistaConstruyendo();
             this.hud();
             this.skyboxInit();
-            this.initBarrasVida();
+            this.initBarrasVida(ScreenWidth,ScreenHeight);
             
         }
         public void initMapa(){
@@ -155,15 +166,20 @@ namespace AlumnoEjemplos.RamboAxe
             barraInteraccion = new Barra();
             barraInteraccion.init(color, true, 360, 160, time);
         }
-        public void initBarrasVida()
+        public void initBarrasVida(float screenWidth, float screenHeight)
         {
             float barrasWidth = 280;
             barraHambre = new BarraEstatica();
             barraSed = new BarraEstatica();
             barraVida = new BarraEstatica();
-            barraHambre.init(BarraEstatica.RED, 80, 460, 0, pj.maximaHambre);
-            barraSed.init(BarraEstatica.VIOLET, (barrasWidth) + 80, 460, 0, pj.maximaSed);
-            barraVida.init(BarraEstatica.YELLOW, (barrasWidth * 2) + 80, 460, 0, pj.maximaVida);
+
+            barraHambre.init(BarraEstatica.RED, 80 +(screenWidth/7), screenHeight -100, 0, pj.maximaHambre);
+            barraSed.init(BarraEstatica.VIOLET, (barrasWidth) + 80 + (screenWidth / 7), screenHeight - 100, 0, pj.maximaSed);
+            barraVida.init(BarraEstatica.YELLOW, (barrasWidth * 2) + 80 + (screenWidth / 7), screenHeight - 100, 0, pj.maximaVida);
+            
+            //barraHambre.init(BarraEstatica.RED, 80, 460, 0, pj.maximaHambre);
+            //barraSed.init(BarraEstatica.VIOLET, (barrasWidth) + 80, 460, 0, pj.maximaSed);
+            //barraVida.init(BarraEstatica.YELLOW, (barrasWidth * 2) + 80, 460, 0, pj.maximaVida);
 
             barraHambre.valorActual = pj.hambre;
             barraVida.valorActual = pj.vida;
@@ -262,6 +278,13 @@ namespace AlumnoEjemplos.RamboAxe
                     {
                         pj.stand();
                     }
+                }
+                //Mostrar Ayuda
+                if (d3dInput.keyDown(Key.F5))
+                {
+                    GuiController.Instance.Drawer2D.beginDrawSprite();
+                    menuAyuda.render();
+                    GuiController.Instance.Drawer2D.endDrawSprite();
                 }
                 //direction = new Vector3(0, 0, 0);
             }
@@ -1064,6 +1087,7 @@ namespace AlumnoEjemplos.RamboAxe
             vistaInventario.dispose();
             InventarioManager.dispose();
             MeshManager.dispose();
+            menuAyuda.dispose();
         }
     }
 }
