@@ -83,9 +83,22 @@ namespace AlumnoEjemplos.RamboAxe.GameObjects
             getTerrain().interpoledHeight(550 + boundingBox.PMin.X, 550 + boundingBox.PMin.Z, out y);
             go = new ArbolCalorGo(550 + boundingBox.PMin.X, y, 550 + boundingBox.PMin.Z);
             this.cuadrantObjects.Add(go);
-           
+
             getTerrain().interpoledHeight(700 + boundingBox.PMin.X, 550 + boundingBox.PMin.Z, out y);
             go = new ArbolHongoGo(700 + boundingBox.PMin.X, y, 550 + boundingBox.PMin.Z);
+            this.cuadrantObjects.Add(go);
+
+            getTerrain().interpoledHeight(300 + boundingBox.PMin.X, 350 + boundingBox.PMin.Z, out y);
+            go = new PinitosGo(300 + boundingBox.PMin.X, y, 350 + boundingBox.PMin.Z);
+            this.cuadrantObjects.Add(go);
+
+
+            getTerrain().interpoledHeight(800 + boundingBox.PMin.X, 500 + boundingBox.PMin.Z, out y);
+            go = new ParteNave1(800 + boundingBox.PMin.X, y, 500 + boundingBox.PMin.Z);
+            this.cuadrantObjects.Add(go);
+
+            getTerrain().interpoledHeight(200 + boundingBox.PMin.X, 800 + boundingBox.PMin.Z, out y);
+            go = new ParteNave2(200 + boundingBox.PMin.X, y, 800 + boundingBox.PMin.Z);
             this.cuadrantObjects.Add(go);
             
             //go = new Arbol(440 + latitud * width, y, 300 + longitud * height);

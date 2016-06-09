@@ -133,14 +133,23 @@ namespace AlumnoEjemplos.Ramboaxe
         {
 
             Bitmap bitmap;
-            if(heightmaps.ContainsKey(path)){
-                bitmap = (Bitmap)heightmaps[path].Clone();
-                
-            }else{
-                bitmap =(Bitmap)Bitmap.FromFile(path);
-                heightmaps.Add(path, bitmap);
+            if(!heightmaps.ContainsKey(path)){
+                heightmaps.Add(path, (Bitmap)Bitmap.FromFile(path)); 
             }
-
+            bitmap = (Bitmap)heightmaps[path].Clone();
+            Random rand = new Random();
+            switch (rand.Next(1, 5))
+            {
+                case 1:
+                    bitmap.RotateFlip(RotateFlipType.Rotate90FlipX);
+                    break;
+                case 2:
+                    bitmap.RotateFlip(RotateFlipType.Rotate180FlipX);
+                    break;
+                case 3:
+                    bitmap.RotateFlip(RotateFlipType.Rotate270FlipX);
+                    break;
+            }
             int width = bitmap.Size.Width;
             int length = bitmap.Size.Height;
 
@@ -233,7 +242,7 @@ namespace AlumnoEjemplos.Ramboaxe
             traslation.X =center.X -  (width / 2);
             traslation.Y = center.Y;
             traslation.Z =center.Z - (length / 2);
-
+            
             //Cargar vertices
             loadVertices();
 
@@ -343,16 +352,11 @@ namespace AlumnoEjemplos.Ramboaxe
         public void loadTexture(string path)
         {
             Bitmap b;
-            if (textures.ContainsKey(path))
+            if (!textures.ContainsKey(path))
             {
-                b = (Bitmap)textures[path].Clone();
-
+                textures.Add(path, (Bitmap)Bitmap.FromFile(path)); 
             }
-            else
-            {
-                b = (Bitmap)Bitmap.FromFile(path);
-                textures.Add(path, b);
-            }
+            b = (Bitmap)textures[path].Clone();
             //Dispose textura anterior, si habia
             if (terrainTexture != null && !terrainTexture.Disposed)
             {

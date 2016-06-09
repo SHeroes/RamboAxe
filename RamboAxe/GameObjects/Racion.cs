@@ -14,7 +14,7 @@ namespace AlumnoEjemplos.RamboAxe.GameObjects
     class Racion:GameObjectAbstract
     {
         float uses = 1;
-        public Racion(float x, float y,float z):base(x,y,z)
+        public Racion(float x, float y,float z):base(x,y+5,z)
         {
             loadMeshes(GuiController.Instance.AlumnoEjemplosDir + "Ramboaxe\\Media\\raciones\\racion_1-TgcScene.xml");
            // normalizarTamanio();

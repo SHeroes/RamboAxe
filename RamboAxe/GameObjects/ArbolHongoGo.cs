@@ -38,11 +38,7 @@ namespace AlumnoEjemplos.RamboAxe.GameObjects
             }
             return null;
         }
-         public override void place(float x, float y, float z)
-         {
-             base.place(x, y, z);
-             this.mesh = mesh.clone("ArbolHongoGoin_" + x.ToString() + z.ToString());
-         }
+        
  
     }
 }

@@ -109,6 +109,9 @@
     <Compile Include="RamboAxe\EjemploAlumno.cs" />
     <Compile Include="RamboAxe\GameCamera.cs" />
     <Compile Include="RamboAxe\GameObjects\AguaSucia.cs" />
+    <Compile Include="RamboAxe\GameObjects\ParteNave2.cs" />
+    <Compile Include="RamboAxe\GameObjects\ParteNave1.cs" />
+    <Compile Include="RamboAxe\GameObjects\Pinitos.cs" />
     <Compile Include="RamboAxe\GameObjects\ArbolCalorGo.cs" />
     <Compile Include="RamboAxe\GameObjects\ArbolHongoGo.cs" />
     <Compile Include="RamboAxe\GameObjects\ArbolCristalGo.cs" />

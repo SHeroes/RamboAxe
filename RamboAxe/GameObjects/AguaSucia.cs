@@ -49,9 +49,7 @@ namespace AlumnoEjemplos.RamboAxe.GameObjects
             
             return null;
         }
-         public override void place(float x, float y, float z)
-         {
-         }
+        
  
     }
 }
