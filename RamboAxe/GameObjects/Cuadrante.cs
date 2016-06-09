@@ -2,6 +2,7 @@
 using Microsoft.DirectX;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using TgcViewer;
@@ -30,6 +31,11 @@ namespace AlumnoEjemplos.RamboAxe.GameObjects
         {
             return longitud;
         }
+        public Color getColor()
+        {
+            return this.color;
+        }
+        private Color color;
         public Cuadrante(bool randomizedCuadrante, int width, int height, int latitud, int longitud)
         {
             boundingBox = new TgcBoundingBox(new Vector3(latitud*width,0,longitud*height),new Vector3(latitud*width+width,1000,longitud*height+height));
@@ -212,18 +218,23 @@ namespace AlumnoEjemplos.RamboAxe.GameObjects
             {
                 case 0:
                     terrain.loadTexture(GuiController.Instance.AlumnoEjemplosDir + "Ramboaxe\\Media\\hm_textures\\muy_frio.jpg");
+                    this.color = Color.PaleTurquoise;
                     break;
                 case 1:
                     terrain.loadTexture(GuiController.Instance.AlumnoEjemplosDir + "Ramboaxe\\Media\\hm_textures\\frio.jpg");
+                    this.color = Color.LightCyan;
                     break;
                 case 2:
                     terrain.loadTexture(GuiController.Instance.AlumnoEjemplosDir + "Ramboaxe\\Media\\hm_textures\\normal.jpg");
+                    this.color = Color.LightGreen;
                     break;
                 case 3:
                     terrain.loadTexture(GuiController.Instance.AlumnoEjemplosDir + "Ramboaxe\\Media\\hm_textures\\caluroso.jpg");
+                    this.color = Color.Orange;
                     break;
                 case 4:
                     terrain.loadTexture(GuiController.Instance.AlumnoEjemplosDir + "Ramboaxe\\Media\\hm_textures\\muy_caluroso.jpg");
+                    this.color = Color.OrangeRed;
                     break;
             }
         }

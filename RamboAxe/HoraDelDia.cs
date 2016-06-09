@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using AlumnoEjemplos.RamboAxe.Player;
+using System.Drawing;
 
 namespace AlumnoEjemplos.RamboAxe
 {
@@ -92,6 +93,20 @@ namespace AlumnoEjemplos.RamboAxe
         public int getMomentoDelDia()
         {
             return momentoDelDia;
+        }
+        public float getLuz()
+        {
+            float cantHorasTranscurridas = this.horaDelDia * 24;
+            if (cantHorasTranscurridas < 4) return 0.13f;
+            else if (cantHorasTranscurridas < 8) return 0.23f;
+            else if (cantHorasTranscurridas < 11) return 0.43f;
+            else if (cantHorasTranscurridas < 14) return 0.85f;
+            else if (cantHorasTranscurridas < 17) return 0.90f;
+            else if (cantHorasTranscurridas < 18) return 0.80f;
+            else if (cantHorasTranscurridas < 19) return 0.40f;
+            else if (cantHorasTranscurridas < 21) return 0.22f;
+            else  return 0.10f;
+            
         }
 
     }

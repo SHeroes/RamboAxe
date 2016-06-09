@@ -21,6 +21,7 @@ using AlumnoEjemplos.RamboAxe.Player;
 using AlumnoEjemplos.RamboAxe.Inventario;
 using AlumnoEjemplos.Ramboaxe;
 using System.Windows.Forms;
+using TgcViewer.Utils.Shaders;
 namespace AlumnoEjemplos.RamboAxe
 {
     public class EjemploAlumno : TgcExample
@@ -49,7 +50,7 @@ namespace AlumnoEjemplos.RamboAxe
         string lluviaInfo = "";
         float chanceLluvia = 0.5f;
         string pjStatusInfo = "";
-
+        
         float distanciaObjeto = 0;
         TgcPickingRay pickingRay;
         static EjemploAlumno game;
@@ -60,13 +61,13 @@ namespace AlumnoEjemplos.RamboAxe
         public VistaInventario vistaInventario;
         VistaConstruyendo vistaConstruyendo;
         float tiempoAcumuladoParaContinue = 0;
-        TgcPlaneWall piso;
+        TgcMesh piso;
         
         bool gameOver = false;
         public bool forceUpdate = true;
         int tiempoDelContinue = 3;
         public MapaDelJuego mapa;
-      
+        private bool dayLightEnable = false;
         public static EjemploAlumno getInstance()
         {
             return game;
@@ -97,8 +98,8 @@ namespace AlumnoEjemplos.RamboAxe
         TgcD3dInput d3dInput;
         TgcText2d textHud;
         TgcText2d textHudExplicacionJuego;
-        TgcText2d text3;
-        TgcText2d text4;
+        TgcText2d infoHudBasicaText;
+        TgcText2d infoBoxText;
         TgcText2d textGameOver;
         TgcText2d textGameContinue;
         SkyBox skyBox;
@@ -112,10 +113,11 @@ namespace AlumnoEjemplos.RamboAxe
         int heightCuadrante = 1000;
         private TgcBox cuerpoPj;
         TgcSprite hudBack;
-        
+        Random r;
         public override void init()
         {
             aguaSucia = new AguaSuciaGo();
+            r = new Random();
             hudBack = new TgcSprite();
             hudBack.Texture = TgcTexture.createTexture(GuiController.Instance.AlumnoEjemplosDir + "RamboAxe\\Media\\fondo_hud_violeta_16a.png");
             Microsoft.DirectX.Direct3D.Device d3dDevice = GuiController.Instance.D3dDevice;
@@ -126,10 +128,11 @@ namespace AlumnoEjemplos.RamboAxe
             //Iniciarlizar PickingRay
             pickingRay = new TgcPickingRay();
             TgcTexture texture = TgcTexture.createTexture(d3dDevice, GuiController.Instance.AlumnoEjemplosDir + "Ramboaxe\\Media\\" + "agua.jpg");
-            piso = new TgcPlaneWall(new Vector3(0, 0, 0), new Vector3(heightCuadrante, 0, widthCuadrante), TgcPlaneWall.Orientations.XZplane, texture);
-
+            TgcPlaneWall pisoPlane = new TgcPlaneWall(new Vector3(0, 0, 0), new Vector3(9000, 0, 9000), TgcPlaneWall.Orientations.XZplane, texture);
+            
             pj.position = new Vector3(500, 125,500);
-
+            pisoPlane.setExtremes(new Vector3(pj.position.X - (4500), 4, pj.position.Z - 4500), new Vector3(pj.position.X + 4500, 8, pj.position.Z + 4500));
+            piso = pisoPlane.toMesh("pisoMesh");
             cuerpoPj = TgcBox.fromSize(pj.position, new Vector3(10 , pj.playerHeight, 10), Color.Aquamarine);
             d3dInput = GuiController.Instance.D3dInput;
 
@@ -140,7 +143,7 @@ namespace AlumnoEjemplos.RamboAxe
             this.initCamera();
 
             this.vistaConstruyendo = new VistaConstruyendo();
-            this.hud();
+            this.initHud();
             this.skyboxInit();
             this.initBarrasVida();
             
@@ -174,7 +177,7 @@ namespace AlumnoEjemplos.RamboAxe
         }
 
         private bool rotateCameraWithMouse = false;
-        private float rads = 0;
+        private float rads = FastMath.ToRad(90);
         private Vector3 direction = new Vector3(0.0f, 0.0f, 0.0f);
         public void handleInput() {
             TgcD3dInput input = GuiController.Instance.D3dInput;
@@ -183,19 +186,23 @@ namespace AlumnoEjemplos.RamboAxe
             //Forward
             float heading = 0.0f;
             float pitch = 0.0f;
+            if (GuiController.Instance.D3dInput.keyPressed(Microsoft.DirectX.DirectInput.Key.L))
+            {
+                dayLightEnable = !dayLightEnable;
+            }
             if (GuiController.Instance.D3dInput.keyPressed(Microsoft.DirectX.DirectInput.Key.P))
             {
                 rotateCameraWithMouse = !rotateCameraWithMouse;
                 if (rotateCameraWithMouse)
                 {
-                   // Cursor.Hide();
+                    // Cursor.Hide();
                 }
                 else
                 {
-                  //  Cursor.Show();
+                    //  Cursor.Show();
                 }
             }
-            if (rotateCameraWithMouse)
+            if (rotateCameraWithMouse )
             {
                 int ScreenWidth = GuiController.Instance.D3dDevice.Viewport.Width;
                 int ScreenHeight = GuiController.Instance.D3dDevice.Viewport.Height;
@@ -206,6 +213,7 @@ namespace AlumnoEjemplos.RamboAxe
                 pitch = d3dInput.YposRelative * rotationSpeed;
                 heading = d3dInput.XposRelative * rotationSpeed;
                 camera.rotate(heading, pitch, 0.0f);
+                
            
             }
 
@@ -519,14 +527,16 @@ namespace AlumnoEjemplos.RamboAxe
         {
             objetosColisionables.Clear();
         }
-
+        int prevCuadrantX, prevCuadrantZ = -100;
         private void gameLoop(float elapsedTime)
         {
 
             Vector2 currentCuadrante  = mapa.getCuadranteCoordsFor((int)pj.position.X,(int)pj.position.Z);
             currentCuadrantX = (int)currentCuadrante.X;
             currentCuadrantZ = (int)currentCuadrante.Y;
-    
+
+          
+
             if (selectedGameObject != null)
             {
                 if (barraInteraccion != null && !barraInteraccion.isActive())
@@ -596,54 +606,6 @@ namespace AlumnoEjemplos.RamboAxe
 
                     if ((collisionPjObjetosCuadrantes != TgcCollisionUtils.BoxBoxResult.Afuera))
                     {
-
-                        /*//colision norte
-                        int fixDistance = 6;
-                        int fixDistanceCorner = 5;
-                        if (cuerpoBounds.PMin.X > goBounds.PMin.X && cuerpoBounds.PMax.X < goBounds.PMax.X && cuerpoBounds.PMin.Z < goBounds.PMax.Z && cuerpoBounds.PMax.Z > goBounds.PMax.Z)
-                        {
-                            text3.Text = "Colision norte";
-                            pj.position.Z = goBounds.PMax.Z + fixDistance;
-                        }//colision sur
-                        else if (cuerpoBounds.PMax.X > goBounds.PMin.Z && cuerpoBounds.PMin.Z < goBounds.PMin.Z && cuerpoBounds.PMin.X > goBounds.PMin.X && cuerpoBounds.PMax.X < goBounds.PMax.X)
-                        {
-                            text3.Text = "Colision Sur";
-                            pj.position.Z = goBounds.PMin.Z - fixDistance;
-                        }//colision oeste
-                        else if (cuerpoBounds.PMin.X < goBounds.PMin.X && cuerpoBounds.PMax.X > goBounds.PMin.X && cuerpoBounds.PMax.Z < goBounds.PMax.Z && cuerpoBounds.PMin.Z > goBounds.PMin.Z)
-                        {
-                            text3.Text = "Colision Oeste";
-                            pj.position.X = goBounds.PMin.X - fixDistance;
-                        }//colision este
-                        else if (cuerpoBounds.PMin.X < goBounds.PMax.X && cuerpoBounds.PMax.X > goBounds.PMax.X && cuerpoBounds.PMax.Z < goBounds.PMax.Z && cuerpoBounds.PMin.Z > goBounds.PMin.Z)
-                        {
-                            pj.position.X = goBounds.PMax.X + fixDistance;
-                        }//colision noroeste
-                        else if (cuerpoBounds.PMin.X > goBounds.PMin.X && cuerpoBounds.PMax.X > goBounds.PMax.X && cuerpoBounds.PMin.Z > goBounds.PMin.Z && cuerpoBounds.PMax.Z > goBounds.PMax.Z)
-                        {
-                            text3.Text = "Colision Noroeste";
-                            pj.position.Z = goBounds.PMax.Z + fixDistanceCorner;
-                            pj.position.X = goBounds.PMin.X - fixDistanceCorner;
-                        }//colision noreste
-                        else if (cuerpoBounds.PMin.X < goBounds.PMax.X && cuerpoBounds.PMax.X > goBounds.PMax.X && cuerpoBounds.PMin.Z > goBounds.PMax.Z && cuerpoBounds.PMax.Z > goBounds.PMax.Z)
-                        {
-                            text3.Text = "Colision Noreste";
-                            pj.position.Z = goBounds.PMax.Z + fixDistanceCorner;
-                            pj.position.X = goBounds.PMax.X + fixDistanceCorner;
-                        }//colision suroeste
-                        else if (cuerpoBounds.PMin.X < goBounds.PMin.X && cuerpoBounds.PMax.X > goBounds.PMin.X && cuerpoBounds.PMin.Z < goBounds.PMin.Z && cuerpoBounds.PMax.Z < goBounds.PMax.Z)
-                        {
-                            text3.Text = "Colision Suroeste";
-                            pj.position.Z = goBounds.PMin.Z - fixDistanceCorner;
-                            pj.position.X = goBounds.PMin.X - fixDistanceCorner;
-
-                        }//colision sureste
-                        else if (cuerpoBounds.PMin.X < goBounds.PMax.X && cuerpoBounds.PMax.X > goBounds.PMax.X && cuerpoBounds.PMax.Z > goBounds.PMin.Z && cuerpoBounds.PMax.Z < goBounds.PMax.Z)
-                        {
-                            text3.Text = "Colision Sureste";
-                            pj.position.Z = goBounds.PMin.Z - fixDistanceCorner;
-                            pj.position.X = goBounds.PMax.X + fixDistanceCorner;
-                        }*/
                         collisionFound = true;
                     }
                 }
@@ -719,8 +681,8 @@ namespace AlumnoEjemplos.RamboAxe
             camera.updateViewMatrix(GuiController.Instance.D3dDevice);
             camera.updateCamera();
 
-            piso.setExtremes(new Vector3(pj.position.X - (4500), 8, pj.position.Z - 4500), new Vector3(pj.position.X + 4500, 8, pj.position.Z + 4500));
-            piso.updateValues();
+           
+            
             //fin colision jugador con objetos
             
             if (pj.vida <= 0)
@@ -806,13 +768,13 @@ namespace AlumnoEjemplos.RamboAxe
                     text = "hace muchisimo calor.";
                     break;
             }
-           text3.Text = " Dia "+ HoraDelDia.getInstance().dia.ToString()+" es " + HoraDelDia.getInstance().getHoraEnString()+ ", "+text;
+           infoHudBasicaText.Text = " Dia "+ HoraDelDia.getInstance().dia.ToString()+" es " + HoraDelDia.getInstance().getHoraEnString()+ ", "+text;
             String hudInfo;
             hudInfo = " FPS " + HighResolutionTimer.Instance.FramesPerSecond.ToString() + " " + currentCuadrantX + " " + currentCuadrantZ;
-            text3.Text += hudInfo;
-            text3.Text += vientoInfo;
-            text3.Text += lluviaInfo;
-            text3.Text += pjStatusInfo;
+            infoHudBasicaText.Text += hudInfo;
+            infoHudBasicaText.Text += vientoInfo;
+            infoHudBasicaText.Text += lluviaInfo;
+            infoHudBasicaText.Text += pjStatusInfo;
             
             barraHambre.valorActual = pj.hambre;
             barraVida.valorActual = pj.vida;
@@ -841,6 +803,7 @@ namespace AlumnoEjemplos.RamboAxe
 
         public override void render(float elapsedTime)
         {
+            piso.Position =new Vector3(pj.position.X -4500,8,pj.position.Z - 4500);
             //piso.BoundingBox.render();
             if (_lastTime > 0.03)
             {
@@ -849,6 +812,12 @@ namespace AlumnoEjemplos.RamboAxe
             }
             
             _lastTime += elapsedTime;
+
+            //RENDER BEGINS
+
+
+            Microsoft.DirectX.Direct3D.Device d3dDevice = GuiController.Instance.D3dDevice;
+            d3dDevice.BeginScene();
 
             if(!gameOver){
                 this.handleInput();
@@ -865,12 +834,8 @@ namespace AlumnoEjemplos.RamboAxe
 
             
 
-            //RENDER BEGINS
-
-            Microsoft.DirectX.Direct3D.Device d3dDevice = GuiController.Instance.D3dDevice;
-           
-            d3dDevice.BeginScene();
-
+            
+            
 
             barraSed.render(elapsedTime);
             barraVida.render(elapsedTime);
@@ -885,30 +850,39 @@ namespace AlumnoEjemplos.RamboAxe
          
 
             vistaConstruyendo.render();
-           // box.render();
-
-
+          
 
 
             changeSkyBox();
+           
             skyBox.Center = camera.Position;
             skyBox.updateValues();
-            skyBox.render();
+            
 
             int boxesToCheck = 9;
-            text4.Text = "";
-            
+
+            if (currentCuadrantX != prevCuadrantX || currentCuadrantZ != prevCuadrantZ)
+            {
+             //   infoBoxText.Text = " Loading... ";
+                prevCuadrantZ = currentCuadrantZ;
+                prevCuadrantX = currentCuadrantX;
+            }
+            else
+            {
+              //  infoBoxText.Text = "";
+            }
+            infoBoxText.render();
+
             for (int x = 0; x < boxesToCheck; x++)
             {
                 for (int z = 0; z < boxesToCheck; z++)
                 {
 
-                    Cuadrante unCuadrante = mapa.getCuadrante((int)(currentCuadrantX+(x-((int)boxesToCheck/2))), ((int)currentCuadrantZ+z-(int)boxesToCheck/2));
+                     Cuadrante unCuadrante = mapa.getCuadrante((int)(currentCuadrantX+(x-((int)boxesToCheck/2))), ((int)currentCuadrantZ+z-(int)boxesToCheck/2));
                      TgcCollisionUtils.FrustumResult r = TgcCollisionUtils.classifyFrustumAABB(GuiController.Instance.Frustum, unCuadrante.getBoundingBox());
                     
                      if (r == TgcCollisionUtils.FrustumResult.INTERSECT|| r == TgcCollisionUtils.FrustumResult.INSIDE)
                      {
-
                          unCuadrante.getTerrain().render();
                         // text4.Text += ">> " +unCuadrante.getLatitud().ToString() + " " + unCuadrante.getLongitud().ToString()+"\n";
                          foreach (GameObjectAbstract go in unCuadrante.getObjects())
@@ -933,7 +907,53 @@ namespace AlumnoEjemplos.RamboAxe
                      }
                 }
             }
-             
+
+
+            
+            if (dayLightEnable)
+            {
+                //Con luz: Cambiar el shader actual por el shader default que trae el framework para iluminacion dinamica con PointLight
+                piso.Effect = TgcShaders.loadEffect(GuiController.Instance.ExamplesMediaDir + "Shaders\\Ejemplo1.fx");
+                piso.Technique = "Darkening";
+                foreach (TgcMesh face in skyBox.Faces)
+                {
+                    face.Effect = piso.Effect;
+                    face.Technique = piso.Technique;
+                }
+            }
+            else
+            {
+                //Sin luz: Restaurar shader default
+                piso.Effect = GuiController.Instance.Shaders.TgcMeshShader;
+                piso.Technique = GuiController.Instance.Shaders.getTgcMeshTechnique(piso.RenderType);
+                foreach (TgcMesh face in skyBox.Faces)
+                {
+                    face.Effect = piso.Effect;
+                    face.Technique = piso.Technique;
+                }
+
+                
+            }
+            
+            if (dayLightEnable)
+            {
+                //Cargar variables shader de la luz
+
+                piso.Effect.SetValue("darkFactor", (float)HoraDelDia.getInstance().getHoraDelDia() * 2);
+                //infoBoxText.Text = skyBox.Faces.Length.ToString();
+                foreach (TgcMesh face in skyBox.Faces)
+                {
+                    face.Effect.SetValue("darkFactor", (float)HoraDelDia.getInstance().getHoraDelDia() * 2);
+                    face.render();
+                }
+               // piso.Effect.SetValue("random", (float)r.NextDouble());
+                //piso.Effect.SetValue("textureOffset", (float)GuiController.Instance.Modifiers["textureOffset"]);
+
+            }
+            else
+            {
+                skyBox.render();
+            }
             piso.render();
             
             
@@ -951,8 +971,8 @@ namespace AlumnoEjemplos.RamboAxe
                GuiController.Instance.Drawer2D.beginDrawSprite();
                hudBack.render();
                GuiController.Instance.Drawer2D.endDrawSprite();
-               text3.render();
-               text4.render();
+               infoHudBasicaText.render();
+               
            }
            //cuerpoPj.BoundingBox.render();
            GuiController.Instance.D3dDevice.EndScene();
@@ -980,6 +1000,7 @@ namespace AlumnoEjemplos.RamboAxe
         }
         public void skyboxInit(){
             skyBox = new SkyBox();
+            
            // skyBox.Center = new Vector3(0, 500, 0);
             skyBox.Size = new Vector3(10000, 10000, 10000);
             
@@ -1002,16 +1023,12 @@ namespace AlumnoEjemplos.RamboAxe
             if (momentoDiaAnterior != momentoDiaString)
             {
                 skyBox.updateSkyBoxTextures(momentoDiaString);
-                string pisoTexture = GuiController.Instance.AlumnoEjemplosDir + "RamboAxe\\Media\\skyBox\\" + momentoDiaString + "\\down.jpg";
-                piso.dispose();
-                TgcTexture texture = TgcTexture.createTexture(GuiController.Instance.D3dDevice,pisoTexture);
-                piso.setTexture(texture);
                 momentoDiaAnterior = momentoDiaString;
             }           
         }
 
 
-           public void hud()
+           public void initHud()
         {
             int ScreenWidth = GuiController.Instance.D3dDevice.Viewport.Width;
             int ScreenHeight = GuiController.Instance.D3dDevice.Viewport.Width;
@@ -1031,19 +1048,19 @@ namespace AlumnoEjemplos.RamboAxe
             textHudExplicacionJuego.Color = Color.Gold;
             textHudExplicacionJuego.Position = new Point(75, 10);
 
-            text3 = new TgcText2d();
+            infoHudBasicaText = new TgcText2d();
             
-            text3.Align = TgcText2d.TextAlign.CENTER;
-            text3.Size = new Size(800, 100);
-            text3.Color = Color.Gold;
-            text3.Position = new Point(115, 30);
+            infoHudBasicaText.Align = TgcText2d.TextAlign.CENTER;
+            infoHudBasicaText.Size = new Size(800, 100);
+            infoHudBasicaText.Color = Color.Gold;
+            infoHudBasicaText.Position = new Point(115, 30);
 
-            text4 = new TgcText2d();
+            infoBoxText = new TgcText2d();
 
-            text4.Align = TgcText2d.TextAlign.CENTER;
-            text4.Size = new Size(800, 100);
-            text4.Color = Color.Gold;
-            text4.Position = new Point(155, 30);
+            infoBoxText.Align = TgcText2d.TextAlign.CENTER;
+            infoBoxText.Size = new Size(GuiController.Instance.D3dDevice.Viewport.Width - 20, 100);
+            infoBoxText.Color = Color.Gold;
+            infoBoxText.Position = new Point(10, GuiController.Instance.D3dDevice.Viewport.Height/2-15);
 
             textGameOver = new TgcText2d();
             textGameOver.Text = "GAME OVER";
@@ -1063,7 +1080,33 @@ namespace AlumnoEjemplos.RamboAxe
             System.Drawing.Font font2 = new System.Drawing.Font("Arial", 44);
             textGameContinue.Position = new Point(ScreenWidth / 2 - 200, ScreenHeight / 2 );               
 
+            /*//Modifiers para variables de luz
+            GuiController.Instance.Modifiers.addBoolean("lightEnable", "lightEnable", true);
+            GuiController.Instance.Modifiers.addFloat("lightIntensity", 0, 150, 20);
+            GuiController.Instance.Modifiers.addFloat("lightAttenuation", 0.1f, 2, 0.3f);
+            GuiController.Instance.Modifiers.addFloat("specularEx", 0, 20, 9f);
 
+            //Modifiers para material
+            GuiController.Instance.Modifiers.addColor("mEmissive", Color.Black);
+            GuiController.Instance.Modifiers.addColor("mAmbient", Color.White);
+            GuiController.Instance.Modifiers.addColor("mDiffuse", Color.White);
+            GuiController.Instance.Modifiers.addColor("mSpecular", Color.White);*/
+            GuiController.Instance.Modifiers.addInterval("Technique", new string[] { 
+                "OnlyTexture", 
+                "OnlyColor", 
+                "Darkening",
+                "Complementing",
+                "MaskRedOut",
+                "RedOnly",
+                "RandomTexCoord",
+                "RandomColorVS",
+                "TextureOffset"
+            }, 0);
+
+            //Modifier para variables de shader
+            GuiController.Instance.Modifiers.addFloat("darkFactor", 0f, 1f, 0.5f);
+            GuiController.Instance.Modifiers.addFloat("textureOffset", 0f, 1f, 0.5f);
+            
         }
 
         private string getLluviaIntensidadString() {
@@ -1137,7 +1180,7 @@ namespace AlumnoEjemplos.RamboAxe
         {
             textHud.dispose();
             textHudExplicacionJuego.dispose();
-            text3.dispose();
+            infoHudBasicaText.dispose();
             textGameContinue.dispose();
             textGameOver.dispose();
             vistaConstruyendo.dispose();
