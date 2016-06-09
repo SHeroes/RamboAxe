@@ -154,5 +154,17 @@ namespace AlumnoEjemplos.RamboAxe.GameObjects
             posiciones.Z = Math.Abs(position.Z) - Math.Abs(cuadranteZ * widthCuadrante);
             return posiciones;
         }
+        public void dispose()
+        {
+            foreach (String keyX in cuadrantes.Keys)
+            {
+                Dictionary<string, Cuadrante> cuadrantesX = cuadrantes[keyX];
+                foreach (String keyY in cuadrantesX.Keys)
+                {
+                    cuadrantesX[keyY].dispose();
+                }
+            }
+        }
     }
+    
 }

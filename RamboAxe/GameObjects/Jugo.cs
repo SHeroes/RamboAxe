@@ -18,7 +18,7 @@ namespace AlumnoEjemplos.RamboAxe.GameObjects
         {
             loadMeshes(GuiController.Instance.AlumnoEjemplosDir + "Ramboaxe\\Media\\raciones\\juguito_1-TgcScene.xml");
            // normalizarTamanio();
-            resize(1f, 2f, 1f);
+            resize(2f, 4f, 2f);
         }
          public  override InteractuableResponse use()
         {

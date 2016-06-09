@@ -22,6 +22,7 @@ using AlumnoEjemplos.RamboAxe.Inventario;
 using AlumnoEjemplos.Ramboaxe;
 using System.Windows.Forms;
 using TgcViewer.Utils.Shaders;
+using TgcViewer.Utils.Interpolation;
 namespace AlumnoEjemplos.RamboAxe
 {
     public class EjemploAlumno : TgcExample
@@ -59,7 +60,7 @@ namespace AlumnoEjemplos.RamboAxe
         int currentCuadrantX, currentCuadrantZ = 1;
         CharacterSheet pj = CharacterSheet.getInstance();
         public VistaInventario vistaInventario;
-        VistaConstruyendo vistaConstruyendo;
+        //VistaConstruyendo vistaConstruyendo;
         float tiempoAcumuladoParaContinue = 0;
         TgcMesh piso;
         
@@ -67,7 +68,30 @@ namespace AlumnoEjemplos.RamboAxe
         public bool forceUpdate = true;
         int tiempoDelContinue = 3;
         public MapaDelJuego mapa;
-        private bool dayLightEnable = false;
+        private bool meshShadersEnable = false;
+        private bool quadShadersEnable = false;
+
+
+
+        VertexBuffer screenQuadVB;
+        Texture renderTarget2D;
+        Surface pOldRT;
+        Microsoft.DirectX.Direct3D.Effect effect;
+        //InterpoladorVaiven intVaivenOscurecer;
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
         public static EjemploAlumno getInstance()
         {
             return game;
@@ -113,14 +137,54 @@ namespace AlumnoEjemplos.RamboAxe
         int heightCuadrante = 1000;
         private TgcBox cuerpoPj;
         TgcSprite hudBack;
+        
         Random r;
         public override void init()
         {
+
+            Microsoft.DirectX.Direct3D.Device d3dDevice = GuiController.Instance.D3dDevice;
+            //PostProcess sobre quad
+            CustomVertex.PositionTextured[] screenQuadVertices = new CustomVertex.PositionTextured[]
+		    {
+    			new CustomVertex.PositionTextured( -1, 1, 1, 0,0), 
+			    new CustomVertex.PositionTextured(1,  1, 1, 1,0),
+			    new CustomVertex.PositionTextured(-1, -1, 1, 0,1),
+			    new CustomVertex.PositionTextured(1,-1, 1, 1,1)
+    		};
+            //vertex buffer de los triangulos
+            screenQuadVB = new VertexBuffer(typeof(CustomVertex.PositionTextured),
+                    4, d3dDevice, Usage.Dynamic | Usage.WriteOnly,
+                        CustomVertex.PositionTextured.Format, Pool.Default);
+            screenQuadVB.SetData(screenQuadVertices, 0, LockFlags.None);
+
+            //Creamos un Render Targer sobre el cual se va a dibujar la pantalla
+            renderTarget2D = new Texture(d3dDevice, d3dDevice.PresentationParameters.BackBufferWidth
+                    , d3dDevice.PresentationParameters.BackBufferHeight, 1, Usage.RenderTarget,
+                        Format.X8R8G8B8, Pool.Default);
+
+
+            //Cargar shader con efectos de Post-Procesado
+            effect = TgcShaders.loadEffect(GuiController.Instance.ExamplesMediaDir + "Shaders\\PostProcess.fx");
+
+            //Configurar Technique dentro del shader
+            effect.Technique = "OscurecerTechnique";
+
+            //Interpolador para efecto de variar la intensidad de la textura de alarma
+            /*intVaivenOscurecer = new InterpoladorVaiven();
+            intVaivenOscurecer.Min = 0;
+            intVaivenOscurecer.Max = 1;
+            intVaivenOscurecer.Speed = 0.4f;
+            intVaivenOscurecer.reset();*/
+
+            
+            //Fin inicio
+
             aguaSucia = new AguaSuciaGo();
             r = new Random();
             hudBack = new TgcSprite();
+            
             hudBack.Texture = TgcTexture.createTexture(GuiController.Instance.AlumnoEjemplosDir + "RamboAxe\\Media\\fondo_hud_violeta_16a.png");
-            Microsoft.DirectX.Direct3D.Device d3dDevice = GuiController.Instance.D3dDevice;
+            
             GuiController.Instance.CustomRenderEnabled = true;
            
             EjemploAlumno.game = this;
@@ -142,7 +206,7 @@ namespace AlumnoEjemplos.RamboAxe
 
             this.initCamera();
 
-            this.vistaConstruyendo = new VistaConstruyendo();
+            //this.vistaConstruyendo = new VistaConstruyendo();
             this.initHud();
             this.skyboxInit();
             this.initBarrasVida();
@@ -188,7 +252,11 @@ namespace AlumnoEjemplos.RamboAxe
             float pitch = 0.0f;
             if (GuiController.Instance.D3dInput.keyPressed(Microsoft.DirectX.DirectInput.Key.L))
             {
-                dayLightEnable = !dayLightEnable;
+                meshShadersEnable = !meshShadersEnable;
+            }
+            if (GuiController.Instance.D3dInput.keyPressed(Microsoft.DirectX.DirectInput.Key.K))
+            {
+                quadShadersEnable = !quadShadersEnable;
             }
             if (GuiController.Instance.D3dInput.keyPressed(Microsoft.DirectX.DirectInput.Key.P))
             {
@@ -701,7 +769,12 @@ namespace AlumnoEjemplos.RamboAxe
                     {
                         pj.deBuffes.Add("Mojado");
                     }
-                    
+
+                }
+                else
+                {
+                    llueve = false;
+                    lluviaInfo = "";
                 }
                 //Si esta calentito te secas
                 if (temperaturaCuadranteActual > 0)
@@ -720,7 +793,7 @@ namespace AlumnoEjemplos.RamboAxe
                 vientoActual.Normalize();
                 intensidadViento = (float)RanWind.NextDouble() * (float)RanWind.NextDouble() * (float)RanWind.NextDouble() * (float)RanWind.NextDouble();
                 intensidadLluvia = (float)RanWind.NextDouble() * (float)RanWind.NextDouble();
-                vientoInfo = "\n Viento Direccion: " + vientoActualString() + " intensidad: " + (int)(intensidadViento * 120) + "KM/h";
+                vientoInfo = "Viento Direccion: " + vientoActualString() + " intensidad: " + (int)(intensidadViento * 120) + "KM/h";
 
                 //vientoInfo += "\t VectorVientoNormalizado" + vientoActual.X.ToString() + vientoActual.Y.ToString();
             };
@@ -793,9 +866,12 @@ namespace AlumnoEjemplos.RamboAxe
 
             hudBack.Position = new Vector2(10, 10);
             
-            float _result = ((GuiController.Instance.D3dDevice.Viewport.Width-20) / 32);
+
+            float _result = ((GuiController.Instance.D3dDevice.Viewport.Width - 20) / 32);
             
             hudBack.Scaling = new Vector2(_result, 1.9f);
+
+           
          
             
         }
@@ -803,6 +879,8 @@ namespace AlumnoEjemplos.RamboAxe
 
         public override void render(float elapsedTime)
         {
+
+
             piso.Position =new Vector3(pj.position.X -4500,8,pj.position.Z - 4500);
             //piso.BoundingBox.render();
             if (_lastTime > 0.03)
@@ -812,64 +890,99 @@ namespace AlumnoEjemplos.RamboAxe
             }
             
             _lastTime += elapsedTime;
-
+            if (!gameOver)
+            {
+                this.handleInput();
+            }
             //RENDER BEGINS
 
+            
 
             Microsoft.DirectX.Direct3D.Device d3dDevice = GuiController.Instance.D3dDevice;
-            d3dDevice.BeginScene();
 
-            if(!gameOver){
-                this.handleInput();
-                vistaInventario.render();
+            //Cargamos el Render Targer al cual se va a dibujar la escena 3D. Antes nos guardamos el surface original
+            //En vez de dibujar a la pantalla, dibujamos a un buffer auxiliar, nuestro Render Target.
+            pOldRT = d3dDevice.GetRenderTarget(0);
+            Surface pSurf = renderTarget2D.GetSurfaceLevel(0);
+            d3dDevice.SetRenderTarget(0, pSurf);
+            d3dDevice.Clear(ClearFlags.Target | ClearFlags.ZBuffer, Color.Black, 1.0f, 0);
+
+            //Dibujamos la escena comun, pero en vez de a la pantalla al Render Target
+            drawSceneToRenderTarget(d3dDevice,elapsedTime);
+
+            //Liberar memoria de surface de Render Target
+            pSurf.Dispose();
+
+            //Si quisieramos ver que se dibujo, podemos guardar el resultado a una textura en un archivo para debugear su resultado (ojo, es lento)
+            //TextureLoader.Save(GuiController.Instance.ExamplesMediaDir + "Shaders\\render_target.bmp", ImageFileFormat.Bmp, renderTarget2D);
+
+
+            //Ahora volvemos a restaurar el Render Target original (osea dibujar a la pantalla)
+            d3dDevice.SetRenderTarget(0, pOldRT);
+
+
+            //Luego tomamos lo dibujado antes y lo combinamos con una textura con efecto de alarma
+            drawPostProcess(d3dDevice);
+            d3dDevice.BeginScene();
+            if (!gameOver)
+            {
                 if (barraInteraccion != null)
                 {
                     barraInteraccion.render(elapsedTime);
                 }
-            }else{
+                if (!vistaInventario.abierto)
+                {
+                    GuiController.Instance.Drawer2D.beginDrawSprite();
+                    hudBack.render();
+                    GuiController.Instance.Drawer2D.endDrawSprite();
+                    infoHudBasicaText.render();
+
+                }
+                vistaInventario.render();
+            }
+            else
+            {
                 vistaInventario.cerrar();
                 textGameOver.render();
                 textGameContinue.render();
             }
 
-            
-
-            
-            
-
             barraSed.render(elapsedTime);
             barraVida.render(elapsedTime);
             barraHambre.render(elapsedTime);
 
-            if (barraInteraccion != null)
-            {
-                barraInteraccion.render(elapsedTime);
-            }
+            
             vistaInventario.render();
-           
-         
 
-            vistaConstruyendo.render();
-          
+            
 
+            d3dDevice.EndScene();
+        }
+        /// <summary>
+        /// Dibujamos toda la escena pero en vez de a la pantalla, la dibujamos al Render Target que se cargo antes.
+        /// Es como si dibujaramos a una textura auxiliar, que luego podemos utilizar.
+        /// </summary>
+        private void drawSceneToRenderTarget(Microsoft.DirectX.Direct3D.Device d3dDevice,float elapsedTime)
+        {
+            d3dDevice.BeginScene();
 
             changeSkyBox();
-           
+
             skyBox.Center = camera.Position;
             skyBox.updateValues();
-            
+
 
             int boxesToCheck = 9;
 
             if (currentCuadrantX != prevCuadrantX || currentCuadrantZ != prevCuadrantZ)
             {
-             //   infoBoxText.Text = " Loading... ";
+                //   infoBoxText.Text = " Loading... ";
                 prevCuadrantZ = currentCuadrantZ;
                 prevCuadrantX = currentCuadrantX;
             }
             else
             {
-              //  infoBoxText.Text = "";
+                //  infoBoxText.Text = "";
             }
             infoBoxText.render();
 
@@ -878,64 +991,67 @@ namespace AlumnoEjemplos.RamboAxe
                 for (int z = 0; z < boxesToCheck; z++)
                 {
 
-                     Cuadrante unCuadrante = mapa.getCuadrante((int)(currentCuadrantX+(x-((int)boxesToCheck/2))), ((int)currentCuadrantZ+z-(int)boxesToCheck/2));
-                     TgcCollisionUtils.FrustumResult r = TgcCollisionUtils.classifyFrustumAABB(GuiController.Instance.Frustum, unCuadrante.getBoundingBox());
-                    
-                     if (r == TgcCollisionUtils.FrustumResult.INTERSECT|| r == TgcCollisionUtils.FrustumResult.INSIDE)
-                     {
-                         unCuadrante.getTerrain().render();
+                    Cuadrante unCuadrante = mapa.getCuadrante((int)(currentCuadrantX + (x - ((int)boxesToCheck / 2))), ((int)currentCuadrantZ + z - (int)boxesToCheck / 2));
+                    TgcCollisionUtils.FrustumResult r = TgcCollisionUtils.classifyFrustumAABB(GuiController.Instance.Frustum, unCuadrante.getBoundingBox());
+
+                    if (r == TgcCollisionUtils.FrustumResult.INTERSECT || r == TgcCollisionUtils.FrustumResult.INSIDE)
+                    {
+
+                       
+                        unCuadrante.getTerrain().Effect = piso.Effect;
+                        unCuadrante.getTerrain().Technique = piso.Technique;
+                        
+                        unCuadrante.getTerrain().render();
                         // text4.Text += ">> " +unCuadrante.getLatitud().ToString() + " " + unCuadrante.getLongitud().ToString()+"\n";
-                         foreach (GameObjectAbstract go in unCuadrante.getObjects())
-                         {
+                        foreach (GameObjectAbstract go in unCuadrante.getObjects())
+                        {
 
-                             int foreachCuadranteX = currentCuadrantX + x - 1;
-                             int foreachCuadranteZ = currentCuadrantZ + z - 1;
-                             TgcMesh mesh = go.getMesh();
-                             r = TgcCollisionUtils.classifyFrustumAABB(GuiController.Instance.Frustum, mesh.BoundingBox);
-                             
-                             if (r == TgcCollisionUtils.FrustumResult.INSIDE|| r == TgcCollisionUtils.FrustumResult.INTERSECT)
-                             {
-                                 /*foreach (TgcMesh bound in go.getBounds())
-                                 {
-                                     bound.BoundingBox.render();
-                                 }*/
+                            int foreachCuadranteX = currentCuadrantX + x - 1;
+                            int foreachCuadranteZ = currentCuadrantZ + z - 1;
+                            TgcMesh mesh = go.getMesh();
+                            r = TgcCollisionUtils.classifyFrustumAABB(GuiController.Instance.Frustum, mesh.BoundingBox);
+
+                            if (r == TgcCollisionUtils.FrustumResult.INSIDE || r == TgcCollisionUtils.FrustumResult.INTERSECT)
+                            {
+                                /*foreach (TgcMesh bound in go.getBounds())
+                                {
+                                    bound.BoundingBox.render();
+                                }*/
+                                mesh.Effect = piso.Effect;
+                                mesh.Technique = piso.Technique;
                                 mesh.render();
-                             }
-                             
+                            }
 
-                         }
-                     }
+
+                        }
+                    }
                 }
             }
 
 
-            
-            if (dayLightEnable)
-            {
-                //Con luz: Cambiar el shader actual por el shader default que trae el framework para iluminacion dinamica con PointLight
-                piso.Effect = TgcShaders.loadEffect(GuiController.Instance.ExamplesMediaDir + "Shaders\\Ejemplo1.fx");
-                piso.Technique = "Darkening";
-                foreach (TgcMesh face in skyBox.Faces)
-                {
-                    face.Effect = piso.Effect;
-                    face.Technique = piso.Technique;
-                }
-            }
-            else
-            {
-                //Sin luz: Restaurar shader default
-                piso.Effect = GuiController.Instance.Shaders.TgcMeshShader;
-                piso.Technique = GuiController.Instance.Shaders.getTgcMeshTechnique(piso.RenderType);
-                foreach (TgcMesh face in skyBox.Faces)
-                {
-                    face.Effect = piso.Effect;
-                    face.Technique = piso.Technique;
-                }
 
-                
-            }
-            
-            if (dayLightEnable)
+             if (meshShadersEnable)
+             {
+                 piso.Effect = TgcShaders.loadEffect(GuiController.Instance.ExamplesMediaDir + "Shaders\\Ejemplo1.fx");
+                 piso.Technique = "Darkening";
+                 foreach (TgcMesh face in skyBox.Faces)
+                 {
+                     face.Effect = piso.Effect;
+                     face.Technique = piso.Technique;
+                 }
+             }
+             else
+             {
+                 piso.Effect = GuiController.Instance.Shaders.TgcMeshShader;
+                 piso.Technique = GuiController.Instance.Shaders.getTgcMeshTechnique(piso.RenderType);
+                 foreach (TgcMesh face in skyBox.Faces)
+                 {
+                     face.Effect = piso.Effect;
+                     face.Technique = piso.Technique;
+                 }
+             }
+
+            if (meshShadersEnable)
             {
                 //Cargar variables shader de la luz
 
@@ -953,32 +1069,65 @@ namespace AlumnoEjemplos.RamboAxe
             else
             {
                 skyBox.render();
-            }
+            }// descomentar skybox.render() si se comenta meshShadersEnable y viseversa
+            //skyBox.render();
+
             piso.render();
+
+
+            if (selectedGameObject != null)
+            {
+                if (barraInteraccion != null && !barraInteraccion.isActive())
+                {
+                    barraInteraccion.dispose();
+                    barraInteraccion = null;
+                    selectedGameObject.use();
+                }
+            }
             
-            
-           if (selectedGameObject != null)
-           {
-               if (barraInteraccion != null && !barraInteraccion.isActive())
-               {
-                   barraInteraccion.dispose();
-                   barraInteraccion = null;
-                   selectedGameObject.use();
-               }
-           }
-           if (!vistaInventario.abierto)
-           {
-               GuiController.Instance.Drawer2D.beginDrawSprite();
-               hudBack.render();
-               GuiController.Instance.Drawer2D.endDrawSprite();
-               infoHudBasicaText.render();
-               
-           }
-           //cuerpoPj.BoundingBox.render();
-           GuiController.Instance.D3dDevice.EndScene();
-           
+            //cuerpoPj.BoundingBox.render();
+            d3dDevice.EndScene();
         }
 
+
+        /// <summary>
+        /// Se toma todo lo dibujado antes, que se guardo en una textura, y se le aplica un shader para oscurecer la imagen
+        /// </summary>
+        private void drawPostProcess(Microsoft.DirectX.Direct3D.Device d3dDevice)
+        {
+            //Arrancamos la escena
+            d3dDevice.BeginScene();
+
+            //Cargamos para renderizar el unico modelo que tenemos, un Quad que ocupa toda la pantalla, con la textura de todo lo dibujado antes
+            d3dDevice.VertexFormat = CustomVertex.PositionTextured.Format;
+            d3dDevice.SetStreamSource(0, screenQuadVB, 0);
+
+            //Ver si el efecto de oscurecer esta activado, configurar Technique del shader segun corresponda
+            
+            if (quadShadersEnable)
+            {
+                effect.Technique = "OscurecerTechnique";
+            }
+            else
+            {
+                effect.Technique = "DefaultTechnique";
+            }
+
+            //Cargamos parametros en el shader de Post-Procesado
+            effect.SetValue("render_target2D", renderTarget2D);
+            effect.SetValue("scaleFactor",HoraDelDia.getInstance().getLuz());
+
+            //Limiamos la pantalla y ejecutamos el render del shader
+            d3dDevice.Clear(ClearFlags.Target | ClearFlags.ZBuffer, Color.Black, 1.0f, 0);
+            effect.Begin(FX.None);
+            effect.BeginPass(0);
+            d3dDevice.DrawPrimitives(PrimitiveType.TriangleStrip, 0, 2);
+            effect.EndPass();
+            effect.End();
+
+            //Terminamos el renderizado de la escena
+            d3dDevice.EndScene();
+        }
         public void userVars()
         {
         
@@ -1051,9 +1200,9 @@ namespace AlumnoEjemplos.RamboAxe
             infoHudBasicaText = new TgcText2d();
             
             infoHudBasicaText.Align = TgcText2d.TextAlign.CENTER;
-            infoHudBasicaText.Size = new Size(800, 100);
+            infoHudBasicaText.Size = new Size(GuiController.Instance.D3dDevice.Viewport.Width - 20, 72);
             infoHudBasicaText.Color = Color.Gold;
-            infoHudBasicaText.Position = new Point(115, 30);
+            infoHudBasicaText.Position = new Point(14, 14);
 
             infoBoxText = new TgcText2d();
 
@@ -1091,7 +1240,7 @@ namespace AlumnoEjemplos.RamboAxe
             GuiController.Instance.Modifiers.addColor("mAmbient", Color.White);
             GuiController.Instance.Modifiers.addColor("mDiffuse", Color.White);
             GuiController.Instance.Modifiers.addColor("mSpecular", Color.White);*/
-            GuiController.Instance.Modifiers.addInterval("Technique", new string[] { 
+         /*   GuiController.Instance.Modifiers.addInterval("Technique", new string[] { 
                 "OnlyTexture", 
                 "OnlyColor", 
                 "Darkening",
@@ -1105,7 +1254,7 @@ namespace AlumnoEjemplos.RamboAxe
 
             //Modifier para variables de shader
             GuiController.Instance.Modifiers.addFloat("darkFactor", 0f, 1f, 0.5f);
-            GuiController.Instance.Modifiers.addFloat("textureOffset", 0f, 1f, 0.5f);
+            GuiController.Instance.Modifiers.addFloat("textureOffset", 0f, 1f, 0.5f);*/
             
         }
 
@@ -1168,25 +1317,26 @@ namespace AlumnoEjemplos.RamboAxe
             return viento;
         }
 
-        private string anguloDeCaidaLLuvia(){
-
-            //depende de para donde mire el pj entonces seria algo asi como:
-            //Math.PI /2 * intensidadViento //productoVectorial con elVector de a donde mira el pj ;
-            //return ((int)angulo).ToString() + " º";
-            return "max 45Grados";
-        }
+        
 
         public override void close()
         {
             textHud.dispose();
             textHudExplicacionJuego.dispose();
             infoHudBasicaText.dispose();
+            
             textGameContinue.dispose();
             textGameOver.dispose();
-            vistaConstruyendo.dispose();
+            //vistaConstruyendo.dispose();
             vistaInventario.dispose();
             InventarioManager.dispose();
             MeshManager.dispose();
+            infoBoxText.Text = " Disposing...";
+            mapa.dispose();
+            infoBoxText.dispose();
+            effect.Dispose();
+            screenQuadVB.Dispose();
+            renderTarget2D.Dispose();
         }
     }
 }

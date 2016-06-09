@@ -134,5 +134,29 @@ namespace AlumnoEjemplos.RamboAxe.GameObjects
         {
             return this.bounds;
         }
+        public void dispose()
+        {
+            if(mesh!=null){
+                try
+                { 
+                mesh.dispose();
+                }
+                catch
+                {
+
+                }
+            }
+            
+            foreach(TgcMesh _mesh in bounds){
+                try
+                {
+                    _mesh.dispose();
+                }
+                catch
+                {
+
+                }
+            }
+        }
     }
 }

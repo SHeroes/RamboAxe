@@ -248,5 +248,14 @@ namespace AlumnoEjemplos.RamboAxe.GameObjects
         {
             return this.cuadrantObjects;
         }
+        public void dispose()
+        {
+            
+            foreach (GameObjectAbstract go in cuadrantObjects)
+            {
+                go.dispose();
+            }
+            terrain.dispose();
+        }
     }
 }
