@@ -173,9 +173,9 @@ namespace AlumnoEjemplos.RamboAxe
             barraSed = new BarraEstatica();
             barraVida = new BarraEstatica();
 
-            barraHambre.init(BarraEstatica.RED, 80 +(screenWidth/7), screenHeight -100, 0, pj.maximaHambre);
-            barraSed.init(BarraEstatica.VIOLET, (barrasWidth) + 80 + (screenWidth / 7), screenHeight - 100, 0, pj.maximaSed);
-            barraVida.init(BarraEstatica.YELLOW, (barrasWidth * 2) + 80 + (screenWidth / 7), screenHeight - 100, 0, pj.maximaVida);
+            barraHambre.init(BarraEstatica.RED, GuiController.Instance.AlumnoEjemplosDir + "RamboAxe\\Media\\comidaicon.png",80 + (screenWidth / 7), screenHeight - 100, 0, pj.maximaHambre);
+            barraSed.init(BarraEstatica.VIOLET, GuiController.Instance.AlumnoEjemplosDir + "RamboAxe\\Media\\sedicon.png",(barrasWidth) + 80 + (screenWidth / 7), screenHeight - 100, 0, pj.maximaSed);
+            barraVida.init(BarraEstatica.YELLOW, GuiController.Instance.AlumnoEjemplosDir + "RamboAxe\\Media\\vidaicon.png", (barrasWidth * 2) + 80 + (screenWidth / 7), screenHeight - 100, 0, pj.maximaVida);
             
             //barraHambre.init(BarraEstatica.RED, 80, 460, 0, pj.maximaHambre);
             //barraSed.init(BarraEstatica.VIOLET, (barrasWidth) + 80, 460, 0, pj.maximaSed);

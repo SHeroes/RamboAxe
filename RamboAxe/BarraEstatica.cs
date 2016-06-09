@@ -14,6 +14,7 @@ namespace AlumnoEjemplos.RamboAxe
     public class BarraEstatica
     {
         TgcText2d barTitle;
+        TgcSprite barIcon;
         TgcSprite barEmpty;
         TgcSprite barColor;
         public string barTitleText = "";
@@ -26,7 +27,7 @@ namespace AlumnoEjemplos.RamboAxe
         private float max;
 
         //Color, Posicion X, Posicion Y, ValorMinimo ºC, ValorMaximo ºC
-        public void init(int color, float barraVaciaPosX = (float)60.0, float barraVaciaPosY = (float)460.0, int min = 0, int _max = 100){         
+        public void init(int color, string texturePath,float barraVaciaPosX = (float)60.0, float barraVaciaPosY = (float)460.0, int min = 0, int _max = 100){         
             barraAnchoCompleto = (float)0.23;
             max = _max;
             valorActual = 1;
@@ -55,6 +56,17 @@ namespace AlumnoEjemplos.RamboAxe
             barColor.Position = new Vector2(barraPosX, barraPosY);
             barColor.Scaling = new Vector2(barraAnchoCompleto, barraAlto);
 
+            barIcon = new TgcSprite();
+            barIcon.Texture = TgcTexture.createTexture(texturePath);
+            barIcon.Position = new Vector2(barraVaciaPosX -5, barraVaciaPosY -100);
+            if (texturePath.Contains("vidaicon"))
+            {
+                barIcon.Scaling = new Vector2(0.2f, 0.2f);
+            }
+            else{
+                barIcon.Scaling = new Vector2(0.15f, 0.15f);
+            }
+
             barTitle = new TgcText2d();
             barTitle.Position = new Point((int)barraVaciaPosX-5, (int)barraVaciaPosY-20);
             barTitle.Size = new Size(310, 100);
@@ -76,6 +88,7 @@ namespace AlumnoEjemplos.RamboAxe
             barEmpty.render();
             barTitle.Text = barTitleText;
             barTitle.render();
+            barIcon.render();
             GuiController.Instance.Drawer2D.endDrawSprite();
 
         }
