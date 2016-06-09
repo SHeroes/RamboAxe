@@ -145,6 +145,7 @@
     <Compile Include="RamboAxe\Inventario\Receta.cs" />
     <Compile Include="RamboAxe\SkyBox.cs" />
     <Compile Include="RamboAxe\HeightMapTerrain.cs" />
+    <Compile Include="RamboAxe\Sonidos\Sonido.cs" />
     <Compile Include="SurvivalBars\Barra.cs" />
     <Compile Include="SurvivalBars\BarraExampleTest.cs" />
     <Compile Include="SurvivalBars\SurvivalBarsExample.cs" />

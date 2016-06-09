@@ -66,6 +66,7 @@ namespace AlumnoEjemplos.RamboAxe
         public bool forceUpdate = true;
         int tiempoDelContinue = 3;
         public MapaDelJuego mapa;
+        Sonido sonidoDeFondo;
       
         public static EjemploAlumno getInstance()
         {
@@ -121,7 +122,8 @@ namespace AlumnoEjemplos.RamboAxe
             GuiController.Instance.CustomRenderEnabled = true;
            
             EjemploAlumno.game = this;
-            
+            sonidoDeFondo = new Sonido(GuiController.Instance.AlumnoEjemplosDir + "RamboAxe\\Media\\sonidofondo.mp3");
+            sonidoDeFondo.setLoop(true);
             //Iniciarlizar PickingRay
             pickingRay = new TgcPickingRay();
             TgcTexture texture = TgcTexture.createTexture(d3dDevice, GuiController.Instance.AlumnoEjemplosDir + "Ramboaxe\\Media\\" + "agua.jpg");
@@ -461,6 +463,8 @@ namespace AlumnoEjemplos.RamboAxe
                 pj.incrementContinueCounter();
                 pj.reloadContinueStats();
                 gameOver = false;
+                sonidoDeFondo.setLoop(true);
+                sonidoDeFondo.loadMp3(GuiController.Instance.AlumnoEjemplosDir + "RamboAxe\\Media\\sonidofondo.mp3");
                 tiempoAcumuladoParaContinue = 3;
             }
 
@@ -775,6 +779,8 @@ namespace AlumnoEjemplos.RamboAxe
                 vistaInventario.cerrar();
                 textGameOver.render();
                 textGameContinue.render();
+                sonidoDeFondo.setLoop(false);
+                sonidoDeFondo.loadMp3(GuiController.Instance.AlumnoEjemplosDir + "RamboAxe\\Media\\siamofuori.mp3");
 
             }
             
@@ -868,6 +874,7 @@ namespace AlumnoEjemplos.RamboAxe
                text4.render();
            }
 
+           sonidoDeFondo.playMusic();
            GuiController.Instance.D3dDevice.EndScene();
            
         }
