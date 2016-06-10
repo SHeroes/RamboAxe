@@ -353,13 +353,7 @@ namespace AlumnoEjemplos.RamboAxe
                         pj.stand();
                     }
                 }
-                //Mostrar Ayuda
-                if (d3dInput.keyDown(Key.F5))
-                {
-                    GuiController.Instance.Drawer2D.beginDrawSprite();
-                    menuAyuda.render();
-                    GuiController.Instance.Drawer2D.endDrawSprite();
-                }
+                
                 //direction = new Vector3(0, 0, 0);
             }
            // Vector3 realMovement = collisionManager.moveCharacter(characterElipsoid, direction, objetosColisionables);
@@ -588,6 +582,7 @@ namespace AlumnoEjemplos.RamboAxe
                 pj.incrementContinueCounter();
                 pj.reloadContinueStats();
                 gameOver = false;
+                quadShadersEnable = false;
                 sonidoDeFondo.setLoop(true);
                 sonidoDeFondo.loadMp3(GuiController.Instance.AlumnoEjemplosDir + "RamboAxe\\Media\\sonidofondo.mp3");
                 tiempoAcumuladoParaContinue = 3;
@@ -798,6 +793,12 @@ namespace AlumnoEjemplos.RamboAxe
             //Cuando cambia momento del dia
             if (HoraDelDia.getInstance().getMomentoDelDia() != intmomentoDiaAnterior)
             {
+                if (HoraDelDia.getInstance().getHoraEnString() == "NOCHE")
+                {
+                    meshShadersEnable = true;
+                } else {
+                    meshShadersEnable = false;
+                }
                 if (chanceLluvia > (float)RanWind.NextDouble()) {
                     llueve = true;
                     lluviaInfo = " Llueve " + getLluviaIntensidadString();
@@ -896,6 +897,7 @@ namespace AlumnoEjemplos.RamboAxe
                     barraInteraccion = null;
                     selectedGameObject.use();
                 }
+                quadShadersEnable = true;
                 direction = new Vector3(0, 0, 0);
                 this.handleResetGame(elapsedTime);
             }
@@ -986,7 +988,14 @@ namespace AlumnoEjemplos.RamboAxe
                 sonidoDeFondo.loadMp3(GuiController.Instance.AlumnoEjemplosDir + "RamboAxe\\Media\\siamofuori.mp3");
 
             }
-            if (!d3dInput.keyDown(Key.F5)) //menua ayuda
+            //Mostrar Ayuda
+            if (d3dInput.keyDown(Key.F5))
+            {
+                GuiController.Instance.Drawer2D.beginDrawSprite();
+                menuAyuda.render();
+                GuiController.Instance.Drawer2D.endDrawSprite();
+            }
+            else
             {
                 barraSed.render(elapsedTime);
                 barraVida.render(elapsedTime);

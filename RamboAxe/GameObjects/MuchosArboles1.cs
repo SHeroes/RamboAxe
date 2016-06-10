@@ -17,9 +17,9 @@ namespace AlumnoEjemplos.RamboAxe.GameObjects
         
         public MuchosArboles1(float x,float y, float z): base(x, y, z)
         {
-            loadMeshes(GuiController.Instance.AlumnoEjemplosDir + "Ramboaxe\\Media\\escenarios\\muchosArboles1-TgcScene.xml");
+            loadMeshes(GuiController.Instance.AlumnoEjemplosDir + "Ramboaxe\\Media\\escenario\\muchosArboles1-TgcScene.xml");
             // normalizarTamanio();
-            resize(2f, 2f, 5f);
+            resize(10f, 10f, 10f);
             delayUso = 2f;   
         }
         public  override InteractuableResponse use()

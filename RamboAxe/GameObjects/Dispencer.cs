@@ -12,11 +12,12 @@ namespace AlumnoEjemplos.RamboAxe.GameObjects
     class Dispencer:GameObjectAbstract
     {
         CharacterSheet pj = CharacterSheet.getInstance();
-        float uses = 2;
+        float uses = 3;
         public Dispencer(float x, float y,float z):base(x,y,z)
         {
             delayUso = 2f;
             this.loadMeshes(GuiController.Instance.AlumnoEjemplosDir + "\\Ramboaxe\\Media\\dispenser\\DispenserAgua-TgcScene.xml");
+            resize(6f,20f,6f);
         }
         
          public  override InteractuableResponse use()
@@ -33,7 +34,7 @@ namespace AlumnoEjemplos.RamboAxe.GameObjects
 
 
              //   EjemploAlumno.getInstance().getBarraHidratacion().agregarPorcentajeABarra(0.2f);
-                pj.addLevelSed(-20);
+                pj.addLevelSed(-30);
                 if (uses == 0)
                 {
                     getMesh().Scale = new Vector3(0f, 0f, 0f);
