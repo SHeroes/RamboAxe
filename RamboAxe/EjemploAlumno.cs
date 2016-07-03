@@ -60,7 +60,7 @@ namespace AlumnoEjemplos.RamboAxe
         int currentCuadrantX, currentCuadrantZ = 1;
         CharacterSheet pj = CharacterSheet.getInstance();
         public VistaInventario vistaInventario;
-        //VistaConstruyendo vistaConstruyendo;
+        VistaConstruyendo vistaConstruyendo;
         float tiempoAcumuladoParaContinue = 0;
 
         //TgcPlaneWall piso;
@@ -217,7 +217,7 @@ namespace AlumnoEjemplos.RamboAxe
 
             this.initCamera();
 
-            //this.vistaConstruyendo = new VistaConstruyendo();
+            this.vistaConstruyendo = new VistaConstruyendo();
             this.initHud();
             this.skyboxInit();
             this.initBarrasVida(ScreenWidth,ScreenHeight);
@@ -972,6 +972,7 @@ namespace AlumnoEjemplos.RamboAxe
                 sonidoDeFondo.playMusic();
 
                 vistaInventario.render();
+                //vistaConstruyendo.render();
             }
             else
             {
@@ -1027,6 +1028,7 @@ namespace AlumnoEjemplos.RamboAxe
 
             skyBox.Center = camera.Position;
             skyBox.updateValues();
+            
 
 
             int boxesToCheck = 9;
@@ -1070,10 +1072,6 @@ namespace AlumnoEjemplos.RamboAxe
 
                             if (r == TgcCollisionUtils.FrustumResult.INSIDE || r == TgcCollisionUtils.FrustumResult.INTERSECT)
                             {
-                                /*foreach (TgcMesh bound in go.getBounds())
-                                {
-                                    bound.BoundingBox.render();
-                                }*/
                                 mesh.Effect = piso.Effect;
                                 mesh.Technique = piso.Technique;
                                 mesh.render();
@@ -1084,7 +1082,6 @@ namespace AlumnoEjemplos.RamboAxe
                     }
                 }
             }
-
 
 
              if (meshShadersEnable)
@@ -1136,8 +1133,7 @@ namespace AlumnoEjemplos.RamboAxe
             //skyBox.render();
 
             piso.render();
-
-
+            vistaConstruyendo.render();
             
 
             //cuerpoPj.BoundingBox.render();
@@ -1412,7 +1408,7 @@ namespace AlumnoEjemplos.RamboAxe
             
             textGameContinue.dispose();
             textGameOver.dispose();
-            //vistaConstruyendo.dispose();
+            vistaConstruyendo.dispose();
             vistaInventario.dispose();
             InventarioManager.dispose();
             MeshManager.dispose();

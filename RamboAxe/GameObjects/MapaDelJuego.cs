@@ -165,6 +165,23 @@ namespace AlumnoEjemplos.RamboAxe.GameObjects
                 }
             }
         }
+
+        public void placeObject(GameObjectAbstract go)
+        {
+            if (go != null)
+            {
+                Vector3 worldPosition = go.getMesh().Position;
+                Cuadrante cuadrante = getCuadranteForPosition(worldPosition);
+                Vector3 relativePosition = getCuadranteRelativePosition(worldPosition);
+                go.place(
+                    (int)Math.Ceiling(relativePosition.X),
+                    (int)Math.Ceiling(relativePosition.Y),
+                    (int)Math.Ceiling(relativePosition.Z)
+                );
+                cuadrante.getObjects().Add(go);
+                EjemploAlumno.getInstance().forceUpdate = true;
+            }
+        }
     }
     
 }

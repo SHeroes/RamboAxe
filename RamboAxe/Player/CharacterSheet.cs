@@ -137,7 +137,11 @@ namespace AlumnoEjemplos.RamboAxe.Player
         public bool estaEquipadaParteDelCuerpo(string parteDelCuerpo)
         {
             ObjetoInventario objeto = null;
-            return equipoEnUso.TryGetValue(parteDelCuerpo, out objeto);
+            if (equipoEnUso.TryGetValue(parteDelCuerpo, out objeto))
+            {
+                return (objeto != null);
+            }
+            return false;
         }
 
         public ObjetoInventario desequiparObjetoDeParteDelCuerpo(String parteDelCuerpo)        //desequipar
@@ -231,7 +235,7 @@ namespace AlumnoEjemplos.RamboAxe.Player
             }
             GameObjectAbstract go = construyendo;
             construyendo = null;
-            //EjemploAlumno.getInstance().mapa.placeObject(go);
+            EjemploAlumno.getInstance().mapa.placeObject(go);
             huboCambios();
         }
 

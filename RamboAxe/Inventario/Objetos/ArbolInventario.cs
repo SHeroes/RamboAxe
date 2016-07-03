@@ -22,7 +22,8 @@ namespace AlumnoEjemplos.RamboAxe.Inventario.Objetos
                 GuiController.Instance.AlumnoEjemplosDir + "\\Ramboaxe\\Media\\bol-TgcScene.xml",
                 0, 0, 0
             );*/
-            return null;
+
+            return new ArbolCristalGo(0, 0, 0);
         }
     }
 }
