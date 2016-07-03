@@ -30,7 +30,7 @@ namespace AlumnoEjemplos.RamboAxe.Player
             }
         }
 
-        public void playMusic()
+        public void playMusic(bool loopValue = true)
         {
             TgcMp3Player player = GuiController.Instance.Mp3Player;
             TgcMp3Player.States currentState = player.getStatus();
@@ -38,7 +38,7 @@ namespace AlumnoEjemplos.RamboAxe.Player
             if (currentState == TgcMp3Player.States.Open)
             {
                 //Reproducir MP3
-                player.play(true);
+                player.play(loopValue);
             }
             if (currentState == TgcMp3Player.States.Stopped)
             {

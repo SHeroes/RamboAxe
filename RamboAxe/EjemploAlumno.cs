@@ -979,9 +979,14 @@ namespace AlumnoEjemplos.RamboAxe
                 vistaInventario.cerrar();
                 textGameOver.render();
                 textGameContinue.render();
-                sonidoDeFondo.setLoop(false);
-                sonidoDeFondo.loadMp3(GuiController.Instance.AlumnoEjemplosDir + "RamboAxe\\Media\\siamofuori.mp3");
-
+                
+                if (sonidoDeFondo.getActualSound() == GuiController.Instance.AlumnoEjemplosDir + "RamboAxe\\Media\\sonidofondo.mp3")
+                {
+                    //GuiController.Instance.Logger.log("sonidoDeFondo: " + sonidoDeFondo.getActualSound());
+                    sonidoDeFondo.loadMp3(GuiController.Instance.AlumnoEjemplosDir + "RamboAxe\\Media\\siamofuori.mp3");
+                    sonidoDeFondo.playMusic(false);
+                }
+                
             }
             //Mostrar Ayuda
             if (d3dInput.keyDown(Key.F5))
