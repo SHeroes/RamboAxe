@@ -231,7 +231,7 @@ namespace AlumnoEjemplos.RamboAxe.Player
             }
             GameObjectAbstract go = construyendo;
             construyendo = null;
-            //EjemploAlumno.getInstance().mapa.placeObject(go);
+            EjemploAlumno.getInstance().mapa.placeObject(go);
             huboCambios();
         }
 

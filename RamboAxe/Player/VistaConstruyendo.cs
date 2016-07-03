@@ -13,16 +13,17 @@ namespace AlumnoEjemplos.RamboAxe.Player
 {
     public class VistaConstruyendo: Observador
     {
-        private const float DISTANCIA_CONSTRUIBLE = 50.0f;
         private TgcMesh construyendo;
         private TgcMesh meshVerde;
         private TgcMesh meshRojo;
         private Vector3 ultimoLookAt;
         private Vector3 ultimoEye;
         private bool estaConstruyendo;
+        private float distanciaConstruible;
 
         public VistaConstruyendo()
         {
+            distanciaConstruible = 50.0f;
             estaConstruyendo = false;
             CharacterSheet.getInstance().agregarObservador(this);
         }
@@ -33,6 +34,7 @@ namespace AlumnoEjemplos.RamboAxe.Player
             meshRojo = meshVerde.clone("ConstruyendoIncorrecto");
             meshVerde.setColor(Color.LightGreen);
             meshRojo.setColor(Color.Salmon);
+            distanciaConstruible = meshVerde.BoundingBox.calculateBoxRadius();
             construyendo = meshVerde;
             estaConstruyendo = true;
         }
@@ -76,14 +78,15 @@ namespace AlumnoEjemplos.RamboAxe.Player
             radians -= FastMath.ToRad(33.3f);
             /* Lo muevo a la posicion con respecto de la camara */
             Vector3 meshPosition = new Vector3(
-                ultimoEye.X + DISTANCIA_CONSTRUIBLE * FastMath.Cos(radians),
+                ultimoEye.X + distanciaConstruible * FastMath.Cos(radians),
                 0.0f,
-                ultimoEye.Z + DISTANCIA_CONSTRUIBLE * FastMath.Sin(radians)
+                ultimoEye.Z + distanciaConstruible * FastMath.Sin(radians)
             );
             Cuadrante cuad = EjemploAlumno.getInstance().mapa.getCuadranteForPosition(meshPosition);
             if(cuad.getTerrain() != null){
                 cuad.getTerrain().interpoledHeight(meshPosition.X, meshPosition.Z, out meshPosition.Y);
             }
+            meshPosition.Y -= 10.0f;
             meshVerde.Position = meshPosition;
             meshVerde.Rotation = new Vector3(
                 0.0f,
