@@ -81,7 +81,7 @@ namespace AlumnoEjemplos.RamboAxe
         public MapaDelJuego mapa;
         Sonido sonidoDeFondo;
         TgcSprite menuAyuda;
-        private bool meshShadersEnable = false;
+        private bool meshShadersEnable = true;
         private bool quadShadersEnable = false;
 
 
@@ -117,7 +117,7 @@ namespace AlumnoEjemplos.RamboAxe
 
         public override string getDescription()
         {
-            return "Survival craft 3d.";
+            return "Survival craft 3D";
         }
         TgcD3dInput d3dInput;
         TgcText2d textHud;
@@ -793,12 +793,6 @@ namespace AlumnoEjemplos.RamboAxe
             //Cuando cambia momento del dia
             if (HoraDelDia.getInstance().getMomentoDelDia() != intmomentoDiaAnterior)
             {
-                if (HoraDelDia.getInstance().getHoraEnString() == "NOCHE")
-                {
-                    meshShadersEnable = true;
-                } else {
-                    meshShadersEnable = false;
-                }
                 if (chanceLluvia > (float)RanWind.NextDouble()) {
                     llueve = true;
                     lluviaInfo = " Llueve " + getLluviaIntensidadString();
@@ -1117,12 +1111,18 @@ namespace AlumnoEjemplos.RamboAxe
             if (meshShadersEnable)
             {
                 //Cargar variables shader de la luz
+                factorOscuridad = 0;
+                if (HoraDelDia.getInstance().isAM())
+                    factorOscuridad = (float)HoraDelDia.getInstance().getHoraDelDia();
+                else  factorOscuridad = 1f - (float)HoraDelDia.getInstance().getHoraDelDia();
+                //GuiController.Instance.Logger.log("factorOscuridad: "+factorOscuridad.ToString() );
+                piso.Effect.SetValue("darkFactor", factorOscuridad);
+               
 
-                piso.Effect.SetValue("darkFactor", (float)HoraDelDia.getInstance().getHoraDelDia() * 2);
                 //infoBoxText.Text = skyBox.Faces.Length.ToString();
                 foreach (TgcMesh face in skyBox.Faces)
                 {
-                    face.Effect.SetValue("darkFactor", (float)HoraDelDia.getInstance().getHoraDelDia() * 2);
+                    face.Effect.SetValue("darkFactor", factorOscuridad);
                     face.render();
                 }
                // piso.Effect.SetValue("random", (float)r.NextDouble());
@@ -1212,6 +1212,7 @@ namespace AlumnoEjemplos.RamboAxe
 
 
         string momentoDiaAnterior = "";
+        private float factorOscuridad;
         private void changeSkyBox()
         {
 
