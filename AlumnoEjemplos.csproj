@@ -108,6 +108,7 @@
     <Compile Include="RamboAxe\BarraEstatica.cs" />
     <Compile Include="RamboAxe\EjemploAlumno.cs" />
     <Compile Include="RamboAxe\GameCamera.cs" />
+    <Compile Include="RamboAxe\GameObjects\Dropbox.cs" />
     <Compile Include="RamboAxe\GameObjects\MuchosArboles1.cs" />
     <Compile Include="RamboAxe\GameObjects\AguaSucia.cs" />
     <Compile Include="RamboAxe\GameObjects\ParteNave2.cs" />

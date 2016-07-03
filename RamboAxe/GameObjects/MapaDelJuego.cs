@@ -6,6 +6,7 @@ using System.Text;
 using TgcViewer.Utils.TgcSceneLoader;
 using System.Drawing;
 using TgcViewer.Utils.TgcGeometry;
+using AlumnoEjemplos.RamboAxe.Inventario;
 
 namespace AlumnoEjemplos.RamboAxe.GameObjects
 {
@@ -181,6 +182,12 @@ namespace AlumnoEjemplos.RamboAxe.GameObjects
                 cuadrante.getObjects().Add(go);
                 EjemploAlumno.getInstance().forceUpdate = true;
             }
+        }
+
+        public void tirar(ObjetoInventario obj)
+        {
+            Cuadrante cuadrante = getCuadranteForPosition(EjemploAlumno.getInstance().camera.lookAt);
+            cuadrante.getDropbox().agregar(obj);
         }
     }
     

@@ -468,6 +468,16 @@ namespace AlumnoEjemplos.RamboAxe.Player
             }
         }
 
+        public void tirarActual()
+        {
+            if(esInventario){
+                ObjetoInventario objeto = inv.obtenerObjetoEnPosicion(currentRow);
+                if(objeto != null){
+                    inv.tirar(objeto);
+                }
+            }
+        }
+
         private void fabricarActual()
         {
             if (esReceta)
