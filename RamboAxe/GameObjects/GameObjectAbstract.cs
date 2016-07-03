@@ -107,7 +107,13 @@ namespace AlumnoEjemplos.RamboAxe.GameObjects
 
         private void updateSize()
         {
-            resize(lastResize.X, lastResize.Y, lastResize.Z);
+            if(lastResize.X == 0){
+                resize(30, 30, 30);
+            }
+            else
+            {
+                resize(lastResize.X, lastResize.Y, lastResize.Z);
+            }
         }
 
         public GameObjectAbstract()
