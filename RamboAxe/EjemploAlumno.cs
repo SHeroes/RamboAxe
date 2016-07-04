@@ -538,6 +538,9 @@ namespace AlumnoEjemplos.RamboAxe
                 {
                     vistaInventario.accionarItem();
                 }
+                else if(input.keyPressed(Key.T)){
+                    vistaInventario.tirarActual();
+                }
             }
             else
             {

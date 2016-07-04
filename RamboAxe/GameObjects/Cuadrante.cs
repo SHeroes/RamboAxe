@@ -263,6 +263,61 @@ namespace AlumnoEjemplos.RamboAxe.GameObjects
             this.cuadrantObjects.Remove(anObject);
         }
 
+        public Dropbox getDropbox()
+        {
+            Dropbox dropbox = findDropbox();
+            if(dropbox == null){
+                dropbox = new Dropbox(0, 0, 0);
+                // Logica para poner un objeto delante de la camara
+                /* Variables de control */
+                Vector3 ultimoEye = EjemploAlumno.getInstance().camera.eye;
+                Vector3 ultimoLookAt = EjemploAlumno.getInstance().camera.lookAt;
+                float distanciaConstruible = 40;
+                /* Obtengo el angulo en el que esta mirando */
+                float radians = FastMath.Atan2(
+                    ultimoLookAt.Z - ultimoEye.Z,
+                    ultimoLookAt.X - ultimoEye.X
+                );
+                /* Cambio el angulo para centrarlo en la pantalla */
+                radians -= FastMath.ToRad(33.3f);
+                /* Lo muevo a la posicion con respecto de la camara */
+                Vector3 meshPosition = new Vector3(
+                    ultimoEye.X + distanciaConstruible * FastMath.Cos(radians),
+                    0.0f,
+                    ultimoEye.Z + distanciaConstruible * FastMath.Sin(radians)
+                );
+                Cuadrante cuad = EjemploAlumno.getInstance().mapa.getCuadranteForPosition(meshPosition);
+                if (cuad.getTerrain() != null)
+                {
+                    cuad.getTerrain().interpoledHeight(meshPosition.X, meshPosition.Z, out meshPosition.Y);
+                }
+                meshPosition.Y -= 5.0f;
+                dropbox.place(
+                    (int)Math.Ceiling(meshPosition.X),
+                    (int)Math.Ceiling(meshPosition.Y),
+                    (int)Math.Ceiling(meshPosition.Z)
+                );
+                getObjects().Add(dropbox);
+            }
+            return dropbox;
+        }
+
+        private Dropbox findDropbox()
+        {
+            Dropbox found = null;
+            foreach(GameObjectAbstract obj in this.cuadrantObjects){
+                if(obj is Dropbox){
+                    found = (Dropbox) obj;
+                    break;
+                }
+            }
+            if(found != null && !found.esVisible){
+                removeMesh(found);
+                found = null;
+            }
+            return found;
+        }
+
 
         public List<GameObjectAbstract> getObjects()
         {

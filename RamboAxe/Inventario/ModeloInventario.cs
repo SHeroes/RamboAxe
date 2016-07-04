@@ -137,6 +137,21 @@ namespace AlumnoEjemplos.RamboAxe.Inventario
         }
 
         /// <summary>
+        /// Tira un item del inventario
+        /// </summary>
+        /// <param name="objeto">Objeto a tirar</param>
+        /// <returns>Si se tiro o no el objeto</returns>
+        public bool tirar(ObjetoInventario objeto)
+        {
+            bool pudoSacar = sacar(objeto);
+            if(pudoSacar)
+            {
+                EjemploAlumno.getInstance().mapa.tirar(objeto);
+            }
+            return pudoSacar;
+        }
+
+        /// <summary>
         /// Fabrica una receta del inventario
         /// </summary>
         /// <param name="receta">Receta del inventario</param>
