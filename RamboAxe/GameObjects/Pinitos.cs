@@ -17,8 +17,11 @@ namespace AlumnoEjemplos.RamboAxe.GameObjects
         public PinitosGo(float x,float y, float z): base(x, y-10, z)
         {
             delayUso = 7f;
-            loadMeshes(GuiController.Instance.AlumnoEjemplosDir + "\\Ramboaxe\\Media\\escenario\\pinitos-TgcScene.xml");
-            resize(140,160,140);
+            esBailador = true;
+            //loadMeshes(GuiController.Instance.AlumnoEjemplosDir + "\\Ramboaxe\\Media\\escenario\\pinitos-TgcScene.xml");
+            //resize(140,160,140);
+            loadMeshes(GuiController.Instance.AlumnoEjemplosDir + "\\Ramboaxe\\Media\\escenario\\pinito-TgcScene.xml");
+            resize(70, 160, 70);
         }
         public  override InteractuableResponse use()
         {

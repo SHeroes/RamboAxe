@@ -757,7 +757,6 @@ namespace AlumnoEjemplos.RamboAxe
                 bool collisionFound = false;
                 foreach (TgcMesh bounds in go.getBounds())
                 {
-
                     TgcBoundingBox goBounds = bounds.BoundingBox;
                     TgcCollisionUtils.BoxBoxResult collisionPjObjetosCuadrantes = TgcCollisionUtils.classifyBoxBox(cuerpoBounds, goBounds);
 
@@ -773,6 +772,15 @@ namespace AlumnoEjemplos.RamboAxe
                     break;
                 }
             }
+
+            foreach (GameObjectAbstract go in unCuadrante.getObjects())
+            {
+                if (go.esBailador) {
+                    
+                    go.bailar(vientoActual, intensidadViento);
+                }
+            }
+
 
             cuerpoPj.Position = pj.position;
             cuerpoPj.updateValues();
@@ -1032,7 +1040,15 @@ namespace AlumnoEjemplos.RamboAxe
             changeSkyBox();
 
             skyBox.Center = camera.Position;
-            skyBox.updateValues();
+            //skyBox.updateValues();
+
+            /*
+             ...
+               skyBox.Center = camera.Position;
+                skyBox.updateValues(); //aquí se instancia texturas y vertices, esto no es recomendado hacerlo en render time, se aviso por la cadena de mail no utilizara este metodo. utilicen una matriz traslación.
+                ...
+             */
+            
             
 
 

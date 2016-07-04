@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using TgcViewer.Utils.TgcGeometry;
 using TgcViewer.Utils.TgcSceneLoader;
-
+using TgcViewer;
 
 namespace AlumnoEjemplos.RamboAxe.GameObjects
 {
@@ -17,8 +17,10 @@ namespace AlumnoEjemplos.RamboAxe.GameObjects
         float x;
         float y;
         float z;
+        public bool esBailador = false;
         Vector3 normalizadoOriginal;
         Vector3 lastResize;
+        Vector2 vientoAnterior;
         protected static Dictionary<String, TgcScene> scenes;
        
         public float delayUso
@@ -27,7 +29,28 @@ namespace AlumnoEjemplos.RamboAxe.GameObjects
             set;
         }
 
-       
+       public void bailar (Vector2 vientoActual, float intensidadViento){
+
+           if (vientoActual != vientoAnterior)
+           {
+               Vector3 rotation = this.getMesh().Rotation; 
+               rotation.X = (FastMath.PI/8) * vientoActual.X;
+               rotation.Z = (FastMath.PI / 8) * vientoActual.Y;
+               this.getMesh().Rotation = rotation;
+               //this.getMesh().rotateZ((FastMath.PI_HALF / 4) * vientoActual.Y * intensidadViento);
+
+
+               GuiController.Instance.Logger.log("vientoActual.X: "+ (vientoActual.X).ToString());
+               GuiController.Instance.Logger.log("intensidadViento: " + intensidadViento.ToString());
+               GuiController.Instance.Logger.log("TOTAL: "+((FastMath.PI) * vientoActual.X * intensidadViento).ToString());
+
+           }
+           else {
+           
+           }
+           vientoAnterior = vientoActual;
+
+       }
 
         public GameObjectAbstract(float x, float y, float z)
         {
