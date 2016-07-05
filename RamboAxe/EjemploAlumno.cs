@@ -62,7 +62,7 @@ namespace AlumnoEjemplos.RamboAxe
         public VistaInventario vistaInventario;
         VistaConstruyendo vistaConstruyendo;
         float tiempoAcumuladoParaContinue = 0;
-
+        TgcText2d textoAyuda;
         //TgcPlaneWall piso;
 
         TgcMesh piso;
@@ -632,7 +632,6 @@ namespace AlumnoEjemplos.RamboAxe
         int prevCuadrantX, prevCuadrantZ = -100;
         private void gameLoop(float elapsedTime)
         {
-
             Vector2 currentCuadrante  = mapa.getCuadranteCoordsFor((int)pj.position.X,(int)pj.position.Z);
             currentCuadrantX = (int)currentCuadrante.X;
             currentCuadrantZ = (int)currentCuadrante.Y;
@@ -836,7 +835,6 @@ namespace AlumnoEjemplos.RamboAxe
                 intensidadViento = (float)RanWind.NextDouble() * (float)RanWind.NextDouble() * (float)RanWind.NextDouble() * (float)RanWind.NextDouble();
                 intensidadLluvia = (float)RanWind.NextDouble() * (float)RanWind.NextDouble();
                 vientoInfo = "Viento Direccion: " + vientoActualString() + " intensidad: " + (int)(intensidadViento * 120) + "KM/h";
-
                 //vientoInfo += "\t VectorVientoNormalizado" + vientoActual.X.ToString() + vientoActual.Y.ToString();
             };
             pjStatusInfo = "";
@@ -916,7 +914,6 @@ namespace AlumnoEjemplos.RamboAxe
 
         public override void render(float elapsedTime)
         {
-
             piso.Position =new Vector3(pj.position.X -4500,8,pj.position.Z - 4500);
             //piso.BoundingBox.render();
             if (_lastTime > 0.03)
@@ -974,6 +971,7 @@ namespace AlumnoEjemplos.RamboAxe
                     hudBack.render();
                     GuiController.Instance.Drawer2D.endDrawSprite();
                     infoHudBasicaText.render();
+                    textoAyuda.render();
 
                 }
                 if (llueve && intensidadLluvia > 0.5)
@@ -1278,6 +1276,14 @@ namespace AlumnoEjemplos.RamboAxe
             infoHudBasicaText.Color = Color.Gold;
             infoHudBasicaText.Position = new Point(14, 14);
 
+            textoAyuda = new TgcText2d();
+            textoAyuda.Text = "¿Como jugar ? Presioná F5";
+            textoAyuda.Color = Color.Yellow;
+            textoAyuda.Align = TgcText2d.TextAlign.LEFT;
+            textoAyuda.Position = new Point(1050, 650);
+            textoAyuda.Size = new Size(240, 50);
+            textoAyuda.changeFont(new System.Drawing.Font("TimesNewRoman", 15, FontStyle.Bold | FontStyle.Italic));
+
             infoBoxText = new TgcText2d();
 
             infoBoxText.Align = TgcText2d.TextAlign.CENTER;
@@ -1301,7 +1307,9 @@ namespace AlumnoEjemplos.RamboAxe
             textGameContinue.Size = new Size(400, 100);
             textGameContinue.Color = Color.Red;
             System.Drawing.Font font2 = new System.Drawing.Font("Arial", 44);
-            textGameContinue.Position = new Point((int)ScreenWidth / 2 - 200, (int)ScreenHeight / 2 );               
+            textGameContinue.Position = new Point((int)ScreenWidth / 2 - 200, (int)ScreenHeight / 2 );
+
+
 
             /*//Modifiers para variables de luz
             GuiController.Instance.Modifiers.addBoolean("lightEnable", "lightEnable", true);
@@ -1429,7 +1437,7 @@ namespace AlumnoEjemplos.RamboAxe
             textHud.dispose();
             textHudExplicacionJuego.dispose();
             infoHudBasicaText.dispose();
-            
+            textoAyuda.dispose();
             textGameContinue.dispose();
             textGameOver.dispose();
             vistaConstruyendo.dispose();
