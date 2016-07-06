@@ -84,11 +84,12 @@ namespace AlumnoEjemplos.RamboAxe
         private bool meshShadersEnable = true;
         private bool quadShadersEnable = false;
 
-
+        Texture zBufferTexture;
         VertexBuffer screenQuadVB;
         Texture renderTarget2D;
         Surface pOldRT;
         Microsoft.DirectX.Direct3D.Effect effect;
+        Microsoft.DirectX.Direct3D.Effect zBufferEffect;
         //InterpoladorVaiven intVaivenOscurecer;
  
 
@@ -169,6 +170,8 @@ namespace AlumnoEjemplos.RamboAxe
             //Configurar Technique dentro del shader
             effect.Technique = "OscurecerTechnique";
 
+            zBufferEffect = TgcShaders.loadEffect(GuiController.Instance.ExamplesMediaDir + "Shaders\\EjemploGetZBuffer.fx");
+            zBufferTexture = new Texture(d3dDevice, d3dDevice.Viewport.Width, d3dDevice.Viewport.Height, 1, Usage.RenderTarget, Format.R32F, Pool.Default);
             //Interpolador para efecto de variar la intensidad de la textura de alarma
             /*intVaivenOscurecer = new InterpoladorVaiven();
             intVaivenOscurecer.Min = 0;
@@ -931,32 +934,29 @@ namespace AlumnoEjemplos.RamboAxe
 
             
 
-            Microsoft.DirectX.Direct3D.Device d3dDevice = GuiController.Instance.D3dDevice;
+            //Microsoft.DirectX.Direct3D.Device d3dDevice = GuiController.Instance.D3dDevice;
 
-            //Cargamos el Render Targer al cual se va a dibujar la escena 3D. Antes nos guardamos el surface original
-            //En vez de dibujar a la pantalla, dibujamos a un buffer auxiliar, nuestro Render Target.
-            pOldRT = d3dDevice.GetRenderTarget(0);
-            Surface pSurf = renderTarget2D.GetSurfaceLevel(0);
-            d3dDevice.SetRenderTarget(0, pSurf);
-            d3dDevice.Clear(ClearFlags.Target | ClearFlags.ZBuffer, Color.Black, 1.0f, 0);
+            //Surface pSurf = renderTarget2D.GetSurfaceLevel(0);
+            //d3dDevice.SetRenderTarget(0, pSurf);
+            //d3dDevice.Clear(ClearFlags.Target | ClearFlags.ZBuffer, Color.Black, 1.0f, 0);
 
             //Dibujamos la escena comun, pero en vez de a la pantalla al Render Target
-            drawSceneToRenderTarget(d3dDevice,elapsedTime);
+            drawSceneToRenderTarget(elapsedTime);
 
             //Liberar memoria de surface de Render Target
-            pSurf.Dispose();
+            //pSurf.Dispose();
 
             //Si quisieramos ver que se dibujo, podemos guardar el resultado a una textura en un archivo para debugear su resultado (ojo, es lento)
             //TextureLoader.Save(GuiController.Instance.ExamplesMediaDir + "Shaders\\render_target.bmp", ImageFileFormat.Bmp, renderTarget2D);
 
 
             //Ahora volvemos a restaurar el Render Target original (osea dibujar a la pantalla)
-            d3dDevice.SetRenderTarget(0, pOldRT);
+            //d3dDevice.SetRenderTarget(0, pOldRT);
 
 
             //Luego tomamos lo dibujado antes y lo combinamos con una textura con efecto de alarma
-            drawPostProcess(d3dDevice);
-            d3dDevice.BeginScene();
+            //drawPostProcess(d3dDevice);
+            //d3dDevice.BeginScene();
             if (!gameOver)
             {
                 if (barraInteraccion != null)
@@ -1028,16 +1028,53 @@ namespace AlumnoEjemplos.RamboAxe
             }
  * */
 
-            d3dDevice.EndScene();
+            //d3dDevice.EndScene();
         }
         /// <summary>
         /// Dibujamos toda la escena pero en vez de a la pantalla, la dibujamos al Render Target que se cargo antes.
         /// Es como si dibujaramos a una textura auxiliar, que luego podemos utilizar.
         /// </summary>
-        private void drawSceneToRenderTarget(Microsoft.DirectX.Direct3D.Device d3dDevice,float elapsedTime)
+        private void drawSceneToRenderTarget(float elapsedTime)
         {
+            //Guardar render target original
+            //Cargamos el Render Targer al cual se va a dibujar la escena 3D. Antes nos guardamos el surface original
+            //En vez de dibujar a la pantalla, dibujamos a un buffer auxiliar, nuestro Render Target.
+
+            Microsoft.DirectX.Direct3D.Device d3dDevice = GuiController.Instance.D3dDevice;
+
+            pOldRT = d3dDevice.GetRenderTarget(0);
+
+            d3dDevice.BeginScene();
+            Surface zBufferSurface = zBufferTexture.GetSurfaceLevel(0);
+            d3dDevice.SetRenderTarget(0, zBufferSurface);
+            d3dDevice.Clear(ClearFlags.Target | ClearFlags.ZBuffer, Color.Black, 1.0f, 0);
+
+            renderSceneWith(zBufferEffect, "GenerateZBuffer");
+
+            zBufferSurface.Dispose();
+            d3dDevice.EndScene();
+
+
+            // 2) Volvemos a dibujar la escena y pasamos el ZBuffer al shader como una textura.
+            // Para este ejemplo particular utilizamos el valor de Z para alterar el color del pixel
             d3dDevice.BeginScene();
 
+            //Restaurar render target original
+            d3dDevice.SetRenderTarget(0, pOldRT);
+            d3dDevice.Clear(ClearFlags.Target | ClearFlags.ZBuffer, Color.Black, 1.0f, 0);
+
+            //Cargar textura de zBuffer al shader
+            zBufferEffect.SetValue("texZBuffer", zBufferTexture);
+            zBufferEffect.SetValue("screenDimensions", new float[] { d3dDevice.Viewport.Width, d3dDevice.Viewport.Height });
+
+            renderSceneWith(zBufferEffect, "AlterColorByDepth");
+
+            //cuerpoPj.BoundingBox.render();
+            d3dDevice.EndScene();
+        }
+
+        private void renderSceneWith(Microsoft.DirectX.Direct3D.Effect anEffect, string aTechnique)
+        {
             changeSkyBox();
 
             skyBox.Center = camera.Position;
@@ -1049,8 +1086,8 @@ namespace AlumnoEjemplos.RamboAxe
                 skyBox.updateValues(); //aquí se instancia texturas y vertices, esto no es recomendado hacerlo en render time, se aviso por la cadena de mail no utilizara este metodo. utilicen una matriz traslación.
                 ...
              */
-            
-            
+
+
 
 
             int boxesToCheck = 9;
@@ -1078,10 +1115,10 @@ namespace AlumnoEjemplos.RamboAxe
                     if (r == TgcCollisionUtils.FrustumResult.INTERSECT || r == TgcCollisionUtils.FrustumResult.INSIDE)
                     {
 
-                       
-                        unCuadrante.getTerrain().Effect = piso.Effect;
-                        unCuadrante.getTerrain().Technique = piso.Technique;
-                        
+
+                        unCuadrante.getTerrain().Effect = anEffect;
+                        unCuadrante.getTerrain().Technique = aTechnique;
+
                         unCuadrante.getTerrain().render();
                         // text4.Text += ">> " +unCuadrante.getLatitud().ToString() + " " + unCuadrante.getLongitud().ToString()+"\n";
                         foreach (GameObjectAbstract go in unCuadrante.getObjects())
@@ -1094,8 +1131,8 @@ namespace AlumnoEjemplos.RamboAxe
 
                             if (r == TgcCollisionUtils.FrustumResult.INSIDE || r == TgcCollisionUtils.FrustumResult.INTERSECT)
                             {
-                                mesh.Effect = piso.Effect;
-                                mesh.Technique = piso.Technique;
+                                mesh.Effect = anEffect;
+                                mesh.Technique = aTechnique;
                                 mesh.render();
                             }
 
@@ -1106,26 +1143,26 @@ namespace AlumnoEjemplos.RamboAxe
             }
 
 
-             if (meshShadersEnable)
-             {
-                 piso.Effect = TgcShaders.loadEffect(GuiController.Instance.ExamplesMediaDir + "Shaders\\Ejemplo1.fx");
-                 piso.Technique = "Darkening";
-                 foreach (TgcMesh face in skyBox.Faces)
-                 {
-                     face.Effect = piso.Effect;
-                     face.Technique = piso.Technique;
-                 }
-             }
-             else
-             {
-                 piso.Effect = GuiController.Instance.Shaders.TgcMeshShader;
-                 piso.Technique = GuiController.Instance.Shaders.getTgcMeshTechnique(piso.RenderType);
-                 foreach (TgcMesh face in skyBox.Faces)
-                 {
-                     face.Effect = piso.Effect;
-                     face.Technique = piso.Technique;
-                 }
-             }
+            if (meshShadersEnable)
+            {
+                piso.Effect = anEffect;
+                piso.Technique = aTechnique;
+                foreach (TgcMesh face in skyBox.Faces)
+                {
+                    face.Effect = anEffect;
+                    face.Technique = aTechnique;
+                }
+            }
+            else
+            {
+                piso.Effect = GuiController.Instance.Shaders.TgcMeshShader;
+                piso.Technique = GuiController.Instance.Shaders.getTgcMeshTechnique(piso.RenderType);
+                foreach (TgcMesh face in skyBox.Faces)
+                {
+                    face.Effect = anEffect;
+                    face.Technique = aTechnique;
+                }
+            }
 
             if (meshShadersEnable)
             {
@@ -1133,18 +1170,19 @@ namespace AlumnoEjemplos.RamboAxe
                 factorOscuridad = 0;
                 if (HoraDelDia.getInstance().isAM())
                     factorOscuridad = (float)HoraDelDia.getInstance().getHoraDelDia();
-                else  factorOscuridad = 1f - (float)HoraDelDia.getInstance().getHoraDelDia();
+                else factorOscuridad = 1f - (float)HoraDelDia.getInstance().getHoraDelDia();
                 //GuiController.Instance.Logger.log("factorOscuridad: "+factorOscuridad.ToString() );
-                piso.Effect.SetValue("darkFactor", factorOscuridad);
-               
+                
+                //piso.Effect.SetValue("darkFactor", factorOscuridad);
+
 
                 //infoBoxText.Text = skyBox.Faces.Length.ToString();
                 foreach (TgcMesh face in skyBox.Faces)
                 {
-                    face.Effect.SetValue("darkFactor", factorOscuridad);
+                    //face.Effect.SetValue("darkFactor", factorOscuridad);
                     face.render();
                 }
-               // piso.Effect.SetValue("random", (float)r.NextDouble());
+                // piso.Effect.SetValue("random", (float)r.NextDouble());
                 //piso.Effect.SetValue("textureOffset", (float)GuiController.Instance.Modifiers["textureOffset"]);
 
             }
@@ -1156,10 +1194,6 @@ namespace AlumnoEjemplos.RamboAxe
 
             piso.render();
             vistaConstruyendo.render();
-            
-
-            //cuerpoPj.BoundingBox.render();
-            d3dDevice.EndScene();
         }
 
 
