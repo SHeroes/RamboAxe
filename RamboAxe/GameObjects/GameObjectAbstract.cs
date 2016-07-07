@@ -18,6 +18,8 @@ namespace AlumnoEjemplos.RamboAxe.GameObjects
         float y;
         float z;
         public bool esBailador = false;
+        public float capacidadMovimiento = 1;
+
         Vector3 normalizadoOriginal;
         Vector3 lastResize;
         Vector2 vientoAnterior;
@@ -30,26 +32,13 @@ namespace AlumnoEjemplos.RamboAxe.GameObjects
         }
 
        public void bailar (Vector2 vientoActual, float intensidadViento){
+            Random rand = new Random();
+            float rx = (float)rand.NextDouble()-0.5f;
+            Vector3 rotation = this.getMesh().Rotation;
 
-           if (vientoActual != vientoAnterior)
-           {
-               Vector3 rotation = this.getMesh().Rotation; 
-               rotation.X = (FastMath.PI/8) * vientoActual.X;
-               rotation.Z = (FastMath.PI / 8) * vientoActual.Y;
-               this.getMesh().Rotation = rotation;
-               //this.getMesh().rotateZ((FastMath.PI_HALF / 4) * vientoActual.Y * intensidadViento);
-
-
-               GuiController.Instance.Logger.log("vientoActual.X: "+ (vientoActual.X).ToString());
-               GuiController.Instance.Logger.log("intensidadViento: " + intensidadViento.ToString());
-               GuiController.Instance.Logger.log("TOTAL: "+((FastMath.PI) * vientoActual.X * intensidadViento).ToString());
-
-           }
-           else {
-           
-           }
-           vientoAnterior = vientoActual;
-
+            rotation.X = (vientoActual.X + rx) * FastMath.PI * 0.1f * this.capacidadMovimiento * intensidadViento;
+            rotation.Z = (vientoActual.Y + rx) * FastMath.PI * 0.1f * this.capacidadMovimiento * intensidadViento; 
+            this.getMesh().Rotation = rotation;
        }
 
         public GameObjectAbstract(float x, float y, float z)

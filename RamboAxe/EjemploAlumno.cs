@@ -159,15 +159,16 @@ namespace AlumnoEjemplos.RamboAxe
             screenQuadVB.SetData(screenQuadVertices, 0, LockFlags.None);
 
             //Creamos un Render Targer sobre el cual se va a dibujar la pantalla
+
             renderTarget2D = new Texture(d3dDevice, d3dDevice.PresentationParameters.BackBufferWidth
                     , d3dDevice.PresentationParameters.BackBufferHeight, 1, Usage.RenderTarget,
                         Format.X8R8G8B8, Pool.Default);
             
              //codigo extra para que funcione con placas de video no integradas
-           
+           /*
             stencil = d3dDevice.CreateDepthStencilSurface(d3dDevice.PresentationParameters.BackBufferWidth,d3dDevice.PresentationParameters.BackBufferHeight, DepthFormat.D24S8, MultiSampleType.None, 0, true);
             d3dDevice.DepthStencilSurface = stencil;
-
+            */
 
             //Cargar shader con efectos de Post-Procesado
             effect = TgcShaders.loadEffect(GuiController.Instance.ExamplesMediaDir + "Shaders\\PostProcess.fx");
@@ -785,7 +786,9 @@ namespace AlumnoEjemplos.RamboAxe
             {
                 if (go.esBailador) {
                     
-                    go.bailar(vientoActual, intensidadViento);
+                    //go.bailar(vientoActual, intensidadViento);
+
+                    go.bailar(vientoActual, 0.5f);
                 }
             }
 

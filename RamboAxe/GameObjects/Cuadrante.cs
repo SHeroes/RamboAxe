@@ -99,17 +99,25 @@ namespace AlumnoEjemplos.RamboAxe.GameObjects
             go = new ArbolCristalGo(700 + boundingBox.PMin.X, y, 700 + boundingBox.PMin.Z);
             this.cuadrantObjects.Add(go);
 
-            getTerrain().interpoledHeight(550 + boundingBox.PMin.X, 550 + boundingBox.PMin.Z, out y);
-            go = new ArbolCalorGo(550 + boundingBox.PMin.X, y, 550 + boundingBox.PMin.Z);
-            this.cuadrantObjects.Add(go);
+            if (rX.NextDouble() > 0.6f)
+            {
+                getTerrain().interpoledHeight(550 + boundingBox.PMin.X, 550 + boundingBox.PMin.Z, out y);
+                go = new ArbolCalorGo(550 + boundingBox.PMin.X, y, 550 + boundingBox.PMin.Z);
+                this.cuadrantObjects.Add(go);
+            }
+            else if (rX.NextDouble() > 0.2f)
+            {
+                getTerrain().interpoledHeight(550 + boundingBox.PMin.X, 550 + boundingBox.PMin.Z, out y);
+                go = new PinitosGo(550 + boundingBox.PMin.X, y, 550 + boundingBox.PMin.Z);
+                this.cuadrantObjects.Add(go);
+            }
 
             getTerrain().interpoledHeight(700 + boundingBox.PMin.X, 550 + boundingBox.PMin.Z, out y);
             go = new ArbolHongoGo(700 + boundingBox.PMin.X, y, 550 + boundingBox.PMin.Z);
             this.cuadrantObjects.Add(go);
 
-            
             getTerrain().interpoledHeight(300 + boundingBox.PMin.X, 350 + boundingBox.PMin.Z, out y);
-            go = new PinitosGo(300 + boundingBox.PMin.X, y, 350 + boundingBox.PMin.Z);
+            go = new PinitoGo(300 + boundingBox.PMin.X, y, 350 + boundingBox.PMin.Z);
             this.cuadrantObjects.Add(go);
 
             getTerrain().interpoledHeight(300 + boundingBox.PMin.X, 350 + boundingBox.PMin.Z, out y);
@@ -121,10 +129,30 @@ namespace AlumnoEjemplos.RamboAxe.GameObjects
             go = new ParteNave1(800 + boundingBox.PMin.X, y, 500 + boundingBox.PMin.Z);
             this.cuadrantObjects.Add(go);
 
-            getTerrain().interpoledHeight(200 + boundingBox.PMin.X, 800 + boundingBox.PMin.Z, out y);
-            go = new ParteNave2(200 + boundingBox.PMin.X, y, 800 + boundingBox.PMin.Z);
-            this.cuadrantObjects.Add(go);
+
+            if (rX.NextDouble() > 0.8f) {
+                /*
+                getTerrain().interpoledHeight(200 + boundingBox.PMin.X, 800 + boundingBox.PMin.Z, out y);
+                go = new PinitosGo(200 + boundingBox.PMin.X, y, 800 + boundingBox.PMin.Z);
+                this.cuadrantObjects.Add(go);
+                 * */
+            }
+            else if (rX.NextDouble() > 0.6f)
+            {
+                getTerrain().interpoledHeight(200 + boundingBox.PMin.X, 800 + boundingBox.PMin.Z, out y);
+                go = new ParteNave2(200 + boundingBox.PMin.X, y, 800 + boundingBox.PMin.Z);
+                this.cuadrantObjects.Add(go);
+            }
+
             
+            /*
+            getTerrain().interpoledHeight(300 + boundingBox.PMin.X, 350 + boundingBox.PMin.Z, out y);
+            go = new ArbustosGo(300 + boundingBox.PMin.X, y, 350 + boundingBox.PMin.Z);
+            this.cuadrantObjects.Add(go);
+
+             * 
+             * 
+             */ 
             //go = new Arbol(440 + latitud * width, y, 300 + longitud * height);
            // this.cuadrantObjects.Add(go);
            /*  mesh = MapaDelJuego.getGameMesh(1).clone("comida_1");
