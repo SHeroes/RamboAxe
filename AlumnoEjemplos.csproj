@@ -139,6 +139,9 @@
     <Compile Include="RamboAxe\Inventario\ObjetoInventarioEquipable.cs" />
     <Compile Include="RamboAxe\Inventario\Objetos\ArbolInventario.cs" />
     <Compile Include="RamboAxe\Inventario\Objetos\HachaInventario.cs" />
+    <Compile Include="RamboAxe\Inventario\Objetos\CamperaInventario.cs" />
+    <Compile Include="RamboAxe\Inventario\Objetos\RemeraInventario.cs" />
+    <Compile Include="RamboAxe\Inventario\Objetos\ZapatillasInventario.cs" />
     <Compile Include="RamboAxe\Inventario\Objetos\PantalonInventario.cs" />
     <Compile Include="RamboAxe\Inventario\Objetos\PiedraInventario.cs" />
     <Compile Include="RamboAxe\Inventario\Objetos\JugoInventario.cs" />

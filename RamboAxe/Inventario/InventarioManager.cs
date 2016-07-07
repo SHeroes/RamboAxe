@@ -19,6 +19,9 @@ namespace AlumnoEjemplos.RamboAxe.Inventario
         public static ObjetoInventario Hacha { get { return objetos["Hacha"]; } }
         public static ObjetoInventario Arbol { get { return objetos["Arbol"]; } }
         public static ObjetoInventario Pantalon { get { return objetos["Pantalon"]; } }
+        public static ObjetoInventario Campera { get { return objetos["Campera"]; } }
+        public static ObjetoInventario Remera { get { return objetos["Remera"]; } }
+        public static ObjetoInventario Zapatillas { get { return objetos["Zapatillas"]; } }
         # endregion
 
         # region Recetas
@@ -37,6 +40,10 @@ namespace AlumnoEjemplos.RamboAxe.Inventario
             agregarObjeto(new RacionInventario());
             agregarObjeto(new RamitaInventario());
             agregarObjeto(new JugoInventario());
+            agregarObjeto(new ZapatillasInventario());
+            agregarObjeto(new RemeraInventario());
+            agregarObjeto(new CamperaInventario());
+           
             /* Listado de Recetas */
             agregarReceta(
                 Arbol,

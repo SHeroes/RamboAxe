@@ -29,6 +29,7 @@ namespace AlumnoEjemplos.RamboAxe.GameObjects
             uses--;
             if (uses >= 0)
             {
+                CharacterSheet.getInstance().getInventario().agregar(InventarioManager.Ramita);
                 if (uses < 5)
                 {
                     resize(70,80,70);
@@ -41,7 +42,6 @@ namespace AlumnoEjemplos.RamboAxe.GameObjects
             }
             return null;
         }
-     
  
     }
 }

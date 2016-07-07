@@ -12,7 +12,7 @@ namespace AlumnoEjemplos.RamboAxe.GameObjects
 {
     class PinitosGo:GameObjectAbstract
     {
-        float uses = 7;
+        float uses = 10;
         
         public PinitosGo(float x,float y, float z): base(x, y-20, z)
         {

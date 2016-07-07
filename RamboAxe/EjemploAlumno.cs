@@ -619,6 +619,9 @@ namespace AlumnoEjemplos.RamboAxe
             pj.getInventario().agregar(InventarioManager.Pantalon);
             pj.getInventario().agregar(InventarioManager.Racion, 10);
             pj.getInventario().agregar(InventarioManager.RecetaArbol);
+            pj.getInventario().agregar(InventarioManager.Remera);
+            pj.getInventario().agregar(InventarioManager.Zapatillas);
+
         }
 
         public void initCamera()

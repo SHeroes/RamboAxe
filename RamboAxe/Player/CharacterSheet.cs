@@ -49,6 +49,7 @@ namespace AlumnoEjemplos.RamboAxe.Player
                 crouching = true;
                 playerHeight = 10;
             }
+
         }
         public void stand()
         {
@@ -272,6 +273,7 @@ namespace AlumnoEjemplos.RamboAxe.Player
         public void danioPorFrio(int cantidadDanio)
         {
             int danioFinal = cantidadDanio;
+            if (this.estaEquipadaParteDelCuerpo(TORSO) && cantidadDanio>0) danioFinal = cantidadDanio - 1;
             this.addLevelHambre(danioFinal);
         }
     }

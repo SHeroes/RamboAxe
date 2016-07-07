@@ -22,9 +22,18 @@ namespace AlumnoEjemplos.RamboAxe.Inventario
             if (personaje.estaEquipadaParteDelCuerpo(posicionCuerpo))
             {
                 personaje.desequiparObjetoDeParteDelCuerpo(posicionCuerpo);
+                if (posicionCuerpo == CharacterSheet.PIES)
+                {
+                    personaje.velocity = 3;
+                }
+            }else
+            {
+                personaje.getInventario().sacar(this);
+                personaje.equiparObjetoEnParteDelCuerpo(posicionCuerpo, this);
+                if (posicionCuerpo == CharacterSheet.PIES) {
+                    personaje.velocity = 6;
+                }
             }
-            CharacterSheet.getInstance().getInventario().sacar(this);
-            personaje.equiparObjetoEnParteDelCuerpo(posicionCuerpo, this);
         }
     }
 }

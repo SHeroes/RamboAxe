@@ -13,6 +13,7 @@ namespace AlumnoEjemplos.RamboAxe.GameObjects
     class ArbolCristalGo:GameObjectAbstract
     {
         float uses = 5;
+        private Sonido sonidoExtra;
         
         public ArbolCristalGo(float x,float y, float z): base(x, y-20, z)
         {
@@ -23,6 +24,14 @@ namespace AlumnoEjemplos.RamboAxe.GameObjects
         public  override InteractuableResponse use()
         {
             uses--;
+            /*
+            sonidoExtra = new Sonido(GuiController.Instance.AlumnoEjemplosDir + "RamboAxe\\Media\\FX-Electrical.mp3");
+            sonidoExtra.setLoop(false);
+            sonidoExtra.loadMp3(GuiController.Instance.AlumnoEjemplosDir + "RamboAxe\\Media\\FX-Electrical.mp3");
+            sonidoExtra.playMusic(false);
+
+             */
+            
             if (uses >= 0)
             {
 //                base.getMesh().Scale = new Vector3((float)(uses * 0.), (float)(uses * 0.5), (float)(uses * 0.5));
