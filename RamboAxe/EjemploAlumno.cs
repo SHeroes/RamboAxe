@@ -789,9 +789,9 @@ namespace AlumnoEjemplos.RamboAxe
             {
                 if (go.esBailador) {
                     
-                    //go.bailar(vientoActual, intensidadViento);
+                    go.bailar(vientoActual, intensidadViento);
 
-                    go.bailar(vientoActual, 0.5f);
+                   
                 }
             }
 

@@ -26,7 +26,8 @@ namespace AlumnoEjemplos.RamboAxe.Inventario
                 {
                     personaje.velocity = 3;
                 }
-            }else
+            }
+            else
             {
                 personaje.getInventario().sacar(this);
                 personaje.equiparObjetoEnParteDelCuerpo(posicionCuerpo, this);
@@ -34,6 +35,7 @@ namespace AlumnoEjemplos.RamboAxe.Inventario
                     personaje.velocity = 6;
                 }
             }
+
         }
     }
 }

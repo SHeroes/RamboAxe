@@ -23,7 +23,7 @@ namespace AlumnoEjemplos.RamboAxe.Inventario.Objetos
                 0, 0, 0
             );*/
 
-            return new PinitoGo(50, -15, 50);
+            return new PinitoGo(50, -5, 50);
         }
     }
 }
