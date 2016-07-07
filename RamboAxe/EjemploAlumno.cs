@@ -77,11 +77,14 @@ namespace AlumnoEjemplos.RamboAxe
 
 
         bool gameOver = false;
+        bool gameStarted = false;
         public bool forceUpdate = true;
         int tiempoDelContinue = 3;
         public MapaDelJuego mapa;
         Sonido sonidoDeFondo;
         TgcSprite menuAyuda;
+        TgcSprite intro;
+        TgcSprite controles;
         private bool meshShadersEnable = true;
         private bool quadShadersEnable = false;
 
@@ -207,6 +210,20 @@ namespace AlumnoEjemplos.RamboAxe
             menuAyuda.Position = new Vector2((ScreenWidth - tamaño.Width) / 2.2f,
                    (ScreenHeight - tamaño.Height / 2) / 2.8f);
 
+            intro = new TgcSprite();
+            intro.Texture = TgcTexture.createTexture(GuiController.Instance.AlumnoEjemplosDir + "RamboAxe\\Media\\intro.png");
+            Size tamañoIntro = intro.Texture.Size;
+            intro.Scaling = new Vector2(1.4f, 0.8f);
+            intro.Position = new Vector2((ScreenWidth - tamaño.Width) / 170f,
+                   (ScreenHeight - tamaño.Height / 2) / 170f);
+
+            controles = new TgcSprite();
+            controles.Texture = TgcTexture.createTexture(GuiController.Instance.AlumnoEjemplosDir + "RamboAxe\\Media\\controles.png");
+            Size tamañoControles = controles.Texture.Size;
+            controles.Scaling = new Vector2(1.4f, 0.8f);
+            controles.Position = new Vector2((ScreenWidth - tamaño.Width) / 170f,
+                   (ScreenHeight - tamaño.Height / 2) / 100f);
+
             //Iniciarlizar PickingRay
             pickingRay = new TgcPickingRay();
             TgcTexture texture = TgcTexture.createTexture(d3dDevice, GuiController.Instance.AlumnoEjemplosDir + "Ramboaxe\\Media\\" + "agua.jpg");
@@ -273,6 +290,7 @@ namespace AlumnoEjemplos.RamboAxe
         private float rads = FastMath.ToRad(90);
         private Vector3 direction = new Vector3(0.0f, 0.0f, 0.0f);
         public void handleInput() {
+            if (gameStarted) { 
             TgcD3dInput input = GuiController.Instance.D3dInput;
             direction = new Vector3(0.0f, 0.0f, 0.0f);
             //direction.Z += 5.0f;
@@ -572,7 +590,19 @@ namespace AlumnoEjemplos.RamboAxe
                // collisionPointMesh.Position = collisionPoint;
                //  collisionPointMesh.render();
             }
-
+            }
+            else
+            {
+                if (d3dInput.keyPressed(Key.Return))
+                {
+                    gameStarted= true;
+                }
+                if(d3dInput.keyDown(Key.F5)){
+                    GuiController.Instance.Drawer2D.beginDrawSprite();
+                    controles.render();
+                    GuiController.Instance.Drawer2D.endDrawSprite();
+                }
+            }
                       
         }
 
@@ -926,6 +956,7 @@ namespace AlumnoEjemplos.RamboAxe
 
         public override void render(float elapsedTime)
         {
+            if (gameStarted) {
             piso.Position =new Vector3(pj.position.X -4500,8,pj.position.Z - 4500);
             //piso.BoundingBox.render();
             if (_lastTime > 0.03)
@@ -1041,6 +1072,14 @@ namespace AlumnoEjemplos.RamboAxe
  * */
 
             d3dDevice.EndScene();
+            }
+            else
+            {
+                GuiController.Instance.Drawer2D.beginDrawSprite();
+                intro.render();
+                GuiController.Instance.Drawer2D.endDrawSprite();
+                this.handleInput();
+            }
         }
         /// <summary>
         /// Dibujamos toda la escena pero en vez de a la pantalla, la dibujamos al Render Target que se cargo antes.
