@@ -170,7 +170,7 @@ namespace AlumnoEjemplos.RamboAxe
             //Configurar Technique dentro del shader
             effect.Technique = "OscurecerTechnique";
 
-            zBufferEffect = TgcShaders.loadEffect(GuiController.Instance.ExamplesMediaDir + "Shaders\\EjemploGetZBuffer.fx");
+            zBufferEffect = TgcShaders.loadEffect(GuiController.Instance.AlumnoEjemplosDir + "RamboAxe\\Media\\FogShader.fx");
             zBufferTexture = new Texture(d3dDevice, d3dDevice.Viewport.Width, d3dDevice.Viewport.Height, 1, Usage.RenderTarget, Format.R32F, Pool.Default);
             //Interpolador para efecto de variar la intensidad de la textura de alarma
             /*intVaivenOscurecer = new InterpoladorVaiven();
@@ -1078,29 +1078,13 @@ namespace AlumnoEjemplos.RamboAxe
             changeSkyBox();
 
             skyBox.Center = camera.Position;
-            //skyBox.updateValues();
-
-            /*
-             ...
-               skyBox.Center = camera.Position;
-                skyBox.updateValues(); //aquí se instancia texturas y vertices, esto no es recomendado hacerlo en render time, se aviso por la cadena de mail no utilizara este metodo. utilicen una matriz traslación.
-                ...
-             */
-
-
-
 
             int boxesToCheck = 9;
 
             if (currentCuadrantX != prevCuadrantX || currentCuadrantZ != prevCuadrantZ)
             {
-                //   infoBoxText.Text = " Loading... ";
                 prevCuadrantZ = currentCuadrantZ;
                 prevCuadrantX = currentCuadrantX;
-            }
-            else
-            {
-                //  infoBoxText.Text = "";
             }
             infoBoxText.render();
 
