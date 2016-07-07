@@ -23,6 +23,7 @@ using AlumnoEjemplos.Ramboaxe;
 using System.Windows.Forms;
 using TgcViewer.Utils.Shaders;
 using TgcViewer.Utils.Interpolation;
+
 namespace AlumnoEjemplos.RamboAxe
 {
     public class EjemploAlumno : TgcExample
@@ -161,6 +162,11 @@ namespace AlumnoEjemplos.RamboAxe
             renderTarget2D = new Texture(d3dDevice, d3dDevice.PresentationParameters.BackBufferWidth
                     , d3dDevice.PresentationParameters.BackBufferHeight, 1, Usage.RenderTarget,
                         Format.X8R8G8B8, Pool.Default);
+            
+             //codigo extra para que funcione con placas de video no integradas
+           
+            stencil = d3dDevice.CreateDepthStencilSurface(d3dDevice.PresentationParameters.BackBufferWidth,d3dDevice.PresentationParameters.BackBufferHeight, DepthFormat.D24S8, MultiSampleType.None, 0, true);
+            d3dDevice.DepthStencilSurface = stencil;
 
 
             //Cargar shader con efectos de Post-Procesado
@@ -1233,6 +1239,9 @@ namespace AlumnoEjemplos.RamboAxe
 
         string momentoDiaAnterior = "";
         private float factorOscuridad;
+
+
+        private Surface stencil;
         private void changeSkyBox()
         {
 
@@ -1447,5 +1456,6 @@ namespace AlumnoEjemplos.RamboAxe
             renderTarget2D.Dispose();
 
         }
+
     }
 }
