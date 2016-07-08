@@ -290,8 +290,9 @@ namespace AlumnoEjemplos.RamboAxe
         private float rads = FastMath.ToRad(90);
         private Vector3 direction = new Vector3(0.0f, 0.0f, 0.0f);
         public void handleInput() {
-            if (gameStarted) { 
             TgcD3dInput input = GuiController.Instance.D3dInput;
+            if (gameStarted)
+            { 
             direction = new Vector3(0.0f, 0.0f, 0.0f);
             //direction.Z += 5.0f;
             //Forward
@@ -593,7 +594,7 @@ namespace AlumnoEjemplos.RamboAxe
             }
             else
             {
-                if (d3dInput.keyPressed(Key.Return))
+                if (input.keyPressed(Key.Return))
                 {
                     gameStarted= true;
                 }
@@ -1361,7 +1362,7 @@ namespace AlumnoEjemplos.RamboAxe
             textGameContinue.Size = new Size(400, 100);
             textGameContinue.Color = Color.Red;
             System.Drawing.Font font2 = new System.Drawing.Font("Arial", 44);
-            textGameContinue.Position = new Point((int)ScreenWidth / 2 - 200, (int)ScreenHeight / 2 );
+            textGameContinue.Position = new Point((int)ScreenWidth / 2 - 200, (int)ScreenHeight / 2 - 350);
 
 
 
